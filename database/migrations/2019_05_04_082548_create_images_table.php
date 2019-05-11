@@ -14,8 +14,9 @@ class CreateImagesTable extends Migration
     public function up()
     {
         Schema::create('images', function (Blueprint $table) {
+            $table->engine = 'InnoDB';
             $table->increments('id');
-            $table->uuid('target_uuid');
+            $table->uuid('target_id');
             $table->string('filename');
             $table->timestamps();
         });

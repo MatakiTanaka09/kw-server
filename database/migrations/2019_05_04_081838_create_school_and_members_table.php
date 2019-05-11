@@ -14,9 +14,11 @@ class CreateSchoolAndMembersTable extends Migration
     public function up()
     {
         Schema::create('school_and_members', function (Blueprint $table) {
+            $table->engine = 'InnoDB';
             $table->increments('id');
-            $table->uuid('school_masters_id');
-            $table->integer('school_admin_masters_id')->unsigned();
+            $table->uuid('school_master_id');
+            $table->integer('school_admin_master_id')->unsigned();
+            $table->string('name');
             $table->timestamps();
         });
     }

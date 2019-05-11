@@ -16,9 +16,8 @@ class CreateUserChildrenTable extends Migration
         Schema::create('user_children', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->uuid('id')->primary();
-            $table->uuid('user_parents_id');
-            $table->string('sexes_id');
-            $table->string('icon');
+            $table->unsignedInteger('sex_id');
+            $table->string('icon')->nullable();
             $table->string('first_kana', 50);
             $table->string('last_kana', 50);
             $table->timestamp('birth_day');

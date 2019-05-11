@@ -14,9 +14,10 @@ class CreateTaggablesTable extends Migration
     public function up()
     {
         Schema::create('taggables', function (Blueprint $table) {
+            $table->engine = 'InnoDB';
             $table->increments('id');
-            $table->integer('tags_id')->unsigned();
-            $table->uuid('event_details_id');
+            $table->integer('tag_id')->unsigned();
+            $table->uuid('event_detail_id');
             $table->timestamps();
         });
     }

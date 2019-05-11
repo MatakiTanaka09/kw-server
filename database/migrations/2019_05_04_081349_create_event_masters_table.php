@@ -14,8 +14,10 @@ class CreateEventMastersTable extends Migration
     public function up()
     {
         Schema::create('event_masters', function (Blueprint $table) {
+            $table->engine = 'InnoDB';
             $table->uuid('id')->primary();
-            $table->uuid('school_masters_id');
+            $table->uuid('school_master_id');
+            $table->integer('category_master_id')->unsigned();
             $table->string('title');
             $table->text('detail');
             $table->timestamps();

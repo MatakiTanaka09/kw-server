@@ -14,13 +14,14 @@ class CreateSchoolMastersTable extends Migration
     public function up()
     {
         Schema::create('school_masters', function (Blueprint $table) {
-            $table->increments('id');
+            $table->engine = 'InnoDB';
+            $table->uuid('id')->primary();
             $table->string('name');
             $table->text('detail');
             $table->string('email');
             $table->string('url');
             $table->string('tel');
-            $table->string('icon');
+            $table->string('icon')->nullable();
             $table->string('zip_code1');
             $table->string('zip_code2');
             $table->string('state');

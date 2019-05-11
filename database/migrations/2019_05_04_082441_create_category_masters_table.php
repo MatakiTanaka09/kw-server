@@ -14,10 +14,11 @@ class CreateCategoryMastersTable extends Migration
     public function up()
     {
         Schema::create('category_masters', function (Blueprint $table) {
-            $table->string('id')->primary();
+            $table->engine = 'InnoDB';
+            $table->increments('id');
             $table->string('name');
             $table->string('color');
-            $table->string('path');
+            $table->string('filename');
             $table->timestamps();
         });
     }

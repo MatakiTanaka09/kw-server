@@ -18,7 +18,6 @@ class CreateCompanyAdminMastersTable extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->tinyInteger("role")->default(5);
             $table->rememberToken();
             $table->timestamps();
         });

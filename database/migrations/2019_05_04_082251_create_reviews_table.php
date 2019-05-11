@@ -14,9 +14,10 @@ class CreateReviewsTable extends Migration
     public function up()
     {
         Schema::create('reviews', function (Blueprint $table) {
+            $table->engine = 'InnoDB';
             $table->increments('id');
-            $table->uuid('user_parents_id');
-            $table->uuid('event_details_id');
+            $table->uuid('user_parent_id');
+            $table->uuid('event_detail_id');
             $table->text('comment');
             $table->integer('star_amount');
             $table->timestamps();

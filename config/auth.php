@@ -1,5 +1,7 @@
 <?php
 
+use KW\Infrastructure\Eloquents\UserMaster;
+
 return [
 
     /*
@@ -15,7 +17,7 @@ return [
 
     'defaults' => [
         'guard' => 'web',
-        'passwords' => 'users',
+        'passwords' => 'userMasters',
     ],
 
     /*
@@ -38,12 +40,12 @@ return [
     'guards' => [
         'web' => [
             'driver' => 'session',
-            'provider' => 'users',
+            'provider' => 'userMasters',
         ],
 
         'api' => [
             'driver' => 'token',
-            'provider' => 'users',
+            'provider' => 'userMasters',
         ],
     ],
 
@@ -65,9 +67,9 @@ return [
     */
 
     'providers' => [
-        'users' => [
+        'userMasters' => [
             'driver' => 'eloquent',
-            'model' => App\User::class,
+            'model' => UserMaster::class,
         ],
 
         // 'users' => [
@@ -92,8 +94,8 @@ return [
     */
 
     'passwords' => [
-        'users' => [
-            'provider' => 'users',
+        'userMasters' => [
+            'provider' => 'userMasters',
             'table' => 'password_resets',
             'expire' => 60,
         ],

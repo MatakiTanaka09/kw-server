@@ -14,9 +14,11 @@ class CreateCompanyAndMembersTable extends Migration
     public function up()
     {
         Schema::create('company_and_members', function (Blueprint $table) {
+            $table->engine = 'InnoDB';
             $table->increments('id');
-            $table->uuid('company_masters_id');
-            $table->integer('company_admin_masters_id')->unsigned();
+            $table->uuid('company_master_id');
+            $table->integer('company_admin_master_id')->unsigned();
+            $table->string('name');
             $table->timestamps();
         });
     }

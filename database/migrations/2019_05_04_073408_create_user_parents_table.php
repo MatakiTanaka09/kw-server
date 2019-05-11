@@ -16,9 +16,9 @@ class CreateUserParentsTable extends Migration
         Schema::create('user_parents', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->uuid('id')->primary();
-            $table->integer('user_masters_id')->unsigned();
-            $table->string('sexes_id');
-            $table->string('icon');
+            $table->unsignedInteger('user_master_id');
+            $table->unsignedInteger('sex_id');
+            $table->string('icon')->nullable();
             $table->string('full_name',50);
             $table->string('full_kana',50);
             $table->string('tel');
@@ -27,7 +27,7 @@ class CreateUserParentsTable extends Migration
             $table->string('state');
             $table->string('city');
             $table->string('address1');
-            $table->string('address2');
+            $table->string('address2')->nullable();
             $table->timestamps();
         });
     }
