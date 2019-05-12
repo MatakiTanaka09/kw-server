@@ -4,11 +4,19 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use KW\Infrastructure\Eloquents\UserParent;
 use KW\Infrastructure\Eloquents\UserChild;
+use KW\Infrastructure\Eloquents\ChildParent;
 use KW\Infrastructure\Eloquents\Book;
 use KW\Infrastructure\Eloquents\EventMaster;
 use KW\Infrastructure\Eloquents\EventDetail;
+use KW\Infrastructure\Eloquents\EventPr;
 use KW\Infrastructure\Eloquents\SchoolMaster;
+use KW\Infrastructure\Eloquents\SchoolAndMember;
 use KW\Infrastructure\Eloquents\CompanyMaster;
+use KW\Infrastructure\Eloquents\CompanyAndMember;
+use KW\Infrastructure\Eloquents\CategoryMaster;
+use KW\Infrastructure\Eloquents\Tag;
+use KW\Infrastructure\Eloquents\Taggable;
+use KW\Infrastructure\Eloquents\Sex;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 /*
@@ -232,6 +240,59 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
             });
             Route::delete("/{user_child_id}", function($user_child_id) {
                 UserChild::query()->where('id', '=', $user_child_id)->delete();
+            });
+        });
+
+        /**
+         * ChildParent
+         */
+        Route::group(["prefix" => "child-parents"], function () {
+            Route::get("", function() {
+                return response()->json(ChildParent::query()->select([
+                    'id',
+                    'user_parent_id',
+                    'user_child_id'
+                ])->get());
+            });
+            Route::post("", function(Request $request, ChildParent $childParent) {
+                $request->validate([
+                    'user_parent_id' => 'required',
+                    'user_child_id'  => 'required'
+                ]);
+                $childParent->user_parent_id = $request->json('user_parent_id');
+                $childParent->user_child_id  = $request->json('user_child_id');
+                $childParent->save();
+            });
+            Route::get("/{child_parent_id}", function($child_parent_id) {
+                try {
+                    return ChildParent::where('id', $child_parent_id)
+                        ->select([
+                            'id',
+                            'user_parent_id',
+                            'user_child_id'
+                        ])->firstOrFail();
+                } catch (ModelNotFoundException $exception) {
+                    return response()
+                        ->json(['message' => $exception->getMessage()])
+                        ->header('Content-Type', 'application/json')
+                        ->setStatusCode(404);
+                }
+            });
+            Route::put("/{child_parent_id}", function(Request $request, $child_parent_id) {
+                try {
+                    $childParent = ChildParent::where('id', $child_parent_id)->firstOrFail();
+                    $childParent->user_parent_id = $request->json('user_parent_id');
+                    $childParent->user_child_id  = $request->json('user_child_id');
+                    $childParent->save();
+                } catch (ModelNotFoundException $exception) {
+                    return response()
+                        ->json(['message' => $exception->getMessage()])
+                        ->header('Content-Type', 'application/json')
+                        ->setStatusCode(404);
+                }
+            });
+            Route::delete("/{child_parent_id}", function($child_parent_id) {
+                ChildParent::query()->where('id', '=', $child_parent_id)->delete();
             });
         });
 
@@ -645,6 +706,64 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
         });
 
         /**
+         * SchoolAndMember
+         */
+        Route::group(["prefix" => "school-and-members"], function () {
+            Route::get("", function() {
+                return response()->json(SchoolAndMember::query()->select([
+                    'id',
+                    'school_master_id',
+                    'school_admin_master_id',
+                    'name'
+                ])->get());
+            });
+            Route::post("", function(Request $request, SchoolAndMember $schoolAndMember) {
+                $request->validate([
+                    'school_master_id'       => 'required',
+                    'school_admin_master_id' => 'required',
+                    'name'                    => 'required'
+                ]);
+                $schoolAndMember->school_master_id       = $request->json('school_master_id');
+                $schoolAndMember->school_admin_master_id = $request->json('school_admin_master_id');
+                $schoolAndMember->name                   = $request->json('name');
+                $schoolAndMember->save();
+            });
+            Route::get("/{school_and_member_id}", function($school_and_member_id) {
+                try {
+                    return SchoolAndMember::where('id', $school_and_member_id)
+                        ->select([
+                            'id',
+                            'school_master_id',
+                            'school_admin_master_id',
+                            'name'
+                        ])->firstOrFail();
+                } catch (ModelNotFoundException $exception) {
+                    return response()
+                        ->json(['message' => $exception->getMessage()])
+                        ->header('Content-Type', 'application/json')
+                        ->setStatusCode(404);
+                }
+            });
+            Route::put("/{school_and_member_id}", function(Request $request, $school_and_member_id) {
+                try {
+                    $school_and_member = SchoolAndMember::where('id', $school_and_member_id)->firstOrFail();
+                    $school_and_member->school_master_id       = $request->json('school_master_id');
+                    $school_and_member->school_admin_master_id = $request->json('school_admin_master_id');
+                    $school_and_member->name                    = $request->json('name');
+                    $school_and_member->save();
+                } catch (ModelNotFoundException $exception) {
+                    return response()
+                        ->json(['message' => $exception->getMessage()])
+                        ->header('Content-Type', 'application/json')
+                        ->setStatusCode(404);
+                }
+            });
+            Route::delete("/{school_and_member_id}", function($school_and_member_id) {
+                SchoolAndMember::query()->where('id', '=', $school_and_member_id)->delete();
+            });
+        });
+
+        /**
          * CompanyMaster
          */
         Route::group(["prefix" => "company-masters"], function () {
@@ -758,6 +877,64 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
         });
 
         /**
+         * CompanyAndMember
+         */
+        Route::group(["prefix" => "company-and-members"], function () {
+            Route::get("", function() {
+                return response()->json(CompanyAndMember::query()->select([
+                    'id',
+                    'company_master_id',
+                    'company_admin_master_id',
+                    'name'
+                ])->get());
+            });
+            Route::post("", function(Request $request, CompanyAndMember $companyAndMember) {
+                $request->validate([
+                    'company_master_id'       => 'required',
+                    'company_admin_master_id' => 'required',
+                    'name'                    => 'required'
+                ]);
+                $companyAndMember->company_master_id       = $request->json('company_master_id');
+                $companyAndMember->company_admin_master_id = $request->json('company_admin_master_id');
+                $companyAndMember->name                    = $request->json('name');
+                $companyAndMember->save();
+            });
+            Route::get("/{company_and_member_id}", function($company_and_member_id) {
+                try {
+                    return CompanyAndMember::where('id', $company_and_member_id)
+                        ->select([
+                            'id',
+                            'company_master_id',
+                            'company_admin_master_id',
+                            'name'
+                        ])->firstOrFail();
+                } catch (ModelNotFoundException $exception) {
+                    return response()
+                        ->json(['message' => $exception->getMessage()])
+                        ->header('Content-Type', 'application/json')
+                        ->setStatusCode(404);
+                }
+            });
+            Route::put("/{company_and_member_id}", function(Request $request, $company_and_member_id) {
+                try {
+                    $company_and_member = CompanyAndMember::where('id', $company_and_member_id)->firstOrFail();
+                    $company_and_member->company_master_id       = $request->json('company_master_id');
+                    $company_and_member->company_admin_master_id = $request->json('company_admin_master_id');
+                    $company_and_member->name                    = $request->json('name');
+                    $company_and_member->save();
+                } catch (ModelNotFoundException $exception) {
+                    return response()
+                        ->json(['message' => $exception->getMessage()])
+                        ->header('Content-Type', 'application/json')
+                        ->setStatusCode(404);
+                }
+            });
+            Route::delete("/{company_and_member_id}", function($company_and_member_id) {
+                CompanyAndMember::query()->where('id', '=', $company_and_member_id)->delete();
+            });
+        });
+
+        /**
          * Reviews
          */
         Route::group(["prefix" => "reviews"], function () {
@@ -783,57 +960,111 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
          * CategoryMaster
          */
         Route::group(["prefix" => "category-masters"], function () {
-            Route::get("", function() {});
-            Route::post("", function() {});
-            Route::get("/{category_master_id}", function() {});
-            Route::put("/{category_master_id}", function() {});
-            Route::delete("/{category_master_id}", function() {});
+            Route::get("", function() {
+                return response()->json(CategoryMaster::query()->select([
+                    'id',
+                    'name',
+                    'color',
+                    'filename'
+                ])->get());
+            });
+            Route::post("", function(Request $request, CategoryMaster $categoryMaster) {
+                $request->validate([
+                    'name'     => 'required',
+                    'color'    => 'required',
+                    'filename' => 'required'
+                ]);
+                $categoryMaster->name     = $request->json('name');
+                $categoryMaster->color    = $request->json('color');
+                $categoryMaster->filename = $request->json('filename');
+                $categoryMaster->save();
+            });
+            Route::get("/{category_master_id}", function($category_master_id) {
+                try {
+                    return CategoryMaster::where('id', $category_master_id)
+                        ->select([
+                            'id',
+                            'name',
+                            'color',
+                            'filename'
+                        ])->firstOrFail();
+                } catch (ModelNotFoundException $exception) {
+                    return response()
+                        ->json(['message' => $exception->getMessage()])
+                        ->header('Content-Type', 'application/json')
+                        ->setStatusCode(404);
+                }
+            });
+            Route::put("/{category_master_id}", function(Request $request, $category_master_id) {
+                try {
+                    $category_master = CategoryMaster::where('id', $category_master_id)->firstOrFail();
+                    $category_master->name     = $request->json('name');
+                    $category_master->color    = $request->json('color');
+                    $category_master->filename = $request->json('filename');
+                    $category_master->save();
+                } catch (ModelNotFoundException $exception) {
+                    return response()
+                        ->json(['message' => $exception->getMessage()])
+                        ->header('Content-Type', 'application/json')
+                        ->setStatusCode(404);
+                }
+            });
+            Route::delete("/{category_master_id}", function($category_master_id) {
+                CategoryMaster::query()->where('id', '=', $category_master_id)->delete();
+            });
         });
 
         /**
          * Sex
          */
         Route::group(["prefix" => "sexes"], function () {
-            Route::get("", function() {});
-            Route::post("", function() {});
-            Route::get("/{sex_id}", function() {});
-            Route::put("/{sex_id}", function() {});
-            Route::delete("/{sex_id}", function() {});
-        });
-
-
-        /**
-         * ChildParent
-         */
-        Route::group(["prefix" => "child-parents"], function () {
-            Route::get("", function() {});
-            Route::post("", function() {});
-            Route::get("/{child_parent_id}", function() {});
-            Route::put("/{child_parent_id}", function() {});
-            Route::delete("/{child_parent_id}", function() {});
-        });
-
-        /**
-         * SchoolAndMember
-         */
-        Route::group(["prefix" => "school-and-members"], function () {
-            Route::get("", function() {});
-            Route::post("", function() {});
-            Route::get("/{school_and_member_id}", function() {});
-            Route::put("/{school_and_member_id}", function() {});
-            Route::delete("/{school_and_member_id}", function() {});
-        });
-
-
-        /**
-         * CompanyAndMember
-         */
-        Route::group(["prefix" => "company-and-members"], function () {
-            Route::get("", function() {});
-            Route::post("", function() {});
-            Route::get("/{company_and_member_id}", function() {});
-            Route::put("/{company_and_member_id}", function() {});
-            Route::delete("/{company_and_member_id}", function() {});
+            Route::get("", function() {
+                return response()->json(Sex::query()->select([
+                    'id',
+                    'sex_index',
+                    'sex'
+                ])->get());
+            });
+            Route::post("", function(Request $request, Sex $sex) {
+                $request->validate([
+                    'sex_index' => 'required',
+                    'sex'       => 'required'
+                ]);
+                $sex->id     = $request->json('id');
+                $sex->sex    = $request->json('sex');
+                $sex->save();
+            });
+            Route::get("/{sex_id}", function($sex_id) {
+                try {
+                    return Sex::where('id', $sex_id)
+                        ->select([
+                            'id',
+                            'sex_index',
+                            'sex'
+                        ])->firstOrFail();
+                } catch (ModelNotFoundException $exception) {
+                    return response()
+                        ->json(['message' => $exception->getMessage()])
+                        ->header('Content-Type', 'application/json')
+                        ->setStatusCode(404);
+                }
+            });
+            Route::put("/{sex_id}", function(Request $request, $sex_id) {
+                try {
+                    $sex = Sex::where('id', $sex_id)->firstOrFail();
+                    $sex->sex_index = $request->json('sex_index');
+                    $sex->sex       = $request->json('sex');
+                    $sex->save();
+                } catch (ModelNotFoundException $exception) {
+                    return response()
+                        ->json(['message' => $exception->getMessage()])
+                        ->header('Content-Type', 'application/json')
+                        ->setStatusCode(404);
+                }
+            });
+            Route::delete("/{sex_id}", function($sex_id) {
+                Sex::query()->where('id', '=', $sex_id)->delete();
+            });
         });
 
         /**
@@ -848,15 +1079,176 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
         });
 
         /**
+         * Tag
+         */
+        Route::group(["prefix" => "tags"], function () {
+            Route::get("", function() {
+                return response()->json(Tag::query()->select([
+                    'id',
+                    'name'
+                ])->get());
+            });
+            Route::post("", function(Request $request, Tag $tag) {
+                $request->validate([
+                    'name' => 'required'
+                ]);
+                $tag->name = $request->json('name');
+                $tag->save();
+            });
+            Route::get("/{tag_id}", function($tag_id) {
+                try {
+                    return Tag::where('id', $tag_id)
+                        ->select([
+                            'id',
+                            'name'
+                        ])->firstOrFail();
+                } catch (ModelNotFoundException $exception) {
+                    return response()
+                        ->json(['message' => $exception->getMessage()])
+                        ->header('Content-Type', 'application/json')
+                        ->setStatusCode(404);
+                }
+            });
+            Route::put("/{tag_id}", function(Request $request, $tag_id) {
+                try {
+                    $tag = Tag::where('id', $tag_id)->firstOrFail();
+                    $tag->name     = $request->json('name');
+                    $tag->save();
+                } catch (ModelNotFoundException $exception) {
+                    return response()
+                        ->json(['message' => $exception->getMessage()])
+                        ->header('Content-Type', 'application/json')
+                        ->setStatusCode(404);
+                }
+            });
+            Route::delete("/{tag_id}", function($tag_id) {
+                Tag::query()->where('id', '=', $tag_id)->delete();
+            });
+        });
+
+        /**
          * Taggable
          */
         Route::group(["prefix" => "taggables"], function () {
+            Route::get("", function() {
+                return response()->json(Taggable::query()->select([
+                    'id',
+                    'tag_id',
+                    'event_detail_id'
+                ])->get());
+            });
+            Route::post("", function(Request $request, Taggable $taggable) {
+                $request->validate([
+                    'tag_id'          => 'required',
+                    'event_detail_id' => 'required'
+                ]);
+                $taggable->tag_id         = $request->json('tag_id');
+                $taggable->event_detail_id = $request->json('event_detail_id');
+                $taggable->save();
+            });
+            Route::get("/{taggable_id}", function($taggable_id) {
+                try {
+                    return Taggable::where('id', $taggable_id)
+                        ->select([
+                            'id',
+                            'tag_id',
+                            'event_detail_id'
+                        ])->firstOrFail();
+                } catch (ModelNotFoundException $exception) {
+                    return response()
+                        ->json(['message' => $exception->getMessage()])
+                        ->header('Content-Type', 'application/json')
+                        ->setStatusCode(404);
+                }
+            });
+            Route::put("/{taggable_id}", function(Request $request, $taggable_id) {
+                try {
+                    $taggable = Taggable::where('id', $taggable_id)->firstOrFail();
+                    $taggable->tag_id          = $request->json('tag_id');
+                    $taggable->event_detail_id = $request->json('event_detail_id');
+                    $taggable->save();
+                } catch (ModelNotFoundException $exception) {
+                    return response()
+                        ->json(['message' => $exception->getMessage()])
+                        ->header('Content-Type', 'application/json')
+                        ->setStatusCode(404);
+                }
+            });
+            Route::delete("/{taggable_id}", function($taggable_id) {
+                Taggable::query()->where('id', '=', $taggable_id)->delete();
+            });
+        });
+
+        /**
+         * Role
+         */
+        Route::group(["prefix" => "roles"], function () {
             Route::get("", function() {});
             Route::post("", function() {});
-            Route::get("/{taggables_id}", function() {});
-            Route::put("/{taggables_id}", function() {});
-            Route::delete("/{taggables_id}", function() {});
+            Route::get("/{role_id}", function() {});
+            Route::put("/{role_id}", function() {});
+            Route::delete("/{role_id}", function() {});
         });
+
+        /**
+         * RoleRelation
+         */
+        Route::group(["prefix" => "role-relations"], function () {
+            Route::get("", function() {});
+            Route::post("", function() {});
+            Route::get("/{role_relation_id}", function() {});
+            Route::put("/{role_relation_id}", function() {});
+            Route::delete("/{role_relation_id}", function() {});
+        });
+
+        /**
+         * EventPr
+         */
+        Route::group(["prefix" => "event-prs"], function () {
+            Route::get("", function() {
+                return response()->json(EventPr::query()->select([
+                    'id',
+                    'pr'
+                ])->get());
+            });
+            Route::post("", function(Request $request, EventPr $eventPr) {
+                $request->validate([
+                    'pr' => 'required'
+                ]);
+                $eventPr->pr         = $request->json('pr');
+                $eventPr->save();
+            });
+            Route::get("/{event_pr_id}", function($event_pr_id) {
+                try {
+                    return EventPr::where('id', $event_pr_id)
+                        ->select([
+                            'id',
+                            'pr'
+                        ])->firstOrFail();
+                } catch (ModelNotFoundException $exception) {
+                    return response()
+                        ->json(['message' => $exception->getMessage()])
+                        ->header('Content-Type', 'application/json')
+                        ->setStatusCode(404);
+                }
+            });
+            Route::put("/{event_pr_id}", function(Request $request, $event_pr_id) {
+                try {
+                    $eventPr = EventPr::where('id', $event_pr_id)->firstOrFail();
+                    $eventPr->pr = $request->json('pr');
+                    $eventPr->save();
+                } catch (ModelNotFoundException $exception) {
+                    return response()
+                        ->json(['message' => $exception->getMessage()])
+                        ->header('Content-Type', 'application/json')
+                        ->setStatusCode(404);
+                }
+            });
+            Route::delete("/{event_pr_id}", function($event_pr_id) {
+                EventPr::query()->where('id', '=', $event_pr_id)->delete();
+            });
+        });
+
 
         /**
          * UserMaster
@@ -889,39 +1281,6 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
             Route::get("/{company_admin_master_id}", function() {});
             Route::put("/{company_admin_master_id}", function() {});
             Route::delete("/{company_admin_master_id}", function() {});
-        });
-
-        /**
-         * Role
-         */
-        Route::group(["prefix" => "roles"], function () {
-            Route::get("", function() {});
-            Route::post("", function() {});
-            Route::get("/{role_id}", function() {});
-            Route::put("/{role_id}", function() {});
-            Route::delete("/{role_id}", function() {});
-        });
-
-        /**
-         * RoleRelation
-         */
-        Route::group(["prefix" => "role-relations"], function () {
-            Route::get("", function() {});
-            Route::post("", function() {});
-            Route::get("/{role_relation_id}", function() {});
-            Route::put("/{role_relation_id}", function() {});
-            Route::delete("/{role_relation_id}", function() {});
-        });
-
-        /**
-         * EventPr
-         */
-        Route::group(["prefix" => "event-prs"], function () {
-            Route::get("", function() {});
-            Route::post("", function() {});
-            Route::get("/{event_pr_id}", function() {});
-            Route::put("/{event_pr_id}", function() {});
-            Route::delete("/{event_pr_id}", function() {});
         });
     });
 });

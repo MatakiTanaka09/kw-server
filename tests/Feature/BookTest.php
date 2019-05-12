@@ -7,7 +7,6 @@ use KW\Infrastructure\Eloquents\Book;
 use Illuminate\Http\Response;
 use Illuminate\Foundation\Testing\WithFaker;
 
-
 class BookTest extends KWBaseTestCase
 {
     /**

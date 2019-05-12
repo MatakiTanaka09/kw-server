@@ -8,7 +8,7 @@ namespace KW\Infrastructure\Eloquents;
  * @property int $id
  * @property string $name
  * @property string $color
- * @property string $path
+ * @property string $filename
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\KW\Infrastructure\Eloquents\EventDetail[] $eventDetails
@@ -20,7 +20,7 @@ namespace KW\Infrastructure\Eloquents;
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\CategoryMaster whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\CategoryMaster whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\CategoryMaster whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\CategoryMaster wherePath($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\CategoryMaster whereFilename($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\CategoryMaster whereUpdatedAt($value)
  * @mixin \Eloquent
  */

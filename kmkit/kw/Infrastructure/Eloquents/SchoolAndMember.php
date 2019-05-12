@@ -6,8 +6,8 @@ namespace KW\Infrastructure\Eloquents;
  * KW\Infrastructure\Eloquents\SchoolAndMember
  *
  * @property int $id
- * @property string $school_masters_id
- * @property int $school_admin_masters_id
+ * @property string $school_master_id
+ * @property int $school_admin_master_id
  * @property string $name
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -19,8 +19,8 @@ namespace KW\Infrastructure\Eloquents;
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\SchoolAndMember whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\SchoolAndMember whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\SchoolAndMember whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\SchoolAndMember whereSchoolAdminMastersId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\SchoolAndMember whereSchoolMastersId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\SchoolAndMember whereSchoolAdminMasterId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\SchoolAndMember whereSchoolMasterId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\SchoolAndMember whereUpdatedAt($value)
  * @mixin \Eloquent
  */

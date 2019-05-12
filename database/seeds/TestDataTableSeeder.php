@@ -125,64 +125,57 @@ class TestDataTableSeeder extends Seeder
         }
 
 
-//        DB::table('category_masters')->insert([
-//            [
-////                "id"         => 1,
-//                "name"       => "others",
-//                "filename"   => "images/category.png",
-//                "color"      => "red",
-//                "created_at" => now(),
-//                "updated_at" => now()
-//            ],
-//            [
-////                "id"         => 2,
-//                "name"       => "art",
-//                "color"      => "red",
-//                "filename"   => "images/art.png",
-//                "created_at" => now(),
-//                "updated_at" => now()
-//            ],
-//            [
-////                "id"         => 3,
-//                "name"       => "educational",
-//                "color"      => "red",
-//                "filename"   => "images/educational.png",
-//                "created_at" => now(),
-//                "updated_at" => now()
-//            ],
-//            [
-////                "id"         => 4,
-//                "name"       => "foreign_languages",
-//                "color"      => "red",
-//                "filename"   => "images/foreign_languages.png",
-//                "created_at" => now(),
-//                "updated_at" => now()
-//            ],
-//            [
-////                "id"         => 5,
-//                "name"       => "music",
-//                "color"      => "red",
-//                "filename"   => "images/music.png",
-//                "created_at" => now(),
-//                "updated_at" => now(),
-//            ],
-//            [
-////                "id"         => 6,
-//                "name"       => "science",
-//                "color"      => "red",
-//                "filename"   => "images/science.png",
-//                "created_at" => now(),
-//                "updated_at" => now()
-//
-//            ],
-//            [
-////                "id"         => 7,
-//                "name"       => "sport",
-//                "color"      => "red",
-//                "filename"   => "images/sport.png",
-//                "created_at" => now(),
-//                "updated_at" => now()
-//            ]
-//        ]);
+        DB::table('category_masters')->insert([
+            [
+                "name"       => "others",
+                "filename"   => "images/category.png",
+                "color"      => "red",
+                "created_at" => now(),
+                "updated_at" => now()
+            ],
+            [
+                "name"       => "art",
+                "color"      => "red",
+                "filename"   => "images/art.png",
+                "created_at" => now(),
+                "updated_at" => now()
+            ],
+            [
+                "name"       => "educational",
+                "color"      => "red",
+                "filename"   => "images/educational.png",
+                "created_at" => now(),
+                "updated_at" => now()
+            ],
+            [
+                "name"       => "foreign_languages",
+                "color"      => "red",
+                "filename"   => "images/foreign_languages.png",
+                "created_at" => now(),
+                "updated_at" => now()
+            ],
+            [
+                "name"       => "music",
+                "color"      => "red",
+                "filename"   => "images/music.png",
+                "created_at" => now(),
+                "updated_at" => now(),
+            ],
+            [
+                "name"       => "science",
+                "color"      => "red",
+                "filename"   => "images/science.png",
+                "created_at" => now(),
+                "updated_at" => now()
+
+            ],
+            [
+                "name"       => "sport",
+                "color"      => "red",
+                "filename"   => "images/sport.png",
+                "created_at" => now(),
+                "updated_at" => now()
+            ]
+        ]);
     }
 }

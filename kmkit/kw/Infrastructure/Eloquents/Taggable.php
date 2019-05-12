@@ -6,8 +6,8 @@ namespace KW\Infrastructure\Eloquents;
  * KW\Infrastructure\Eloquents\Taggable
  *
  * @property int $id
- * @property int $tags_id
- * @property string $event_details_id
+ * @property int $tag_id
+ * @property string $event_detail_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \KW\Infrastructure\Eloquents\EventDetail $eventDetail
@@ -16,9 +16,9 @@ namespace KW\Infrastructure\Eloquents;
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\Taggable newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\Taggable query()
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\Taggable whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\Taggable whereEventDetailsId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\Taggable whereEventDetailId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\Taggable whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\Taggable whereTagsId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\Taggable whereTagId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\Taggable whereUpdatedAt($value)
  * @mixin \Eloquent
  */
