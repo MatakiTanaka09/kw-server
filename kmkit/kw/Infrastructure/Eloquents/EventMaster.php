@@ -48,10 +48,10 @@ class EventMaster extends BaseUuid
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
     public function categoryMaster()
     {
-        return $this->belongsTo(CategoryMaster::class);
+        return $this->hasOne(CategoryMaster::class);
     }
 }

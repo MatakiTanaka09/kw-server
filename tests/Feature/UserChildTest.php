@@ -17,7 +17,7 @@ class UserChildTest extends KWBaseTestCase
      * - table
      */
     const USER_CHILDREN = 'api/v1/kw/user-children/';
-    const EVENT_MASTERS_TABLE = 'user_children';
+    const USER_CHILDREN_TABLE = 'user_children';
 
     /**
      * @test
@@ -91,7 +91,7 @@ class UserChildTest extends KWBaseTestCase
             'birth_day' => $newUserChild->birth_day
         ];
         $this->postJson(self::USER_CHILDREN, $params);
-        $this->assertDatabaseHas(self::EVENT_MASTERS_TABLE, $params);
+        $this->assertDatabaseHas(self::USER_CHILDREN_TABLE, $params);
     }
 
     /**
@@ -222,7 +222,7 @@ class UserChildTest extends KWBaseTestCase
     public function api_v1_user_children_idにDELETEメソッドでアクセスできる()
     {
         $user_child_id = $this->getFirstUserChildId();
-        ChildParent::query()->where('user_child_id', '=', $user_child_id)->delete();
+        UserChild::query()->where('id', '=', $user_child_id)->delete();
         $response = $this->delete(self::USER_CHILDREN . $user_child_id);
         $response->assertStatus(200);
     }

@@ -4,8 +4,11 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use KW\Infrastructure\Eloquents\UserParent;
 use KW\Infrastructure\Eloquents\UserChild;
+use KW\Infrastructure\Eloquents\Book;
 use KW\Infrastructure\Eloquents\EventMaster;
 use KW\Infrastructure\Eloquents\EventDetail;
+use KW\Infrastructure\Eloquents\SchoolMaster;
+use KW\Infrastructure\Eloquents\CompanyMaster;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 /*
@@ -136,12 +139,9 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
                 }
             });
             Route::put("/{user_parent_id}", function(Request $request, $user_parent_id) {
-                /**
-                 * @var UserParent $user_parent
-                 */
                 try {
                     $userParent = UserParent::where('id', $user_parent_id)->firstOrFail();
-                    $userParent->sex_id  = $request->json('sex_id');
+                    $userParent->sex_id    = $request->json('sex_id');
                     $userParent->icon      = $request->json('icon');
                     $userParent->full_name = $request->json('full_name');
                     $userParent->full_kana = $request->json('full_kana');
@@ -231,7 +231,7 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
                 }
             });
             Route::delete("/{user_child_id}", function($user_child_id) {
-                UserParent::query()->where('id', '=', $user_child_id)->delete();
+                UserChild::query()->where('id', '=', $user_child_id)->delete();
             });
         });
 
@@ -303,44 +303,458 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
          * EventDetail
          */
         Route::group(["prefix" => "event-details"], function () {
-            Route::get("", function() {});
-            Route::post("", function() {});
-            Route::get("/{event_detail_id}", function() {});
-            Route::put("/{event_detail_id}", function() {});
-            Route::delete("/{event_detail_id}", function() {});
+            Route::get("", function() {
+                return response()->json(EventDetail::query()->select([
+                    'id',
+                    'event_master_id',
+                    'event_pr_id',
+                    'title',
+                    'detail',
+                    'handing',
+                    'started_at',
+                    'expired_at',
+                    'capacity_members',
+                    'event_minutes',
+                    'target_min_age',
+                    'target_max_age',
+                    'parent_attendant',
+                    'price',
+                    'cancel_policy',
+                    'cancel_deadline',
+                    'pub_state',
+                    'arrived_at',
+                    'zip_code1',
+                    'zip_code2',
+                    'state',
+                    'city',
+                    'address1',
+                    'address2',
+                    'longitude',
+                    'latitude'
+                ])->get());
+            });
+            Route::post("", function(Request $request, EventDetail $eventDetail) {
+                $request->validate([
+                    'event_master_id'  => 'required',
+                    'event_pr_id'      => 'required',
+                    'title'            => 'required',
+                    'detail'           => 'required',
+                    'handing'          => 'required',
+                    'started_at'       => 'required',
+                    'expired_at'       => 'required',
+                    'capacity_members' => 'required',
+                    'event_minutes'    => 'required',
+                    'target_min_age'   => 'required',
+                    'target_max_age'   => 'required',
+                    'parent_attendant' => 'required',
+                    'price'            => 'required',
+                    'cancel_policy'    => 'required',
+                    'cancel_deadline'  => 'required',
+                    'pub_state'        => 'required',
+                    'arrived_at'       => 'required',
+                    'zip_code1'        => 'required',
+                    'zip_code2'        => 'required',
+                    'state'            => 'required',
+                    'city'             => 'required',
+                    'address1'         => 'required',
+                    'address2'         => 'required',
+                    'longitude'        => 'required',
+                    'latitude'         => 'required'
+                ]);
+                $eventDetail->event_master_id  = $request->json('event_master_id');
+                $eventDetail->event_pr_id      = $request->json('event_pr_id');
+                $eventDetail->title            = $request->json('title');
+                $eventDetail->detail           = $request->json('detail');
+                $eventDetail->handing          = $request->json('handing');
+                $eventDetail->started_at       = $request->json('started_at');
+                $eventDetail->expired_at       = $request->json('expired_at');
+                $eventDetail->capacity_members = $request->json('capacity_members');
+                $eventDetail->event_minutes    = $request->json('event_minutes');
+                $eventDetail->target_min_age   = $request->json('target_min_age');
+                $eventDetail->target_max_age   = $request->json('target_max_age');
+                $eventDetail->parent_attendant = $request->json('parent_attendant');
+                $eventDetail->price            = $request->json('price');
+                $eventDetail->cancel_policy    = $request->json('cancel_policy');
+                $eventDetail->cancel_deadline  = $request->json('cancel_deadline');
+                $eventDetail->pub_state        = $request->json('pub_state');
+                $eventDetail->arrived_at       = $request->json('arrived_at');
+                $eventDetail->zip_code1        = $request->json('zip_code1');
+                $eventDetail->zip_code2        = $request->json('zip_code2');
+                $eventDetail->state            = $request->json('state');
+                $eventDetail->city             = $request->json('city');
+                $eventDetail->address1         = $request->json('address1');
+                $eventDetail->address2         = $request->json('address2');
+                $eventDetail->longitude        = $request->json('longitude');
+                $eventDetail->latitude         = $request->json('latitude');
+                $eventDetail->save();
+            });
+            Route::get("/{event_detail_id}", function($event_detail_id) {
+                try {
+                    return EventDetail::where('id', $event_detail_id)
+                        ->select([
+                            'id',
+                            'event_master_id',
+                            'event_pr_id',
+                            'title',
+                            'detail',
+                            'handing',
+                            'started_at',
+                            'expired_at',
+                            'capacity_members',
+                            'event_minutes',
+                            'target_min_age',
+                            'target_max_age',
+                            'parent_attendant',
+                            'price',
+                            'cancel_policy',
+                            'cancel_deadline',
+                            'pub_state',
+                            'arrived_at',
+                            'zip_code1',
+                            'zip_code2',
+                            'state',
+                            'city',
+                            'address1',
+                            'address2',
+                            'longitude',
+                            'latitude'
+                        ])
+                        ->firstOrFail();
+                } catch (ModelNotFoundException $exception) {
+                    return response()
+                        ->json(['message' => $exception->getMessage()])
+                        ->header('Content-Type', 'application/json')
+                        ->setStatusCode(404);
+                }
+            });
+            Route::put("/{event_detail_id}", function(Request $request, $event_detail_id) {
+                try {
+                    $eventDetail = EventDetail::where('id', $event_detail_id)->firstOrFail();
+                    $eventDetail->event_master_id  = $request->json('event_master_id');
+                    $eventDetail->event_pr_id      = $request->json('event_pr_id');
+                    $eventDetail->title            = $request->json('title');
+                    $eventDetail->detail           = $request->json('detail');
+                    $eventDetail->handing          = $request->json('handing');
+                    $eventDetail->started_at       = $request->json('started_at');
+                    $eventDetail->expired_at       = $request->json('expired_at');
+                    $eventDetail->capacity_members = $request->json('capacity_members');
+                    $eventDetail->event_minutes    = $request->json('event_minutes');
+                    $eventDetail->target_min_age   = $request->json('target_min_age');
+                    $eventDetail->target_max_age   = $request->json('target_max_age');
+                    $eventDetail->parent_attendant = $request->json('parent_attendant');
+                    $eventDetail->price            = $request->json('price');
+                    $eventDetail->cancel_policy    = $request->json('cancel_policy');
+                    $eventDetail->cancel_deadline  = $request->json('cancel_deadline');
+                    $eventDetail->pub_state        = $request->json('pub_state');
+                    $eventDetail->arrived_at       = $request->json('arrived_at');
+                    $eventDetail->zip_code1        = $request->json('zip_code1');
+                    $eventDetail->zip_code2        = $request->json('zip_code2');
+                    $eventDetail->state            = $request->json('state');
+                    $eventDetail->city             = $request->json('city');
+                    $eventDetail->address1         = $request->json('address1');
+                    $eventDetail->address2         = $request->json('address2');
+                    $eventDetail->longitude        = $request->json('longitude');
+                    $eventDetail->latitude         = $request->json('latitude');
+                    $eventDetail->save();
+                } catch (ModelNotFoundException $exception) {
+                    return response()
+                        ->json(['message' => $exception->getMessage()])
+                        ->header('Content-Type', 'application/json')
+                        ->setStatusCode(404);
+                }
+            });
+            Route::delete("/{event_detail_id}", function($event_detail_id) {
+                EventDetail::query()->where('id', '=', $event_detail_id)->delete();
+            });
         });
 
         /**
          * Book
          */
         Route::group(["prefix" => "books"], function () {
-            Route::get("", function() {});
-            Route::post("", function() {});
-            Route::get("/{book_id}", function() {});
-            Route::put("/{book_id}", function() {});
-            Route::delete("/{book_id}", function() {});
+            Route::get("", function() {
+                return response()->json(Book::query()->select([
+                    'id',
+                    'child_parent_id',
+                    'event_detail_id',
+                    'status',
+                    'price'
+                ])->get());
+            });
+            Route::post("", function(Request $request, Book $book) {
+                $request->validate([
+                    'child_parent_id' => 'required',
+                    'event_detail_id' => 'required',
+                    'status'          => 'required',
+                    'price'           => 'required'
+                ]);
+                $book->child_parent_id    = $request->json('child_parent_id');
+                $book->event_detail_id  = $request->json('event_detail_id');
+                $book->status               = $request->json('status');
+                $book->price              = $request->json('price');
+                $book->save();
+            });
+            Route::get("/{book_id}", function($book_id) {
+                try {
+                    return Book::where('id', $book_id)
+                        ->select([
+                            'id',
+                            'child_parent_id',
+                            'event_detail_id',
+                            'status',
+                            'price'
+                        ])->firstOrFail();
+                } catch (ModelNotFoundException $exception) {
+                    return response()
+                        ->json(['message' => $exception->getMessage()])
+                        ->header('Content-Type', 'application/json')
+                        ->setStatusCode(404);
+                }
+            });
+            Route::put("/{book_id}", function(Request $request, $book_id) {
+                try {
+                    $book = Book::where('id', $book_id)->firstOrFail();
+                    $book->child_parent_id = $request->json('child_parent_id');
+                    $book->event_detail_id = $request->json('event_detail_id');
+                    $book->status          = $request->json('status');
+                    $book->price           = $request->json('price');
+                    $book->save();
+                } catch (ModelNotFoundException $exception) {
+                    return response()
+                        ->json(['message' => $exception->getMessage()])
+                        ->header('Content-Type', 'application/json')
+                        ->setStatusCode(404);
+                }
+            });
+            Route::delete("/{book_id}", function($book_id) {
+                Book::query()->where('id', '=', $book_id)->delete();
+            });
         });
 
         /**
          * SchoolMaster
          */
         Route::group(["prefix" => "school-masters"], function () {
-            Route::get("", function() {});
-            Route::post("", function() {});
-            Route::get("/{school_master_id}", function() {});
-            Route::put("/{school_master_id}", function() {});
-            Route::delete("/{school_master_id}", function() {});
+            Route::get("", function() {
+                return response()->json(SchoolMaster::query()->select([
+                    'id',
+                    'name',
+                    'detail',
+                    'email',
+                    'url',
+                    'tel',
+                    'icon',
+                    'zip_code1',
+                    'zip_code2',
+                    'state',
+                    'city',
+                    'address1',
+                    'address2',
+                    'longitude',
+                    'latitude'
+                ])->get());
+            });
+            Route::post("", function(Request $request, SchoolMaster $schoolMaster) {
+                $request->validate([
+                    'name'      => 'required',
+                    'detail'    => 'required',
+                    'email'     => 'required',
+                    'url'       => 'required',
+                    'tel'       => 'required',
+                    'icon'      => 'required',
+                    'zip_code1' => 'required',
+                    'zip_code2' => 'required',
+                    'state'     => 'required',
+                    'city'      => 'required',
+                    'address1'  => 'required',
+                    'address2'  => 'required',
+                    'longitude' => 'required',
+                    'latitude'  => 'required',
+                ]);
+                $schoolMaster->name      = $request->json('name');
+                $schoolMaster->detail    = $request->json('detail');
+                $schoolMaster->email     = $request->json('email');
+                $schoolMaster->url       = $request->json('url');
+                $schoolMaster->tel       = $request->json('tel');
+                $schoolMaster->icon      = $request->json('icon');
+                $schoolMaster->zip_code1 = $request->json('zip_code1');
+                $schoolMaster->zip_code2 = $request->json('zip_code2');
+                $schoolMaster->state     = $request->json('state');
+                $schoolMaster->city      = $request->json('city');
+                $schoolMaster->address1  = $request->json('address1');
+                $schoolMaster->address2  = $request->json('address2');
+                $schoolMaster->longitude = $request->json('longitude');
+                $schoolMaster->latitude  = $request->json('latitude');
+                $schoolMaster->save();
+            });
+            Route::get("/{school_master_id}", function($school_master_id) {
+                try {
+                    return SchoolMaster::where('id', $school_master_id)
+                        ->select([
+                            'id',
+                            'name',
+                            'detail',
+                            'email',
+                            'url',
+                            'tel',
+                            'icon',
+                            'zip_code1',
+                            'zip_code2',
+                            'state',
+                            'city',
+                            'address1',
+                            'address2',
+                            'longitude',
+                            'latitude'
+                        ])->firstOrFail();
+                } catch (ModelNotFoundException $exception) {
+                    return response()
+                        ->json(['message' => $exception->getMessage()])
+                        ->header('Content-Type', 'application/json')
+                        ->setStatusCode(404);
+                }
+            });
+            Route::put("/{school_master_id}", function(Request $request, $school_master_id) {
+                try {
+                    $schoolMaster = SchoolMaster::where('id', $school_master_id)->firstOrFail();
+                    $schoolMaster->name      = $request->json('name');
+                    $schoolMaster->detail    = $request->json('detail');
+                    $schoolMaster->email     = $request->json('email');
+                    $schoolMaster->url       = $request->json('url');
+                    $schoolMaster->tel       = $request->json('tel');
+                    $schoolMaster->icon      = $request->json('icon');
+                    $schoolMaster->zip_code1 = $request->json('zip_code1');
+                    $schoolMaster->zip_code2 = $request->json('zip_code2');
+                    $schoolMaster->state     = $request->json('state');
+                    $schoolMaster->city      = $request->json('city');
+                    $schoolMaster->address1  = $request->json('address1');
+                    $schoolMaster->address2  = $request->json('address2');
+                    $schoolMaster->longitude = $request->json('longitude');
+                    $schoolMaster->latitude  = $request->json('latitude');
+                    $schoolMaster->save();
+                } catch (ModelNotFoundException $exception) {
+                    return response()
+                        ->json(['message' => $exception->getMessage()])
+                        ->header('Content-Type', 'application/json')
+                        ->setStatusCode(404);
+                }
+            });
+            Route::delete("/{school_master_id}", function($school_master_id) {
+                SchoolMaster::query()->where('id', '=', $school_master_id)->delete();
+            });
         });
 
         /**
          * CompanyMaster
          */
         Route::group(["prefix" => "company-masters"], function () {
-            Route::get("", function() {});
-            Route::post("", function() {});
-            Route::get("/{school_master_id}", function() {});
-            Route::put("/{school_master_id}", function() {});
-            Route::delete("/{school_master_id}", function() {});
+            Route::get("", function() {
+                return response()->json(CompanyMaster::query()->select([
+                    'id',
+                    'name',
+                    'detail',
+                    'email',
+                    'url',
+                    'tel',
+                    'icon',
+                    'zip_code1',
+                    'zip_code2',
+                    'state',
+                    'city',
+                    'address1',
+                    'address2',
+                    'longitude',
+                    'latitude'
+                ])->get());
+            });
+            Route::post("", function(Request $request, CompanyMaster $companyMaster) {
+                $request->validate([
+                    'name'      => 'required',
+                    'detail'    => 'required',
+                    'email'     => 'required',
+                    'url'       => 'required',
+                    'tel'       => 'required',
+                    'icon'      => 'required',
+                    'zip_code1' => 'required',
+                    'zip_code2' => 'required',
+                    'state'     => 'required',
+                    'city'      => 'required',
+                    'address1'  => 'required',
+                    'address2'  => 'required',
+                    'longitude' => 'required',
+                    'latitude'  => 'required',
+                ]);
+                $companyMaster->name      = $request->json('name');
+                $companyMaster->detail    = $request->json('detail');
+                $companyMaster->email     = $request->json('email');
+                $companyMaster->url       = $request->json('url');
+                $companyMaster->tel       = $request->json('tel');
+                $companyMaster->icon      = $request->json('icon');
+                $companyMaster->zip_code1 = $request->json('zip_code1');
+                $companyMaster->zip_code2 = $request->json('zip_code2');
+                $companyMaster->state     = $request->json('state');
+                $companyMaster->city      = $request->json('city');
+                $companyMaster->address1  = $request->json('address1');
+                $companyMaster->address2  = $request->json('address2');
+                $companyMaster->longitude = $request->json('longitude');
+                $companyMaster->latitude  = $request->json('latitude');
+                $companyMaster->save();
+            });
+            Route::get("/{company_master_id}", function($company_master_id) {
+                try {
+                    return CompanyMaster::where('id', $company_master_id)
+                        ->select([
+                            'id',
+                            'name',
+                            'detail',
+                            'email',
+                            'url',
+                            'tel',
+                            'icon',
+                            'zip_code1',
+                            'zip_code2',
+                            'state',
+                            'city',
+                            'address1',
+                            'address2',
+                            'longitude',
+                            'latitude'
+                        ])->firstOrFail();
+                } catch (ModelNotFoundException $exception) {
+                    return response()
+                        ->json(['message' => $exception->getMessage()])
+                        ->header('Content-Type', 'application/json')
+                        ->setStatusCode(404);
+                }
+            });
+            Route::put("/{company_master_id}", function(Request $request, $company_master_id) {
+                try {
+                    $companyMaster = CompanyMaster::where('id', $company_master_id)->firstOrFail();
+                    $companyMaster->name      = $request->json('name');
+                    $companyMaster->detail    = $request->json('detail');
+                    $companyMaster->email     = $request->json('email');
+                    $companyMaster->url       = $request->json('url');
+                    $companyMaster->tel       = $request->json('tel');
+                    $companyMaster->icon      = $request->json('icon');
+                    $companyMaster->zip_code1 = $request->json('zip_code1');
+                    $companyMaster->zip_code2 = $request->json('zip_code2');
+                    $companyMaster->state     = $request->json('state');
+                    $companyMaster->city      = $request->json('city');
+                    $companyMaster->address1  = $request->json('address1');
+                    $companyMaster->address2  = $request->json('address2');
+                    $companyMaster->longitude = $request->json('longitude');
+                    $companyMaster->latitude  = $request->json('latitude');
+                    $companyMaster->save();
+                } catch (ModelNotFoundException $exception) {
+                    return response()
+                        ->json(['message' => $exception->getMessage()])
+                        ->header('Content-Type', 'application/json')
+                        ->setStatusCode(404);
+                }
+            });
+            Route::delete("/{company_master_id}", function($company_master_id) {
+                CompanyMaster::query()->where('id', '=', $company_master_id)->delete();
+            });
         });
 
         /**
@@ -497,6 +911,17 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
             Route::get("/{role_relation_id}", function() {});
             Route::put("/{role_relation_id}", function() {});
             Route::delete("/{role_relation_id}", function() {});
+        });
+
+        /**
+         * EventPr
+         */
+        Route::group(["prefix" => "event-prs"], function () {
+            Route::get("", function() {});
+            Route::post("", function() {});
+            Route::get("/{event_pr_id}", function() {});
+            Route::put("/{event_pr_id}", function() {});
+            Route::delete("/{event_pr_id}", function() {});
         });
     });
 });

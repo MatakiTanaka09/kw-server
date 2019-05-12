@@ -16,7 +16,7 @@ class CreateBooksTable extends Migration
         Schema::create('books', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->uuid('id');
-            $table->integer('child_parent_id')->unsigned();
+            $table->unsignedInteger('child_parent_id');
             $table->uuid('event_detail_id');
             $table->tinyInteger('status')->default(0);
             $table->integer('price')->unsigned();

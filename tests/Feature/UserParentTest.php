@@ -71,7 +71,6 @@ class UserParentTest extends KWBaseTestCase
         $response->assertJsonCount(10);
     }
 
-
     /**
      * @test
      */
@@ -135,7 +134,8 @@ class UserParentTest extends KWBaseTestCase
             'zip_code2'  => '',
             'state'      => '',
             'city'       => '',
-            'address1'   => ''
+            'address1'   => '',
+            'address2'   => '',
         ];
         $response = $this->postJson(self::USER_PARENTS, $params);
         $error_response = [

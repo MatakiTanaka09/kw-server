@@ -40,8 +40,8 @@ class CategoryMaster extends AppEloquent
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function eventDetail()
+    public function eventMaster()
     {
-        return $this->belongsTo(EventDetail::class);
+        return $this->belongsTo(EventMaster::class);
     }
 }

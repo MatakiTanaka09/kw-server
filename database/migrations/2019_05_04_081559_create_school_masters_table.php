@@ -28,8 +28,8 @@ class CreateSchoolMastersTable extends Migration
             $table->string('city');
             $table->string('address1');
             $table->string('address2');
-            $table->float('longitude')->nullable();
-            $table->float('latitude')->nullable();
+            $table->float('longitude')->default(0.0);
+            $table->float('latitude')->default(0.0);
             $table->timestamps();
         });
     }

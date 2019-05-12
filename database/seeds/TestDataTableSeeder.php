@@ -101,7 +101,6 @@ class TestDataTableSeeder extends Seeder
             ['name' => 'general-user', 'role' => 10],
         ]);
 
-
         $roles = Role::all();
         $userMasters = UserMaster::all();
         $schoolAdminMasters = SchoolAdminMaster::all();

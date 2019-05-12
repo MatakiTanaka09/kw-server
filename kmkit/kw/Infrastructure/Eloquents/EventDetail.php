@@ -7,17 +7,20 @@ namespace KW\Infrastructure\Eloquents;
  *
  * @property string $id
  * @property string $event_master_id
+ * @property int $event_pr_id
  * @property string $title
  * @property string $detail
+ * @property string $handing
  * @property string $started_at
  * @property string $expired_at
  * @property int $capacity_members
+ * @property int $event_minutes
  * @property string $target_min_age
  * @property string $target_max_age
- * @property string $pr
  * @property int $parent_attendant
  * @property int $price
- * @property string $canceled_at
+ * @property string $cancel_policy
+ * @property string $cancel_deadline
  * @property int $pub_state
  * @property string $arrived_at
  * @property string|null $zip_code1
@@ -31,18 +34,21 @@ namespace KW\Infrastructure\Eloquents;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\KW\Infrastructure\Eloquents\Book[] $books
- * @property-read \Illuminate\Database\Eloquent\Collection|\KW\Infrastructure\Eloquents\CategoryMaster[] $categoryMaster
  * @property-read \KW\Infrastructure\Eloquents\EventMaster $eventMaster
+ * @property-read \KW\Infrastructure\Eloquents\EventPr $eventPr
  * @property-read \Illuminate\Database\Eloquent\Collection|\KW\Infrastructure\Eloquents\Review[] $reviews
  * @property-read \Illuminate\Database\Eloquent\Collection|\KW\Infrastructure\Eloquents\Tag[] $tags
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\EventDetail newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\EventDetail newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\EventDetail query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\EventDetail whereHanding($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\EventDetail whereAddress1($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\EventDetail whereAddress2($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\EventDetail whereCancelPolicy($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\EventDetail whereArrivedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\EventDetail whereCanceledAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\EventDetail whereCancelDeadline($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\EventDetail whereCapacityMembers($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\EventDetail whereEventMinutes($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\EventDetail whereCity($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\EventDetail whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\EventDetail whereDetail($value)
@@ -52,7 +58,7 @@ namespace KW\Infrastructure\Eloquents;
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\EventDetail whereLatitude($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\EventDetail whereLongitude($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\EventDetail whereParentAttendant($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\EventDetail wherePr($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\EventDetail whereEventPrId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\EventDetail wherePrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\EventDetail wherePubState($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\EventDetail whereStartedAt($value)
@@ -111,10 +117,10 @@ class EventDetail extends BaseUuid
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function categoryMaster()
+    public function eventPr()
     {
-        return $this->hasOne(CategoryMaster::class);
+        return $this->belongsTo(EventPr::class);
     }
 }
