@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use KW\Infrastructure\Eloquents\ChildParent;
 use KW\Infrastructure\Eloquents\UserChild;
+use KW\Infrastructure\Eloquents\UserParent;
 use Tests\KWBaseTestCase;
 use Illuminate\Http\Response;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -11,9 +12,12 @@ use Illuminate\Foundation\Testing\WithFaker;
 class UserChildTest extends KWBaseTestCase
 {
     /**
-     * base api url
+     * base utils
+     * - api url
+     * - table
      */
     const USER_CHILDREN = 'api/v1/kw/user-children/';
+    const EVENT_MASTERS_TABLE = 'user_children';
 
     /**
      * @test
@@ -87,7 +91,7 @@ class UserChildTest extends KWBaseTestCase
             'birth_day' => $newUserChild->birth_day
         ];
         $this->postJson(self::USER_CHILDREN, $params);
-        $this->assertDatabaseHas('user_children', $params);
+        $this->assertDatabaseHas(self::EVENT_MASTERS_TABLE, $params);
     }
 
     /**
@@ -138,8 +142,13 @@ class UserChildTest extends KWBaseTestCase
      */
     public function api_v1_user_childrenに存在しないuser_child_idでGETメソッドでアクセスすると404が返却される()
     {
+        $this->withoutExceptionHandling();
         $response = $this->get(self::USER_CHILDREN. 'adass230394');
-        $response->assertStatus(200);
+        $response->assertStatus(Response::HTTP_NOT_FOUND);
+        $response->assertHeader('Content-Type', 'application/json');
+        $response->assertJson([
+            'message' => 'No query results for model [' .UserChild::class. '].'
+        ]);
     }
 
     /**
@@ -178,7 +187,7 @@ class UserChildTest extends KWBaseTestCase
         $response = $this->get(self::USER_CHILDREN. $user_child_id);
         $user_child = $response->json();
         $user_child_result = [
-            'sex_id'     =>  $user_child['sex_id'],
+            'sex_id'     => $user_child['sex_id'],
             'icon'       => $user_child['icon'],
             'first_kana' => $user_child['first_kana'],
             'last_kana'  => $user_child['last_kana'],
@@ -203,7 +212,7 @@ class UserChildTest extends KWBaseTestCase
         $response->assertStatus(Response::HTTP_NOT_FOUND);
         $response->assertHeader('Content-Type', 'application/json');
         $response->assertJson([
-            'message' => 'No query results for model [KW\Infrastructure\Eloquents\UserChild].'
+            'message' => 'No query results for model [' .UserChild::class. '].'
         ]);
     }
 

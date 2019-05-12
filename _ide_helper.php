@@ -3,7 +3,7 @@
 
 /**
  * A helper file for Laravel 5, to provide autocomplete information to your IDE
- * Generated for Laravel 5.7.28 on 2019-05-06 08:47:15.
+ * Generated for Laravel 5.7.28 on 2019-05-12 02:02:23.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -1770,7 +1770,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Get the currently authenticated user.
          *
-         * @return \KW\Domain\Models\UserMaster|null 
+         * @return \App\User|null 
          * @static 
          */ 
         public static function user()
@@ -1808,7 +1808,7 @@ namespace Illuminate\Support\Facades {
          * Log the given user ID into the application without sessions or cookies.
          *
          * @param mixed $id
-         * @return \KW\Domain\Models\UserMaster|false 
+         * @return \App\User|false 
          * @static 
          */ 
         public static function onceUsingId($id)
@@ -1877,7 +1877,7 @@ namespace Illuminate\Support\Facades {
          *
          * @param mixed $id
          * @param bool $remember
-         * @return \KW\Domain\Models\UserMaster|false 
+         * @return \App\User|false 
          * @static 
          */ 
         public static function loginUsingId($id, $remember = false)
@@ -1944,7 +1944,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Get the last user we attempted to authenticate.
          *
-         * @return \KW\Domain\Models\UserMaster 
+         * @return \App\User 
          * @static 
          */ 
         public static function getLastAttempted()
@@ -2055,7 +2055,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Return the currently cached user.
          *
-         * @return \KW\Domain\Models\UserMaster|null 
+         * @return \App\User|null 
          * @static 
          */ 
         public static function getUser()
@@ -2105,7 +2105,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Determine if current user is authenticated. If not, throw an exception.
          *
-         * @return \KW\Domain\Models\UserMaster 
+         * @return \App\User 
          * @throws \Illuminate\Auth\AuthenticationException
          * @static 
          */ 

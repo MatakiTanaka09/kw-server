@@ -6,7 +6,7 @@ namespace KW\Infrastructure\Eloquents;
  * KW\Infrastructure\Eloquents\EventDetail
  *
  * @property string $id
- * @property string $event_masters_id
+ * @property string $event_master_id
  * @property string $title
  * @property string $detail
  * @property string $started_at
@@ -46,7 +46,7 @@ namespace KW\Infrastructure\Eloquents;
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\EventDetail whereCity($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\EventDetail whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\EventDetail whereDetail($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\EventDetail whereEventMastersId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\EventDetail whereEventMasterId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\EventDetail whereExpiredAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\EventDetail whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\EventDetail whereLatitude($value)

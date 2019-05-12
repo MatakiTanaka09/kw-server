@@ -12,9 +12,12 @@ use Illuminate\Foundation\Testing\WithFaker;
 class UserParentTest extends KWBaseTestCase
 {
     /**
-     * base api url
+     * base utils
+     * - api url
+     * - table
      */
     const USER_PARENTS = 'api/v1/kw/user-parents/';
+    const EVENT_MASTERS_TABLE = 'user_parents';
 
     /**
      * @test
@@ -113,7 +116,7 @@ class UserParentTest extends KWBaseTestCase
             'address2'       => $newUser->address2
         ];
         $this->postJson(self::USER_PARENTS, $params);
-        $this->assertDatabaseHas('user_parents', $params);
+        $this->assertDatabaseHas(self::EVENT_MASTERS_TABLE, $params);
     }
 
     /**
@@ -213,8 +216,12 @@ class UserParentTest extends KWBaseTestCase
      */
     public function api_v1_user_parents_user_parent_idに存在しないuser_parent_idでGETメソッドでアクセスすると404が返却される()
     {
-        $response = $this->get(self::USER_PARENTS. 'adass230394');
-        $response->assertStatus(200);
+        $this->withoutExceptionHandling();$response = $this->get(self::USER_PARENTS. 'adass230394');
+        $response->assertStatus(Response::HTTP_NOT_FOUND);
+        $response->assertHeader('Content-Type', 'application/json');
+        $response->assertJson([
+            'message' => 'No query results for model [' .UserParent::class. '].'
+        ]);
     }
 
     /**
@@ -285,7 +292,7 @@ class UserParentTest extends KWBaseTestCase
     /**
      * @test
      */
-    public function api_v1_user_parents_user_parent_idに存在しないuser_parent_idでPUTメソッドでアクセスすると500が返却される()
+    public function api_v1_user_parents_user_parent_idに存在しないuser_parent_idでPUTメソッドでアクセスすると404が返却される()
     {
         $this->withoutExceptionHandling();
         $response = $this->putJson(self::USER_PARENTS. '999', [
@@ -305,7 +312,7 @@ class UserParentTest extends KWBaseTestCase
         $response->assertStatus(Response::HTTP_NOT_FOUND);
         $response->assertHeader('Content-Type', 'application/json');
         $response->assertJson([
-            'message' => 'No query results for model [KW\Infrastructure\Eloquents\UserParent].'
+            'message' => 'No query results for model [' .UserParent::class. '].'
         ]);
     }
 

@@ -17,7 +17,7 @@ class CreateEventMastersTable extends Migration
             $table->engine = 'InnoDB';
             $table->uuid('id')->primary();
             $table->uuid('school_master_id');
-            $table->integer('category_master_id')->unsigned();
+            $table->unsignedInteger('category_master_id');
             $table->string('title');
             $table->text('detail');
             $table->timestamps();

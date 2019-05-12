@@ -27,30 +27,42 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
     /**
      * users api
      */
-    Route::prefix('users')->group(function () {
-
+    Route::group(["prefix" => "users"], function () {
+        /**
+         * Search
+         */
+        Route::group(["prefix" => "search"], function () {
+            Route::get("/date", function() {});
+            Route::get("/age", function() {});
+            Route::get("/place", function() {});
+            Route::get("/price", function() {});
+            Route::get("/category", function() {});
+            Route::get("/tag", function() {});
+            Route::get("/school", function() {});
+            Route::get("/review", function() {});
+        });
     });
 
     /**
      * schools api
      */
-    Route::prefix('schools')->group(function () {
+    Route::group(["prefix" => "schools"], function () {
     });
 
     /**
      * organizations api
      */
-    Route::prefix('orgs')->group(function () {
+    Route::group(["prefix" => "companies"], function () {
     });
 
     /**
      * kidsweekend api
      */
-    Route::prefix('kw')->group(function () {
+    Route::group(["prefix" => "kw"], function () {
         /**
          * UserParent
          */
-        Route::prefix("user-parents")->group(function () {
+        Route::group(["prefix" => "user-parents"], function () {
             Route::get("", function() {
                 return response()->json(UserParent::query()->select([
                     'id',
@@ -71,17 +83,17 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
             Route::post("", function(Request $request, UserParent $userParent) {
                 $request->validate([
                     'user_master_id' => 'required',
-                    'icon' => '',
-                    'sex_id' => 'required',
-                    'full_name' => 'required',
-                    'full_kana' => 'required',
-                    'tel' => 'required',
-                    'zip_code1' => 'required',
-                    'zip_code2' => 'required',
-                    'state' => 'required',
-                    'city' => 'required',
-                    'address1' => 'required',
-                    'address2' => ''
+                    'icon'           => '',
+                    'sex_id'         => 'required',
+                    'full_name'      => 'required',
+                    'full_kana'      => 'required',
+                    'tel'            => 'required',
+                    'zip_code1'      => 'required',
+                    'zip_code2'      => 'required',
+                    'state'          => 'required',
+                    'city'           => 'required',
+                    'address1'       => 'required',
+                    'address2'       => ''
                 ]);
                 $userParent->user_master_id = $request->json('user_master_id');
                 $userParent->sex_id         = $request->json('sex_id');
@@ -98,24 +110,30 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
                 $userParent->save();
             });
             Route::get("/{user_parent_id}", function($user_parent_id) {
-                return UserParent::query()
-                    ->where('id', '=', $user_parent_id)
-                    ->select([
-                        'id',
-                        'user_master_id',
-                        'sex_id',
-                        'icon',
-                        'full_name',
-                        'full_kana',
-                        'tel',
-                        'zip_code1',
-                        'zip_code2',
-                        'state',
-                        'city',
-                        'address1',
-                        'address2'
-                    ])
-                    ->first();
+                try {
+                    return UserParent::where('id', '=', $user_parent_id)
+                        ->select([
+                            'id',
+                            'user_master_id',
+                            'sex_id',
+                            'icon',
+                            'full_name',
+                            'full_kana',
+                            'tel',
+                            'zip_code1',
+                            'zip_code2',
+                            'state',
+                            'city',
+                            'address1',
+                            'address2'
+                        ])
+                        ->firstOrFail();
+                } catch (ModelNotFoundException $exception) {
+                    return response()
+                        ->json(['message' => $exception->getMessage()])
+                        ->header('Content-Type', 'application/json')
+                        ->setStatusCode(404);
+                }
             });
             Route::put("/{user_parent_id}", function(Request $request, $user_parent_id) {
                 /**
@@ -150,7 +168,7 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
         /**
          * UserChild
          */
-        Route::prefix("user-children")->group(function () {
+        Route::group(["prefix" => "user-children"], function () {
             Route::get("", function() {
                 return response()->json(UserChild::query()->select([
                     'id',
@@ -163,11 +181,11 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
             });
             Route::post("", function(Request $request, UserChild $userChild) {
                 $request->validate([
-                    'icon' => '',
-                    'sex_id' => 'required',
+                    'icon'       => '',
+                    'sex_id'     => 'required',
                     'first_kana' => 'required',
-                    'last_kana' => 'required',
-                    'birth_day' => 'required'
+                    'last_kana'  => 'required',
+                    'birth_day'  => 'required'
                 ]);
                 $userChild->sex_id      = $request->json('sex_id');
                 $userChild->icon        = $request->json('icon');
@@ -177,30 +195,34 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
                 $userChild->save();
             });
             Route::get("/{user_child_id}", function($user_child_id) {
-                return UserChild::query()
-                    ->where('id', '=', $user_child_id)
-                    ->select([
-                        'id',
-                        'sex_id',
-                        'icon',
-                        'first_kana',
-                        'last_kana',
-                        'birth_day'
-                    ])
-                    ->first();
+                try {
+                    return UserChild::where('id', $user_child_id)
+                        ->select([
+                            'id',
+                            'sex_id',
+                            'icon',
+                            'first_kana',
+                            'last_kana',
+                            'birth_day'
+                        ])
+                        ->firstOrFail();
+                } catch (ModelNotFoundException $exception) {
+                    return response()
+                        ->json(['message' => $exception->getMessage()])
+                        ->header('Content-Type', 'application/json')
+                        ->setStatusCode(404);
+                }
+
             });
             Route::put("/{user_child_id}", function(Request $request, $user_child_id) {
-                /**
-                 * @var UserParent $user_parent
-                 */
                 try {
-                    $userParent = UserChild::where('id', $user_child_id)->firstOrFail();
-                    $userParent->sex_id  = $request->json('sex_id');
-                    $userParent->icon      = $request->json('icon');
-                    $userParent->first_kana = $request->json('first_kana');
-                    $userParent->last_kana = $request->json('last_kana');
-                    $userParent->birth_day       = $request->json('birth_day');
-                    $userParent->save();
+                    $userChild = UserChild::where('id', $user_child_id)->firstOrFail();
+                    $userChild->sex_id     = $request->json('sex_id');
+                    $userChild->icon       = $request->json('icon');
+                    $userChild->first_kana = $request->json('first_kana');
+                    $userChild->last_kana  = $request->json('last_kana');
+                    $userChild->birth_day  = $request->json('birth_day');
+                    $userChild->save();
                 } catch (ModelNotFoundException $exception) {
                     return response()
                         ->json(['message' => $exception->getMessage()])
@@ -216,7 +238,7 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
         /**
          * EventMaster
          */
-        Route::prefix("event-masters")->group(function () {
+        Route::group(["prefix" => "event-masters"], function () {
             Route::get("", function() {
                 return response()->json(EventMaster::query()->select([
                     'id',
@@ -226,16 +248,61 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
                     'detail'
                 ])->get());
             });
-            Route::post("", function() {});
-            Route::get("/{event_master_id}", function() {});
-            Route::put("/{event_master_id}", function() {});
-            Route::delete("/{event_master_id}", function() {});
+            Route::post("", function(Request $request, EventMaster $eventMaster) {
+                $request->validate([
+                    'school_master_id'   => 'required',
+                    'category_master_id' => 'required',
+                    'title'              => 'required',
+                    'detail'             => 'required'
+                ]);
+                $eventMaster->school_master_id    = $request->json('school_master_id');
+                $eventMaster->category_master_id  = $request->json('category_master_id');
+                $eventMaster->title               = $request->json('title');
+                $eventMaster->detail              = $request->json('detail');
+                $eventMaster->save();
+            });
+            Route::get("/{event_master_id}", function($event_master_id) {
+                try {
+                    return EventMaster::where('id', $event_master_id)
+                        ->select([
+                            'id',
+                            'school_master_id',
+                            'category_master_id',
+                            'title',
+                            'detail'
+                        ])
+                        ->firstOrFail();
+                } catch (ModelNotFoundException $exception) {
+                    return response()
+                        ->json(['message' => $exception->getMessage()])
+                        ->header('Content-Type', 'application/json')
+                        ->setStatusCode(404);
+                }
+            });
+            Route::put("/{event_master_id}", function(Request $request, $event_master_id) {
+                try {
+                    $eventMaster = EventMaster::where('id', $event_master_id)->firstOrFail();
+                    $eventMaster->school_master_id   = $request->json('school_master_id');
+                    $eventMaster->category_master_id = $request->json('category_master_id');
+                    $eventMaster->title              = $request->json('title');
+                    $eventMaster->detail             = $request->json('detail');
+                    $eventMaster->save();
+                } catch (ModelNotFoundException $exception) {
+                    return response()
+                        ->json(['message' => $exception->getMessage()])
+                        ->header('Content-Type', 'application/json')
+                        ->setStatusCode(404);
+                }
+            });
+            Route::delete("/{event_master_id}", function($event_master_id) {
+                EventMaster::query()->where('id', '=', $event_master_id)->delete();
+            });
         });
 
         /**
          * EventDetail
          */
-        Route::prefix("event-masters")->group(function () {
+        Route::group(["prefix" => "event-details"], function () {
             Route::get("", function() {});
             Route::post("", function() {});
             Route::get("/{event_detail_id}", function() {});
@@ -246,7 +313,7 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
         /**
          * Book
          */
-        Route::prefix("books")->group(function () {
+        Route::group(["prefix" => "books"], function () {
             Route::get("", function() {});
             Route::post("", function() {});
             Route::get("/{book_id}", function() {});
@@ -257,7 +324,7 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
         /**
          * SchoolMaster
          */
-        Route::prefix("school-masters")->group(function () {
+        Route::group(["prefix" => "school-masters"], function () {
             Route::get("", function() {});
             Route::post("", function() {});
             Route::get("/{school_master_id}", function() {});
@@ -268,7 +335,7 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
         /**
          * CompanyMaster
          */
-        Route::prefix("company-masters")->group(function () {
+        Route::group(["prefix" => "company-masters"], function () {
             Route::get("", function() {});
             Route::post("", function() {});
             Route::get("/{school_master_id}", function() {});
@@ -279,7 +346,7 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
         /**
          * Reviews
          */
-        Route::prefix("reviews")->group(function () {
+        Route::group(["prefix" => "reviews"], function () {
             Route::get("", function() {});
             Route::post("", function() {});
             Route::get("/{review_id}", function() {});
@@ -290,7 +357,7 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
         /**
          * Tags
          */
-        Route::prefix("tags")->group(function () {
+        Route::group(["prefix" => "tags"], function () {
             Route::get("", function() {});
             Route::post("", function() {});
             Route::get("/{tag_id}", function() {});
@@ -301,7 +368,7 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
         /**
          * CategoryMaster
          */
-        Route::prefix("category-masters")->group(function () {
+        Route::group(["prefix" => "category-masters"], function () {
             Route::get("", function() {});
             Route::post("", function() {});
             Route::get("/{category_master_id}", function() {});
@@ -312,7 +379,7 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
         /**
          * Sex
          */
-        Route::prefix("sexes")->group(function () {
+        Route::group(["prefix" => "sexes"], function () {
             Route::get("", function() {});
             Route::post("", function() {});
             Route::get("/{sex_id}", function() {});
@@ -320,24 +387,11 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
             Route::delete("/{sex_id}", function() {});
         });
 
-        /**
-         * Search
-         */
-        Route::prefix("search")->group(function () {
-            Route::get("/date", function() {});
-            Route::get("/age", function() {});
-            Route::get("/place", function() {});
-            Route::get("/price", function() {});
-            Route::get("/category", function() {});
-            Route::get("/tag", function() {});
-            Route::get("/school", function() {});
-            Route::get("/review", function() {});
-        });
 
         /**
          * ChildParent
          */
-        Route::prefix("child-parents")->group(function () {
+        Route::group(["prefix" => "child-parents"], function () {
             Route::get("", function() {});
             Route::post("", function() {});
             Route::get("/{child_parent_id}", function() {});
@@ -348,7 +402,7 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
         /**
          * SchoolAndMember
          */
-        Route::prefix("school-and-members")->group(function () {
+        Route::group(["prefix" => "school-and-members"], function () {
             Route::get("", function() {});
             Route::post("", function() {});
             Route::get("/{school_and_member_id}", function() {});
@@ -360,7 +414,7 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
         /**
          * CompanyAndMember
          */
-        Route::prefix("company-and-members")->group(function () {
+        Route::group(["prefix" => "company-and-members"], function () {
             Route::get("", function() {});
             Route::post("", function() {});
             Route::get("/{company_and_member_id}", function() {});
@@ -371,7 +425,7 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
         /**
          * Image
          */
-        Route::prefix("images")->group(function () {
+        Route::group(["prefix" => "images"], function () {
             Route::get("", function() {});
             Route::post("", function() {});
             Route::get("/{image_id}", function() {});
@@ -382,7 +436,7 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
         /**
          * Taggable
          */
-        Route::prefix("taggables")->group(function () {
+        Route::group(["prefix" => "taggables"], function () {
             Route::get("", function() {});
             Route::post("", function() {});
             Route::get("/{taggables_id}", function() {});
@@ -393,7 +447,7 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
         /**
          * UserMaster
          */
-        Route::prefix("user-masters")->group(function () {
+        Route::group(["prefix" => "user-masters"], function () {
             Route::get("", function() {});
             Route::post("", function() {});
             Route::get("/{user_master_id}", function() {});
@@ -404,7 +458,7 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
         /**
          * SchoolAdminMaster
          */
-        Route::prefix("school-admin-masters")->group(function () {
+        Route::group(["prefix" => "school-admin-masters"], function () {
             Route::get("", function() {});
             Route::post("", function() {});
             Route::get("/{school_admin_master_id}", function() {});
@@ -415,7 +469,7 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
         /**
          * CompanyAdminMaster
          */
-        Route::prefix("company-admin-masters")->group(function () {
+        Route::group(["prefix" => "company-admin-masters"], function () {
             Route::get("", function() {});
             Route::post("", function() {});
             Route::get("/{company_admin_master_id}", function() {});
@@ -426,7 +480,7 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
         /**
          * Role
          */
-        Route::prefix("roles")->group(function () {
+        Route::group(["prefix" => "roles"], function () {
             Route::get("", function() {});
             Route::post("", function() {});
             Route::get("/{role_id}", function() {});
@@ -437,7 +491,7 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
         /**
          * RoleRelation
          */
-        Route::prefix("role-relations")->group(function () {
+        Route::group(["prefix" => "role-relations"], function () {
             Route::get("", function() {});
             Route::post("", function() {});
             Route::get("/{role_relation_id}", function() {});
