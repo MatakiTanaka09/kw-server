@@ -16,7 +16,6 @@ class CreateSchoolAdminMastersTable extends Migration
         Schema::create('school_admin_masters', function (Blueprint $table) {
             $table->increments('id');
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();

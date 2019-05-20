@@ -5,15 +5,14 @@ namespace KW\Infrastructure\Eloquents;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
 /**
  * KW\Infrastructure\Eloquents\UserMaster
  *
  * @property int $id
  * @property string $email
- * @property \Illuminate\Support\Carbon|null $email_verified_at
  * @property string $password
- * @property int $role
  * @property string|null $remember_token
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -23,17 +22,20 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\UserMaster query()
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\UserMaster whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\UserMaster whereEmail($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\UserMaster whereEmailVerifiedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\UserMaster whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\UserMaster wherePassword($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\UserMaster whereRememberToken($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\UserMaster whereRole($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\UserMaster whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class UserMaster extends Authenticatable
+class UserMaster extends Authenticatable implements JWTSubject
 {
     use Notifiable;
+
+    /**
+     * @var string
+     */
+    protected $table = "user_masters";
 
     /**
      * The attributes that are mass assignable.
@@ -41,7 +43,7 @@ class UserMaster extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'email', 'password',
     ];
 
     /**
@@ -52,22 +54,6 @@ class UserMaster extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
-
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
-
-    /**
-     * モデルと関連しているテーブル
-     *
-     * @var string
-     */
-    protected $table = 'user_masters';
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\hasOne
@@ -83,5 +69,21 @@ class UserMaster extends Authenticatable
     public function roles()
     {
         return $this->morphToMany(Role::class, 'role_relations');
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    /**
+     * @return array
+     */
+    public function getJWTCustomClaims()
+    {
+        return [];
     }
 }

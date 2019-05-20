@@ -6,7 +6,8 @@ namespace KW\Infrastructure\Eloquents;
  * KW\Infrastructure\Eloquents\Sex
  *
  * @property int $id
- * @property string $sex
+ * @property int $index
+ * @property string $name
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \KW\Infrastructure\Eloquents\UserChild $userChild
@@ -16,6 +17,7 @@ namespace KW\Infrastructure\Eloquents;
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\Sex query()
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\Sex whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\Sex whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\Sex whereIndex($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\Sex whereSex($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\Sex whereUpdatedAt($value)
  * @mixin \Eloquent

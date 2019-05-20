@@ -6,7 +6,7 @@ namespace KW\Infrastructure\Eloquents;
  * KW\Infrastructure\Eloquents\Image
  *
  * @property int $id
- * @property string $target_uuid
+ * @property morphs $target
  * @property string $filename
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -16,7 +16,7 @@ namespace KW\Infrastructure\Eloquents;
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\Image whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\Image whereFilename($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\Image whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\Image whereTargetUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\Image whereTarget($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\Image whereUpdatedAt($value)
  * @mixin \Eloquent
  */
@@ -32,4 +32,12 @@ class Image extends AppEloquent
      * @var array
      */
     protected $guarded = [];
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
+     */
+    public function target()
+    {
+        return $this->morphTo(EventDetail::class, 'target');
+    }
 }

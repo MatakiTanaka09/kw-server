@@ -117,6 +117,14 @@ class EventDetail extends BaseUuid
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     */
+    public function images()
+    {
+        return $this->morphMany(Image::class, 'target');
+    }
+
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function eventPr()

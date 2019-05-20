@@ -3,6 +3,9 @@
 namespace App\Exceptions;
 
 use Exception;
+use Request;
+use Response;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
 class Handler extends ExceptionHandler
@@ -47,5 +50,17 @@ class Handler extends ExceptionHandler
     public function render($request, Exception $exception)
     {
         return parent::render($request, $exception);
+    }
+
+    /**
+     * `Illuminate\Auth\AuthenticationException`が投げられたときのハンドリングを上書き
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param AuthenticationException $exception
+     * @return \Illuminate\Http\JsonResponse|\Symfony\Component\HttpFoundation\Response
+     */
+    protected function unauthenticated($request, AuthenticationException $exception)
+    {
+        return response()->json(['error' => $exception->getMessage()], 401);
     }
 }

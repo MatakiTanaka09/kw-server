@@ -1,5 +1,9 @@
 <?php
 
+use KW\Infrastructure\Eloquents\UserMaster;
+use KW\Infrastructure\Eloquents\SchoolAdminMaster;
+use KW\Infrastructure\Eloquents\CompanyAdminMaster;
+
 return [
 
     /*
@@ -31,7 +35,7 @@ return [
     ],
 
     'stripe' => [
-        'model' => KW\Domain\Models\UserMaster::class,
+        'model' => UserMaster::class,
         'key' => env('STRIPE_KEY'),
         'secret' => env('STRIPE_SECRET'),
         'webhook' => [

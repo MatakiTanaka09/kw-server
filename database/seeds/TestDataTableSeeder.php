@@ -177,5 +177,32 @@ class TestDataTableSeeder extends Seeder
                 "updated_at" => now()
             ]
         ]);
+
+        DB::table('sexes')->insert([
+            [
+                "index"      => 0,
+                "name"       => "not_known",
+                "created_at" => now(),
+                "updated_at" => now()
+            ],
+            [
+                "index"      => 1,
+                "name"       => "male",
+                "created_at" => now(),
+                "updated_at" => now()
+            ],
+            [
+                "index"      => 2,
+                "name"       => "female",
+                "created_at" => now(),
+                "updated_at" => now()
+            ],
+            [
+                "index"      => 9,
+                "name"       => "not_applicable",
+                "created_at" => now(),
+                "updated_at" => now()
+            ]
+        ]);
     }
 }

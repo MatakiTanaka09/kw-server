@@ -16,8 +16,8 @@ class CreateSexesTable extends Migration
         Schema::create('sexes', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->increments('id');
-            $table->unsignedInteger('sex_index');
-            $table->string('sex');
+            $table->unsignedInteger('index');
+            $table->string('name');
             $table->timestamps();
         });
     }

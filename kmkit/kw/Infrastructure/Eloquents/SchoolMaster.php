@@ -75,4 +75,12 @@ class SchoolMaster extends BaseUuid
     {
         return $this->hasMany(SchoolAndMember::class);
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     */
+    public function images()
+    {
+        return $this->morphMany(Image::class, 'target');
+    }
 }

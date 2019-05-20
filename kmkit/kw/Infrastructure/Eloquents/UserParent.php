@@ -78,7 +78,7 @@ class UserParent extends BaseUuid
      */
     public function userChildren()
     {
-        return $this->belongsToMany(UserChild::class, 'child_parents');
+        return $this->belongsToMany(UserChild::class, 'child_parents', 'user_parent_id', 'user_child_id');
     }
 
     /**

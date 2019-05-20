@@ -14,7 +14,6 @@ class RouteServiceProvider extends ServiceProvider
      *
      * @var string
      */
-//    protected $namespace = 'App\Http\Controllers';
     protected $namespace = '';
 
     /**
@@ -38,23 +37,8 @@ class RouteServiceProvider extends ServiceProvider
     {
         $this->mapApiRoutes();
 
-        $this->mapWebRoutes();
-
-        //
-    }
-
-    /**
-     * Define the "web" routes for the application.
-     *
-     * These routes all receive session state, CSRF protection, etc.
-     *
-     * @return void
-     */
-    protected function mapWebRoutes()
-    {
-        Route::middleware('web')
-             ->namespace($this->namespace)
-             ->group(base_path('routes/web.php'));
+        // barryvdh/laravel-cors
+        $this->mapCorsRoutes();
     }
 
     /**
@@ -70,5 +54,19 @@ class RouteServiceProvider extends ServiceProvider
              ->middleware('api')
              ->namespace($this->namespace)
              ->group(base_path('routes/api.php'));
+    }
+
+    /**
+     * Define the "cors" routes for the application.
+     *
+     * These routes are typically stateless.
+     *
+     * @return void
+     */
+    protected function mapCorsRoutes()
+    {
+        Route::middleware('cors')
+            ->namespace($this->namespace)
+            ->group(base_path('routes/cors.php'));
     }
 }

@@ -1,6 +1,8 @@
 <?php
 
 use KW\Infrastructure\Eloquents\UserMaster;
+use KW\Infrastructure\Eloquents\SchoolAdminMaster;
+use KW\Infrastructure\Eloquents\CompanyAdminMaster;
 
 return [
 
@@ -16,7 +18,8 @@ return [
     */
 
     'defaults' => [
-        'guard' => 'web',
+        // change web => users
+        'guard' => 'users',
         'passwords' => 'userMasters',
     ],
 
@@ -38,14 +41,45 @@ return [
     */
 
     'guards' => [
-        'web' => [
-            'driver' => 'session',
-            'provider' => 'userMasters',
+//        'web' => [
+//            'driver' => 'session',
+//            'provider' => 'users',
+//        ],
+
+        /**
+         * api-guards
+         */
+        'users-api' => [
+            'driver' => 'jwt',
+            'provider' => 'users',
         ],
 
-        'api' => [
-            'driver' => 'token',
-            'provider' => 'userMasters',
+        'schools-api' => [
+            'driver' => 'jwt',
+            'provider' => 'users',
+        ],
+
+        'companies-api' => [
+            'driver' => 'jwt',
+            'provider' => 'users',
+        ],
+
+        /**
+         * auth-guards
+         */
+        'users' => [
+            'driver' => 'jwt',
+            'provider' => 'userMasters'
+        ],
+
+        'schools' => [
+            'driver' => 'jwt',
+            'provider' => 'schoolAdminMasters'
+        ],
+
+        'companies' => [
+            'driver' => 'jwt',
+            'provider' => 'companyAdminMasters'
         ],
     ],
 
@@ -70,6 +104,14 @@ return [
         'userMasters' => [
             'driver' => 'eloquent',
             'model' => UserMaster::class,
+        ],
+        'schoolAdminMasters' => [
+            'driver' => 'eloquent',
+            'model' => SchoolAdminMaster::class,
+        ],
+        'companyAdminMasters' => [
+            'driver' => 'eloquent',
+            'model' => CompanyAdminMaster::class,
         ],
 
         // 'users' => [
@@ -96,6 +138,16 @@ return [
     'passwords' => [
         'userMasters' => [
             'provider' => 'userMasters',
+            'table' => 'password_resets',
+            'expire' => 60,
+        ],
+        'schoolAdminMasters' => [
+            'provider' => 'schoolAdminMasters',
+            'table' => 'password_resets',
+            'expire' => 60,
+        ],
+        'companyAdminMasters' => [
+            'provider' => 'companyAdminMasters',
             'table' => 'password_resets',
             'expire' => 60,
         ],

@@ -11,9 +11,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  *
  * @property int $id
  * @property string $email
- * @property \Illuminate\Support\Carbon|null $email_verified_at
  * @property string $password
- * @property int $role
  * @property string|null $remember_token
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -23,11 +21,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\CompanyAdminMaster query()
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\CompanyAdminMaster whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\CompanyAdminMaster whereEmail($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\CompanyAdminMaster whereEmailVerifiedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\CompanyAdminMaster whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\CompanyAdminMaster wherePassword($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\CompanyAdminMaster whereRememberToken($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\CompanyAdminMaster whereRole($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\CompanyAdminMaster whereUpdatedAt($value)
  * @mixin \Eloquent
  */
