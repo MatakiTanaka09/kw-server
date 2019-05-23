@@ -38,10 +38,18 @@ class CategoryMaster extends AppEloquent
     protected $guarded = [];
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
      */
-    public function eventMaster()
+    public function schoolMasters()
     {
-        return $this->belongsTo(EventMaster::class);
+        return $this->morphedByMany(SchoolMaster::class, 'category_relations');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
+     */
+    public function eventMasters()
+    {
+        return $this->morphedByMany(EventMaster::class, 'category_relations');
     }
 }

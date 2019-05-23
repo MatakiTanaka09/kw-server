@@ -65,7 +65,12 @@ class UserChild extends BaseUuid
      */
     public function userParents()
     {
-        return $this->belongsToMany(UserParent::class, 'child_parents');
+        return $this->belongsToMany(
+            UserParent::class,
+            'child_parents',
+            'user_child_id',
+            'user_parent_id'
+        )->withTimestamps();
     }
 
     /**

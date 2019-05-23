@@ -63,24 +63,37 @@ class SchoolMaster extends BaseUuid
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function eventMasters()
-    {
-        return $this->hasMany(EventMaster::class);
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
     public function schoolAndMembers()
     {
         return $this->hasMany(SchoolAndMember::class);
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     * @return \Illuminate\Database\Eloquent\Relations\MorphOne
      */
     public function images()
     {
-        return $this->morphMany(Image::class, 'target');
+        return $this->morphOne(Image::class, 'imageable');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
+     */
+    public function categoryMasters()
+    {
+        return $this->morphToMany(CategoryMaster::class, 'target', 'category_relations');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function eventMasters()
+    {
+        return $this->belongsToMany(
+            EventMaster::class,
+            'event_school_masters',
+            'school_master_id',
+            'event_master_id'
+        )->withTimestamps();
     }
 }

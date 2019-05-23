@@ -2,6 +2,7 @@
 
 namespace KW\Infrastructure\Eloquents;
 
+
 /**
  * KW\Infrastructure\Eloquents\UserParent
  *
@@ -78,22 +79,29 @@ class UserParent extends BaseUuid
      */
     public function userChildren()
     {
-        return $this->belongsToMany(UserChild::class, 'child_parents', 'user_parent_id', 'user_child_id');
+        return $this->belongsToMany(
+            UserChild::class,
+            'child_parents',
+            'user_parent_id',
+            'user_child_id'
+        )->withTimestamps();
     }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function eventDetails()
+    public function reviews()
     {
-        return $this->belongsToMany(EventDetail::class, 'reviews');
+        return $this->belongsToMany(
+            EventDetail::class,
+            'reviews'
+        )
+            ->as('review')
+            ->using(Review::class)
+            ->withPivot(['star_amount', 'comment'])
+            ->withTimestamps();
     }
 
-//    /**
-//     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-//     */
-//    public function sex()
-//    {
-//        return $this->belongsTo(Sex::class);
-//    }
+
+
 }

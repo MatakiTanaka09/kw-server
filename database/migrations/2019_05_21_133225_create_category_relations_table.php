@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateImagesTable extends Migration
+class CreateCategoryRelationsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,11 @@ class CreateImagesTable extends Migration
      */
     public function up()
     {
-        Schema::create('images', function (Blueprint $table) {
-            $table->engine = 'InnoDB';
+        Schema::create('category_relations', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('imageable_type');
-            $table->uuid('imageable_id');
-            $table->string('url');
+            $table->unsignedInteger('category_master_id');
+            $table->string('target_type');
+            $table->uuid('target_id');
             $table->timestamps();
         });
     }
@@ -30,6 +29,6 @@ class CreateImagesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('images');
+        Schema::dropIfExists('category_relations');
     }
 }

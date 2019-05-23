@@ -2,9 +2,13 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use KW\Infrastructure\Eloquents\UserParent;
 use KW\Infrastructure\Eloquents\EventDetail;
 use KW\Infrastructure\Eloquents\Tag;
-
+use KW\Infrastructure\Eloquents\Image;
+use KW\Infrastructure\Eloquents\EventMaster;
+use KW\Infrastructure\Eloquents\EventSchoolMaster;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -68,6 +72,14 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
         });
 
         /**
+         * Book
+         */
+        /** - POST @params child_parent_id, event_detail_id  */
+        /** - GET @params child_parent_id @return event_detail, user_child  */
+        /** - PATCH @params child_parent_id, event_detail_id, status  */
+
+
+        /**
          * Search
          */
         Route::group(["prefix" => "search"], function () {
@@ -80,7 +92,9 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
                     // EventDetailを検索する
                     return "preg_match successfully!";
                 }
-                return explode(" ", $q);
+                else {
+                    return explode(" ", $q);
+                }
             });
             Route::get("/age", function() {});
             Route::get("/place", function() {});
@@ -117,7 +131,23 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
             Route::get("/{user_parent_id}", 'KW\Application\Controllers\Common\UserParent\UserParentBaseController@getUserParent');
             Route::put("/{user_parent_id}", 'KW\Application\Controllers\Common\UserParent\UserParentBaseController@putUserParent');
             Route::delete("/{user_parent_id}", 'KW\Application\Controllers\Common\UserParent\UserParentBaseController@deleteUserParent');
-            Route::get("/{user_parent_id}/children", 'KW\Application\Controllers\Common\UserParent\UserParentBaseController@getUserParentsChildren');
+
+            /**
+             * Relation API 2019-05-22 --
+             */
+            Route::get("/{user_parent_id}/user-children", 'KW\Application\Controllers\Common\UserParent\UserParentBaseController@getUserParentsChildren');
+            Route::get("/{user_parent_id}/reviews", function($user_parent_id) {
+                try {
+                    return UserParent::findOrFail($user_parent_id)
+                        ->reviews()
+                        ->get();
+                } catch (ModelNotFoundException $exception) {
+                    return response()
+                        ->json(['message' => $exception->getMessage()])
+                        ->header('Content-Type', 'application/json')
+                        ->setStatusCode(404);
+                }
+            });
         });
 
         /**
@@ -140,25 +170,11 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
             Route::get("/{child_parent_id}", 'KW\Application\Controllers\Common\ChildParent\ChildParentBaseController@getChildParent');
             Route::put("/{child_parent_id}", 'KW\Application\Controllers\Common\ChildParent\ChildParentBaseController@putChildParent');
             Route::delete("/{child_parent_id}", 'KW\Application\Controllers\Common\ChildParent\ChildParentBaseController@deleteChildParent');
-        });
 
-        /**
-         * Events
-         */
-        Route::group(["prefix" => "events"], function () {
-            Route::get("/{event_detail_id}", function($event_detail_id) {
-//                return EventDetail::with('eventMaster')->get();
-//                return EventDetail::with(['eventMaster.categoryMaster', 'eventMaster.schoolMaster'])->get();
-                return EventDetail::findOrFail($event_detail_id)
-                    ->tags()
-                    ->get();
-            });
-
-            Route::get("/{event_detail_id}/tags", function($event_detail_id) {
-                return EventDetail::findOrFail($event_detail_id)
-                    ->tags()
-                    ->get();
-            });
+            /**
+             * Relation API 2019-05-22 --
+             */
+            Route::get("/{child_parent_id}/event-details", function() {});
         });
 
         /**
@@ -170,6 +186,16 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
             Route::get("/{event_master_id}", 'KW\Application\Controllers\Common\EventMaster\EventMasterBaseController@getEventMaster');
             Route::put("/{event_master_id}", 'KW\Application\Controllers\Common\EventMaster\EventMasterBaseController@putEventMaster');
             Route::delete("/{event_master_id}", 'KW\Application\Controllers\Common\EventMaster\EventMasterBaseController@deleteEventMaster');
+
+            /**
+             * Relation API 2019-05-22 --
+             */
+            Route::get("/event-details", function() {});
+//            Route::group(["prefix" => "relations"], function () {
+//                Route::get("/event_master", function() {
+//                    return EventMaster::with(['eventDetails', 'schoolMaster'])->get();
+//                });
+//            });
         });
 
         /**
@@ -181,10 +207,76 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
             Route::get("/{event_detail_id}", 'KW\Application\Controllers\Common\EventDetail\EventDetailBaseController@getEventDetail');
             Route::put("/{event_detail_id}", 'KW\Application\Controllers\Common\EventDetail\EventDetailBaseController@putEventDetail');
             Route::delete("/{event_detail_id}", 'KW\Application\Controllers\Common\EventDetail\EventDetailBaseController@deleteEventDetail');
-            Route::get("/{event_detail_id}/tags", function($event_detail_id) {
-                return EventDetail::findOrFail($event_detail_id)
-                    ->tags()
-                    ->get();
+
+            /**
+             * Relation API 2019-05-22 --
+             */
+            Route::group(["prefix" => "relations"], function () {
+                // Only KW
+                Route::get("/all", function() {
+                    return EventDetail::all();
+                });
+                // More than General User
+                Route::get("/{event_detail_id}/tags", function($event_detail_id) {
+                    try {
+                        return EventDetail::findOrFail($event_detail_id)
+                            ->tags()
+                            ->get();
+                    } catch (ModelNotFoundException $exception) {
+                        return response()
+                            ->json(['message' => $exception->getMessage()])
+                            ->header('Content-Type', 'application/json')
+                            ->setStatusCode(404);
+                    }
+                });
+                Route::get("/{event_detail_id}/images", function($event_detail_id) {
+                    try {
+                        return EventDetail::findOrFail($event_detail_id)
+                            ->images()
+                            ->get();
+                    } catch (ModelNotFoundException $exception) {
+                        return response()
+                            ->json(['message' => $exception->getMessage()])
+                            ->header('Content-Type', 'application/json')
+                            ->setStatusCode(404);
+                    }
+                });
+                Route::get("/{event_detail_id}", function($event_detail_id) {
+                    try {
+                        return EventDetail::with(['eventSchoolMaster'])
+                            ->where('id', '=', $event_detail_id)
+                            ->get();
+                    } catch (ModelNotFoundException $exception) {
+                        return response()
+                            ->json(['message' => $exception->getMessage()])
+                            ->header('Content-Type', 'application/json')
+                            ->setStatusCode(404);
+                    }
+                });
+                Route::get("/{event_detail_id}/child-parents", function($event_detail_id) {
+                    try {
+                        return EventDetail::findOrFail($event_detail_id)
+                            ->childParents()
+                            ->get();
+                    } catch (ModelNotFoundException $exception) {
+                        return response()
+                            ->json(['message' => $exception->getMessage()])
+                            ->header('Content-Type', 'application/json')
+                            ->setStatusCode(404);
+                    }
+                });
+                Route::get("/{event_detail_id}/reviews", function($event_detail_id) {
+                    try {
+                        return EventDetail::findOrFail($event_detail_id)
+                            ->reviews()
+                            ->get();
+                    } catch (ModelNotFoundException $exception) {
+                        return response()
+                            ->json(['message' => $exception->getMessage()])
+                            ->header('Content-Type', 'application/json')
+                            ->setStatusCode(404);
+                    }
+                });
             });
         });
 
@@ -208,6 +300,13 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
             Route::get("/{school_master_id}", 'KW\Application\Controllers\Common\SchoolMaster\SchoolMasterBaseController@getSchoolMaster');
             Route::put("/{school_master_id}", 'KW\Application\Controllers\Common\SchoolMaster\SchoolMasterBaseController@putSchoolMaster');
             Route::delete("/{school_master_id}", 'KW\Application\Controllers\Common\SchoolMaster\SchoolMasterBaseController@deleteSchoolMaster');
+
+            /**
+             * Relation API 2019-05-22 --
+             */
+            Route::get("/{school_master_id}/category-masters", function() {});
+            Route::get("/{school_master_id}/event-masters", function() {});
+            Route::get("/{school_master_id}/school-admin-masters", function() {});
         });
 
         /**
@@ -230,6 +329,13 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
             Route::get("/{company_master_id}", 'KW\Application\Controllers\Common\CompanyMaster\CompanyMasterBaseController@getCompanyMaster');
             Route::put("/{company_master_id}", 'KW\Application\Controllers\Common\CompanyMaster\CompanyMasterBaseController@putCompanyMaster');
             Route::delete("/{company_master_id}", 'KW\Application\Controllers\Common\CompanyMaster\CompanyMasterBaseController@deleteCompanyMaster');
+
+            /**
+             * Relation API 2019-05-22 --
+             */
+            Route::get("/{company_master_id}/category-master", function() {});
+            Route::get("/{company_master_id}/school-masters", function() {});
+            Route::get("/{company_master_id}/company-admin-masters", function() {});
         });
 
         /**
@@ -263,7 +369,11 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
             Route::get("/{tag_id}", 'KW\Application\Controllers\Common\Tag\TagBaseController@getTag');
             Route::put("/{tag_id}", 'KW\Application\Controllers\Common\Tag\TagBaseController@putTag');
             Route::delete("/{tag_id}", 'KW\Application\Controllers\Common\Tag\TagBaseController@deleteTag');
-            Route::get("/{tag_id}/eventDetails", function($tag_id) {
+
+            /**
+             * Relation API 2019-05-22 --
+             */
+            Route::get("/{tag_id}/event-details", function($tag_id) {
                 return Tag::findOrFail($tag_id)
                     ->eventDetails()
                     ->get();
@@ -290,6 +400,12 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
             Route::get("/{category_master_id}", 'KW\Application\Controllers\Common\CategoryMaster\CategoryMasterBaseController@getCategoryMaster');
             Route::put("/{category_master_id}", 'KW\Application\Controllers\Common\CategoryMaster\CategoryMasterBaseController@putCategoryMaster');
             Route::delete("/{category_master_id}", 'KW\Application\Controllers\Common\CategoryMaster\CategoryMasterBaseController@deleteCategoryMaster');
+
+            /**
+             * Relation API 2019-05-22 --
+             */
+            Route::get("/{category_master_id}/school-masters", function() {});
+            Route::get("/{category_master_id}/event-masters", function() {});
         });
 
         /**
@@ -307,11 +423,56 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
          * Image
          */
         Route::group(["prefix" => "images"], function () {
-            Route::get("", function() {});
-            Route::post("", function() {});
-            Route::get("/{image_id}", function() {});
-            Route::put("/{image_id}", function() {});
-            Route::delete("/{image_id}", function() {});
+            Route::get("", function() {
+                return response()->json(Image::query()->select([
+                    'id',
+                    'target_type',
+                    'target_id',
+                    'filename',
+                    'created_at',
+                    'updated_at'
+                ])->get());
+            });
+            Route::get("/{image_id}", function($image_id) {
+                try {
+                    return Image::where('id', $image_id)
+                        ->select([
+                            'id',
+                            'target_type',
+                            'target_id',
+                            'filename',
+                            'created_at',
+                            'updated_at'
+                        ])->firstOrFail();
+                } catch (ModelNotFoundException $exception) {
+                    return response()
+                        ->json(['message' => $exception->getMessage()])
+                        ->header('Content-Type', 'application/json')
+                        ->setStatusCode(404);
+                }
+            });
+            Route::put("/{image_id}", function(Request $request, $image_id) {
+                try {
+                    $image = Image::where('id', $image_id)->firstOrFail();
+                    $image->filename = $request->json('filename');
+                    $image->save();
+                } catch (ModelNotFoundException $exception) {
+                    return response()
+                        ->json(['message' => $exception->getMessage()])
+                        ->header('Content-Type', 'application/json')
+                        ->setStatusCode(404);
+                }
+            });
+            Route::delete("/{image_id}", function($image_id) {
+                Image::query()->where('id', '=', $image_id)->delete();
+            });
+
+            /**
+             * Relation API 2019-05-22 --
+             */
+            Route::get("/{target_id}/schools", function() {});
+            Route::get("/{target_id}/event-details", function() {});
+
         });
 
         /**
@@ -323,6 +484,14 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
             Route::get("/{role_id}", 'KW\Application\Controllers\Common\Role\RoleBaseController@getRole');
             Route::put("/{role_id}", 'KW\Application\Controllers\Common\Role\RoleBaseController@putRole');
             Route::delete("/{role_id}", 'KW\Application\Controllers\Common\Role\RoleBaseController@deleteRole');
+
+            /**
+             * Relation API 2019-05-22 --
+             */
+            Route::get("/{role_id}", function() {});
+            Route::get("/{role_id}/user-masters", function() {});
+            Route::get("/{role_id}/school-admin-masters", function() {});
+            Route::get("/{role_id}/company-admin-masters", function() {});
         });
 
         /**
@@ -359,12 +528,20 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
                     return 'You are authorized user';
                 });
             });
+            Route::post("password/email", "App\Http\Controllers\UserMasterAuth\ForgotPasswordController@sendResetLinkEmail");
+            Route::post("password/reset/{token}", "App\Http\Controllers\UserMasterAuth\ResetPasswordController@reset");
+            Route::post("email/ship/{user_master_id}", "App\Http\Controllers\UserMasterAuth\RegisterController@ship");
 
             Route::get("", function() {});
             Route::post("", function() {});
             Route::get("/{user_master_id}", function() {});
             Route::put("/{user_master_id}", function() {});
             Route::delete("/{user_master_id}", function() {});
+
+            /**
+             * Relation API 2019-05-22 --
+             */
+            Route::get("/{user_master_id}/roles", function() {});
         });
 
         /**
@@ -376,6 +553,11 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
             Route::get("/{school_admin_master_id}", function() {});
             Route::put("/{school_admin_master_id}", function() {});
             Route::delete("/{school_admin_master_id}", function() {});
+
+            /**
+             * Relation API 2019-05-22 --
+             */
+            Route::get("/{school_admin_master_id}/roles", function() {});
         });
 
         /**
@@ -387,6 +569,11 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
             Route::get("/{company_admin_master_id}", function() {});
             Route::put("/{company_admin_master_id}", function() {});
             Route::delete("/{company_admin_master_id}", function() {});
+
+            /**
+             * Relation API 2019-05-22 --
+             */
+            Route::get("/{company_admin_master_id}/roles", function() {});
         });
     });
 });

@@ -2,6 +2,8 @@
 
 namespace KW\Infrastructure\Eloquents;
 
+use Illuminate\Database\Eloquent\Relations\Pivot;
+
 /**
  * KW\Infrastructure\Eloquents\Review
  *
@@ -12,32 +14,16 @@ namespace KW\Infrastructure\Eloquents;
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\Review query()
  * @mixin \Eloquent
  */
-class Review extends BaseUuid
+class Review extends Pivot
 {
     /**
      * @var string
      */
-    protected $table = 'reveiws';
+    protected $table = 'reviews';
 
     /**
      * 全属性を複数代入可能
      * @var array
      */
     protected $guarded = [];
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function eventDetail()
-    {
-        return $this->belongsTo(EventDetail::class);
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function userParent()
-    {
-        return $this->belongsTo(UserParent::class);
-    }
 }

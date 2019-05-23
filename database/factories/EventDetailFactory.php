@@ -6,7 +6,6 @@ use KW\Infrastructure\Eloquents\EventPr;
 
 $factory->define(EventDetail::class, function (Faker $faker) {
     return [
-        'event_master_id'  => $faker->uuid,
         'event_pr_id'      => function() {
             return factory(EventPr::class)->create()->id;
         },

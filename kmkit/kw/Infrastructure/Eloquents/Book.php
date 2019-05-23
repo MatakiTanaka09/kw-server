@@ -2,6 +2,8 @@
 
 namespace KW\Infrastructure\Eloquents;
 
+use Illuminate\Database\Eloquent\Relations\Pivot;
+
 /**
  * KW\Infrastructure\Eloquents\Book
  *
@@ -26,7 +28,7 @@ namespace KW\Infrastructure\Eloquents;
  * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\Book whereChildParentId($value)
  * @mixin \Eloquent
  */
-class Book extends BaseUuid
+class Book extends PivotUuid
 {
     /**
      * @var string
@@ -37,36 +39,4 @@ class Book extends BaseUuid
      * @var array
      */
     protected $fillable = ['child_parent_id', 'event_detail_id'];
-
-//    /**
-//     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-//     */
-//    public function userParent()
-//    {
-//        return $this->belongsTo(UserParent::class);
-//    }
-
-//    /**
-//     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-//     */
-//    public function userChild()
-//    {
-//        return $this->belongsTo(UserChild::class);
-//    }
-
-//    /**
-//     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-//     */
-//    public function eventDetail()
-//    {
-//        return $this->belongsTo(EventDetail::class);
-//    }
-//
-//    /**
-//     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-//     */
-//    public function childParent()
-//    {
-//        return $this->belongsTo(ChildParent::class);
-//    }
 }

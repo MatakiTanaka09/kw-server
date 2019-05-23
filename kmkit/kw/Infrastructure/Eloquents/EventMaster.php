@@ -37,21 +37,26 @@ class EventMaster extends BaseUuid
      * 全属性を複数代入可能
      * @var array
      */
-    protected $guarded = ['id'];
+    protected $guarded = [];
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
      */
-    public function eventDetails()
+    public function categoryMasters()
     {
-        return $this->hasMany(EventDetail::class);
+        return $this->morphToMany(CategoryMaster::class, 'target', 'category_relations');
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function categoryMaster()
+    public function schoolMasters()
     {
-        return $this->hasOne(CategoryMaster::class);
+        return $this->belongsToMany(
+            SchoolMaster::class,
+            'event_school_masters',
+            'event_master_id',
+            'school_master_id'
+        )->withTimestamps();
     }
 }

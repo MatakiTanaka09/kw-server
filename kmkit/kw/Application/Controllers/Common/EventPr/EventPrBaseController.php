@@ -80,4 +80,6 @@ class EventPrBaseController extends Controller
     {
         EventPr::query()->where('id', '=', $event_pr_id)->delete();
     }
+
+
 }

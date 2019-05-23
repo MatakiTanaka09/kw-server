@@ -36,8 +36,8 @@ class Image extends AppEloquent
     /**
      * @return \Illuminate\Database\Eloquent\Relations\MorphTo
      */
-    public function target()
+    public function imageable()
     {
-        return $this->morphTo(EventDetail::class, 'target');
+        return $this->morphTo();
     }
 }

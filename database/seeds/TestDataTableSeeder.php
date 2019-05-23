@@ -19,6 +19,7 @@ use KW\Infrastructure\Eloquents\CompanyAdminMaster;
 use KW\Infrastructure\Eloquents\CompanyMaster;
 use KW\Infrastructure\Eloquents\CompanyAndMember;
 use KW\Infrastructure\Eloquents\Role;
+use KW\Infrastructure\Eloquents\EventSchoolMaster;
 
 class TestDataTableSeeder extends Seeder
 {
@@ -53,9 +54,33 @@ class TestDataTableSeeder extends Seeder
         factory(SchoolMaster::class, 10)
             ->create()
             ->each(function($schoolMaster) {
-                $schoolMaster->eventMasters()->save(factory(EventMaster::class)->make());
                 $schoolMaster->schoolAndMembers()->save(factory(SchoolAndMember::class)->make());
+                $schoolMaster->categoryMasters()->save(factory(CategoryMaster::class)->make());
+                $schoolMaster->images()->create(['url' => 'https://aws.s3....']);
             });
+
+        factory(EventMaster::class, 10)
+            ->create()
+            ->each(function($eventMaster) {
+                $eventMaster->categoryMasters()->save(factory(CategoryMaster::class)->make());
+//                $eventMaster->schoolMasters()->attach(
+//                    $schoolMasters->random(rand(1,3))->pluck('id')->toArray()
+//                );
+            });
+
+        $schoolMasters = SchoolMaster::all();
+        $eventMasters = EventMaster::all();
+        foreach ($schoolMasters as $schoolMaster) {
+            $schoolMaster->eventMasters()->attach(
+                $eventMasters->random(rand(1,3))->pluck('id')->toArray()
+            );
+        }
+
+        $schoolEventMasters = EventSchoolMaster::all();
+        foreach ($schoolEventMasters as $schoolEventMaster) {
+            $schoolEventMaster->eventDetails()->save(factory(EventDetail::class)->make());
+        }
+
 
         factory(CompanyMaster::class, 10)
             ->create()
@@ -63,16 +88,12 @@ class TestDataTableSeeder extends Seeder
                 $companyMaster->companyAndMembers()->save(factory(CompanyAndMember::class)->make());
             });
 
-        $eventMasters = EventMaster::all();
-        foreach ($eventMasters as $eventMaster) {
-            $eventMaster->eventDetails()->save(factory(EventDetail::class)->make());
-        }
-
         factory(Tag::class, 10)->create();
         $tags = Tag::all();
-
         $eventDetails = EventDetail::all();
+
         foreach ($eventDetails as $eventDetail) {
+            $eventDetail->images()->create(['url' => 'https://aws.s3....']);
             $eventDetail->childParents()->attach(
                 $childParents->random(rand(1,3))->pluck('id')->toArray(),
                 [
@@ -91,6 +112,7 @@ class TestDataTableSeeder extends Seeder
             $eventDetail->tags()->attach(
                 $tags->random(rand(1,3))->pluck('id')->toArray()
             );
+
         }
 
         DB::table('roles')->insert([
@@ -123,7 +145,6 @@ class TestDataTableSeeder extends Seeder
                 $roles->random(1)->pluck('id')->toArray()
             );
         }
-
 
         DB::table('category_masters')->insert([
             [
@@ -177,6 +198,22 @@ class TestDataTableSeeder extends Seeder
                 "updated_at" => now()
             ]
         ]);
+
+        $categoryMasters = CategoryMaster::all();
+        $schoolMasters = SchoolMaster::all();
+        $eventMasters = EventMaster::all();
+
+        foreach ($schoolMasters as $schoolMaster) {
+            $schoolMaster->categoryMasters()->attach(
+                $categoryMasters->random(1)->pluck('id')->toArray()
+            );
+        }
+
+        foreach ($eventMasters as $eventMaster) {
+            $eventMaster->categoryMasters()->attach(
+                $categoryMasters->random(1)->pluck('id')->toArray()
+            );
+        }
 
         DB::table('sexes')->insert([
             [

@@ -37,6 +37,11 @@ class Tag extends AppEloquent
      */
     public function eventDetails()
     {
-        return $this->belongsToMany(EventDetail::class, 'taggables');
+        return $this->belongsToMany(
+            EventDetail::class,
+            'taggables',
+            'tag_id',
+            'event_detail_id'
+        )->withTimestamps();
     }
 }

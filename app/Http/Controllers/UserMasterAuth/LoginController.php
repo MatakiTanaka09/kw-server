@@ -7,6 +7,10 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Support\Facades\Auth;
+use JWTAuth;
+use KW\Infrastructure\Eloquents\UserMaster;
+use Tymon\JWTAuth\Exceptions\JWTException;
 
 class LoginController extends Controller
 {
@@ -79,15 +83,16 @@ class LoginController extends Controller
      */
     public function login(Request $request): JsonResponse
     {
-        $guard = $this->authManager->guard('users');
-        $token = $guard->attempt([
-            'email' =>  $request->get('email'),
-            'password'  =>  $request->get('password'),
-        ]);
-        if (!$token) {
-            return new JsonResponse(__('auth.failed'));
+        $credentials = $request->only('email', 'password');
+        try {
+            if(! $token = JWTAuth::attempt($credentials)) {
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }
+        } catch(JWTException $e) {
+            return response()->json(['error' => 'could_not_create_token'], 500);
         }
-        return new JsonResponse($token);
+        $user = UserMaster::where('email', $request->email)->first();
+        return response()->json(compact('user', 'token'));
     }
 
     /**

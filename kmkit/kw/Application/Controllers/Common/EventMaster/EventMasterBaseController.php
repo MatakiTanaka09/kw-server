@@ -13,13 +13,16 @@ class EventMasterBaseController extends Controller
      */
     public function getEventMasters()
     {
-        return response()->json(EventMaster::query()->select([
-            'id',
-            'school_master_id',
-            'category_master_id',
-            'title',
-            'detail'
-        ])->get());
+//        return response()->json(EventMaster::query()->select([
+//            'id',
+//            'school_master_id',
+//            'category_master_id',
+//            'title',
+//            'detail'
+//        ])->get());
+        return EventMaster::with(['schoolMaster' => function($query) {
+            $query->where('name', 'like', 'Pigeon.%');
+        }])->get();
     }
 
     /**

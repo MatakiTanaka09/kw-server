@@ -3,9 +3,9 @@
 namespace KW\Infrastructure\Eloquents;
 
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use App\Notifications\CustomPasswordReset;
 
 /**
  * KW\Infrastructure\Eloquents\UserMaster
@@ -68,7 +68,10 @@ class UserMaster extends Authenticatable implements JWTSubject
      */
     public function roles()
     {
-        return $this->morphToMany(Role::class, 'role_relations');
+        return $this->morphToMany(
+            Role::class,
+            'role_relations'
+        )->withTimestamps();
     }
 
     /**
@@ -85,5 +88,10 @@ class UserMaster extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new CustomPasswordReset($token));
     }
 }

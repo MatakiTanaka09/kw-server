@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\UserMasterAuth;
 
+use App\Mail\RegisteredMail;
+use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;

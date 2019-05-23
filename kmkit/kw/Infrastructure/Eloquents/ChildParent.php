@@ -20,6 +20,13 @@ class ChildParent extends AppEloquent
      */
     public function eventDetails()
     {
-        return $this->belongsToMany(EventDetail::class, 'books');
+        return $this->belongsToMany(
+            EventDetail::class,
+            'books'
+        )
+            ->as('info')
+            ->using(Book::class)
+            ->withPivot(['status', 'price'])
+            ->withTimestamps();
     }
 }
