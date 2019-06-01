@@ -44,22 +44,6 @@ class UserChild extends BaseUuid
      */
     protected $guarded = [];
 
-//    /**
-//     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-//     */
-//    public function userParent()
-//    {
-//        return $this->belongsToMany(UserParent::class);
-//    }
-
-//    /**
-//     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-//     */
-//    public function books()
-//    {
-//        return $this->belongsToMany(Book::class);
-//    }
-
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */

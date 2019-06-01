@@ -3,42 +3,44 @@
 namespace KW\Application\Controllers\Common\Book;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use KW\Application\Requests\Book\EventDetail as BookRequest;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use KW\Infrastructure\Eloquents\Book;
+use KW\Domain\Models\Book\BookRepositoryInterface;
+use Illuminate\Support\Collection;
 
 class BookBaseController extends Controller
 {
     /**
-     * @return \Illuminate\Http\JsonResponse
+     * @var BookRepositoryInterface
      */
-    public function getBooks()
+    private $bookRepo;
+
+    public function __construct(BookRepositoryInterface $bookRepo)
     {
-        return response()->json(Book::query()->select([
-            'id',
-            'child_parent_id',
-            'event_detail_id',
-            'status',
-            'price'
-        ])->get());
+        $this->bookRepo = $bookRepo;
     }
 
     /**
-     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getBooks(): JsonResponse
+    {
+        $books = $this->bookRepo->findAll();
+        return $books;
+    }
+
+    /**
+     * @param BookRequest $request
      * @param Book $book
      */
-    public function postBooks(Request $request, Book $book)
+    public function postBooks(BookRequest $request, Book $book)
     {
-        $request->validate([
-            'child_parent_id' => 'required',
-            'event_detail_id' => 'required',
-            'status'          => 'required',
-            'price'           => 'required'
-        ]);
-        $book->child_parent_id    = $request->json('child_parent_id');
-        $book->event_detail_id  = $request->json('event_detail_id');
-        $book->status               = $request->json('status');
-        $book->price              = $request->json('price');
+        $book->user_parent_id  = $request->json('user_parent_id');
+        $book->event_detail_id = $request->json('event_detail_id');
+        $book->status          = $request->json('status');
+        $book->price           = $request->json('price');
         $book->save();
     }
 
@@ -48,33 +50,20 @@ class BookBaseController extends Controller
      */
     public function getBook($book_id)
     {
-        try {
-            return Book::where('id', $book_id)
-                ->select([
-                    'id',
-                    'child_parent_id',
-                    'event_detail_id',
-                    'status',
-                    'price'
-                ])->firstOrFail();
-        } catch (ModelNotFoundException $exception) {
-            return response()
-                ->json(['message' => $exception->getMessage()])
-                ->header('Content-Type', 'application/json')
-                ->setStatusCode(404);
-        }
+        $book = $this->bookRepo->findByBookId($book_id);
+        return $book;
     }
 
     /**
-     * @param Request $request
+     * @param BookRequest $request
      * @param $book_id
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function putBook(Request $request, $book_id)
+    public function putBook(BookRequest $request, $book_id)
     {
         try {
             $book = Book::where('id', $book_id)->firstOrFail();
-            $book->child_parent_id = $request->json('child_parent_id');
+            $book->user_parent_id  = $request->json('user_parent_id');
             $book->event_detail_id = $request->json('event_detail_id');
             $book->status          = $request->json('status');
             $book->price           = $request->json('price');

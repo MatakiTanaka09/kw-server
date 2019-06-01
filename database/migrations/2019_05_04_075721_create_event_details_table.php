@@ -16,7 +16,7 @@ class CreateEventDetailsTable extends Migration
         Schema::create('event_details', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->uuid('id')->primary();
-            $table->unsignedInteger('event_school_master_id');
+            $table->uuid('event_master_id');
             $table->unsignedInteger('event_pr_id');
             $table->string('title');
             $table->text('detail');

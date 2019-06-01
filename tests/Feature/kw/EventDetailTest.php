@@ -77,15 +77,6 @@ class EventDetailTest extends KWBaseTestCase
     /**
      * @test
      */
-    public function api_v1_event_detailsにGETメソッドで取得できるユーザー情報は10件である()
-    {
-        $response = $this->get(self::EVENT_DETAILS);
-        $response->assertJsonCount(10);
-    }
-
-    /**
-     * @test
-     */
     public function api_v1_event_detailsにPOSTメソッドでアクセスできる()
     {
         $eventDetails = [
@@ -116,7 +107,7 @@ class EventDetailTest extends KWBaseTestCase
             'latitude'         => 20.8
         ];
         $response = $this->postJson(self::EVENT_DETAILS, $eventDetails);
-        $response->assertStatus(200);
+        $response->assertStatus(201);
     }
 
     public function api_v1_event_details_event_detail_idにデータをPOSTするとevent_detailsテーブルにそのデータが追加される()

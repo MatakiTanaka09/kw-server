@@ -3,12 +3,16 @@
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use KW\Infrastructure\Eloquents\UserParent;
+use KW\Infrastructure\Eloquents\ChildParent;
 use KW\Infrastructure\Eloquents\EventDetail;
 use KW\Infrastructure\Eloquents\Tag;
 use KW\Infrastructure\Eloquents\Image;
 use KW\Infrastructure\Eloquents\EventMaster;
 use KW\Infrastructure\Eloquents\EventSchoolMaster;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use KW\Application\Resources\Book\KW\detail\Book as BookResource;
+use KW\Application\Resources\Book\User\index\Book as BookIndexResource;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -26,7 +30,14 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
     /**
      * recommends, display api
      */
-
+    Route::post("mail/test", function() {
+        $userMaster = \KW\Infrastructure\Eloquents\UserMaster::find(1);
+        $book = \KW\Infrastructure\Eloquents\Book::findOrFail('2600994d-5906-36cc-880e-52b9bf16dd43');
+//        $userMaster->notify(new \KW\Infrastructure\Apis\Notifications\EventDetail\BookReceived($userMaster));
+        $userMaster->notify(new \KW\Infrastructure\Apis\Notifications\Book\BookSuccessed($userMaster));
+//        $book->notify(new \KW\Infrastructure\Apis\Notifications\EventDetail\BookCanceled($book));
+//        $userMaster->notify(new \KW\Infrastructure\Apis\Notifications\EventDetail\BookFailed($userMaster));
+    });
 
     /**
      * users api
@@ -68,15 +79,16 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
          * EventDetail
          */
         Route::group(["prefix" => "event-details"], function () {
-            Route::get("/{event_detail_id}", 'KW\Application\Controllers\Common\EventDetail\EventDetailBaseController@getEventDetail');
+            Route::get("/{event_detail_id}", 'KW\Application\Controllers\User\EventDetail\EventDetailBaseController@getEventDetail');
         });
 
         /**
-         * Book
+         * EventDetail
          */
-        /** - POST @params child_parent_id, event_detail_id  */
-        /** - GET @params child_parent_id @return event_detail, user_child  */
-        /** - PATCH @params child_parent_id, event_detail_id, status  */
+        Route::group(["prefix" => "books"], function () {
+            Route::get("users/{user_parent_id}", 'KW\Application\Controllers\User\Book\BookBaseController@getBooks');
+            Route::put("/{book_id}", 'KW\Application\Controllers\Common\Book\BookBaseController@putBook');
+        });
 
 
         /**
@@ -191,22 +203,17 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
              * Relation API 2019-05-22 --
              */
             Route::get("/event-details", function() {});
-//            Route::group(["prefix" => "relations"], function () {
-//                Route::get("/event_master", function() {
-//                    return EventMaster::with(['eventDetails', 'schoolMaster'])->get();
-//                });
-//            });
         });
 
         /**
          * EventDetail
          */
         Route::group(["prefix" => "event-details"], function () {
-            Route::get("", 'KW\Application\Controllers\Common\EventDetail\EventDetailBaseController@getEventDetails');
-            Route::post("", 'KW\Application\Controllers\Common\EventDetail\EventDetailBaseController@postEventDetail');
-            Route::get("/{event_detail_id}", 'KW\Application\Controllers\Common\EventDetail\EventDetailBaseController@getEventDetail');
-            Route::put("/{event_detail_id}", 'KW\Application\Controllers\Common\EventDetail\EventDetailBaseController@putEventDetail');
-            Route::delete("/{event_detail_id}", 'KW\Application\Controllers\Common\EventDetail\EventDetailBaseController@deleteEventDetail');
+            Route::get("", 'KW\Application\Controllers\KW\EventDetail\EventDetailBaseController@getEventDetails');
+            Route::post("", 'KW\Application\Controllers\KW\EventDetail\EventDetailBaseController@postEventDetail');
+            Route::get("/{event_detail_id}", 'KW\Application\Controllers\KW\EventDetail\EventDetailBaseController@getEventDetail');
+            Route::put("/{event_detail_id}", 'KW\Application\Controllers\KW\EventDetail\EventDetailBaseController@putEventDetail');
+            Route::delete("/{event_detail_id}", 'KW\Application\Controllers\KW\EventDetail\EventDetailBaseController@deleteEventDetail');
 
             /**
              * Relation API 2019-05-22 --
@@ -281,7 +288,7 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
         });
 
         /**
-         * Book
+         * EventDetail
          */
         Route::group(["prefix" => "books"], function () {
             Route::get("", 'KW\Application\Controllers\Common\Book\BookBaseController@getBooks');
@@ -289,6 +296,16 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
             Route::get("/{book_id}", 'KW\Application\Controllers\Common\Book\BookBaseController@getBook');
             Route::put("/{book_id}", 'KW\Application\Controllers\Common\Book\BookBaseController@putBook');
             Route::delete("/{book_id}", 'KW\Application\Controllers\Common\Book\BookBaseController@deleteBook');
+
+            Route::get("/users/{user_parent_id}", 'KW\Application\Controllers\KW\Book\BookBaseController@getBookByUserParentId');
+            Route::get("/event-details/{event_detail_id}", 'KW\Application\Controllers\KW\Book\BookBaseController@getBookByEventDetailId');
+            Route::get("test/users/{user_parent_id}", 'KW\Application\Controllers\User\Book\BookBaseController@getBooks');
+            Route::get('test/{user_parent_id}', function($user_parent_id) {
+                $userParent = UserParent::findOrFail($user_parent_id);
+                $eventDetails = $userParent->books()->get();
+                return BookResource::collection($eventDetails);
+//                return $eventDetails;
+            });
         });
 
         /**

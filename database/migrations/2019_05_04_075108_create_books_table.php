@@ -16,10 +16,10 @@ class CreateBooksTable extends Migration
         Schema::create('books', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->uuid('id');
-            $table->unsignedInteger('child_parent_id');
+            $table->uuid('user_parent_id');
             $table->uuid('event_detail_id');
-            $table->tinyInteger('status')->default(0);
-            $table->integer('price')->unsigned();
+            $table->unsignedInteger('status');
+            $table->unsignedDecimal('price');
             $table->timestamps();
         });
     }

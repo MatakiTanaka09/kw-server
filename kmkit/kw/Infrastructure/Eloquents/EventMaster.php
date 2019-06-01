@@ -40,6 +40,14 @@ class EventMaster extends BaseUuid
     protected $guarded = [];
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function eventDetails()
+    {
+        return $this->hasMany(EventDetail::class);
+    }
+
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
      */
     public function categoryMasters()

@@ -56,8 +56,8 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
-        'name' => env('MAIL_FROM_NAME', 'Example'),
+        'address' => env('MAIL_FROM_ADDRESS', 'kidsweekend@kidseed.co.jp'),
+        'name' => env('MAIL_FROM_NAME', 'Kidsweekend'),
     ],
 
     /*
@@ -133,4 +133,20 @@ return [
 
     'log_channel' => env('MAIL_LOG_CHANNEL'),
 
+    'ses' => [
+        'key' => 'your-ses-key',
+        'secret' => 'your-ses-secret',
+        'region' => 'ses-region',  // e.g. us-east-1
+
+        // options はここに記述
+        'options' => [
+            'ConfigurationSetName' => 'MyConfigurationSet',
+            'Tags' => [
+                [
+                    'Name' => 'foo',
+                    'Value' => 'bar',
+                ],
+            ],
+        ],
+    ],
 ];

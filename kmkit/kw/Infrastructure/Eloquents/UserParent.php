@@ -102,6 +102,18 @@ class UserParent extends BaseUuid
             ->withTimestamps();
     }
 
-
-
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function books()
+    {
+        return $this->belongsToMany(
+            EventDetail::class,
+            'books'
+        )
+            ->as('info')
+            ->using(Book::class)
+            ->withPivot(['status', 'price'])
+            ->withTimestamps();
+    }
 }

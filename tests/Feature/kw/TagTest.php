@@ -65,7 +65,7 @@ class TagTest extends KWBaseTestCase
     {
         $newTags = factory(Tag::class)->make();
         $params = [
-            'name'     => $newTags->name
+            'name' => $newTags->name
         ];
         $this->postJson(self::TAGS, $params);
         $this->assertDatabaseHas(self::TAGS_TABLE, $params);

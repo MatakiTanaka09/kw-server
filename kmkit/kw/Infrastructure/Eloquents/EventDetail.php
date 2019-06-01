@@ -16,34 +16,26 @@ class EventDetail extends BaseUuid
     protected $guarded = [];
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\belongsTo
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function eventSchoolMaster()
+    public function eventMaster()
     {
-        return $this->belongsTo(EventSchoolMaster::class, 'event_school_master_id');
+        return $this->belongsTo(EventMaster::class);
     }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function childParents()
+    public function books()
     {
         return $this->belongsToMany(
-            ChildParent::class,
+            UserParent::class,
             'books'
         )
             ->as('info')
             ->using(Book::class)
             ->withPivot(['status', 'price'])
             ->withTimestamps();
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function userParents()
-    {
-        return $this->belongsToMany(UserParent::class, 'reviews');
     }
 
     /**

@@ -21,6 +21,7 @@ $factory->define(EventDetail::class, function (Faker $faker) {
         'parent_attendant' => $faker->boolean($chanceOfGettingTrue = 20),
         'price'            => $faker->randomElement([1000, 1500, 1800, 2000, 2500]),
         'cancel_deadline'  => $faker->numberBetween(1, 7),
+        'cancel_policy'    => $faker->text(200),
         'pub_state'        => $faker->boolean($chanceOfGettingTrue = 20),
         'arrived_at'       => $faker->numberBetween(5, 15),
         'zip_code1'        => $faker->regexify('[1-9]{3}'),
