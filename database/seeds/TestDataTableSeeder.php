@@ -55,14 +55,14 @@ class TestDataTableSeeder extends Seeder
             ->create()
             ->each(function($schoolMaster) {
                 $schoolMaster->schoolAndMembers()->save(factory(SchoolAndMember::class)->make());
-                $schoolMaster->categoryMasters()->save(factory(CategoryMaster::class)->make());
+//                $schoolMaster->categoryMasters()->save(factory(CategoryMaster::class)->make());
                 $schoolMaster->images()->create(['url' => 'https://aws.s3....']);
             });
 
         factory(EventMaster::class, 10)
             ->create()
             ->each(function($eventMaster) {
-                $eventMaster->categoryMasters()->save(factory(CategoryMaster::class)->make());
+//                $eventMaster->categoryMasters()->save(factory(CategoryMaster::class)->make());
                 $eventMaster->eventDetails()->save(factory(EventDetail::class)->make());
 //                $eventMaster->schoolMasters()->attach(
 //                    $schoolMasters->random(rand(1,3))->pluck('id')->toArray()

@@ -592,5 +592,11 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
              */
             Route::get("/{company_admin_master_id}/roles", function() {});
         });
+
+        Route::group(["prefix" => "event-school-masters"], function() {
+            Route::post("", function() {
+
+            });
+        });
     });
 });

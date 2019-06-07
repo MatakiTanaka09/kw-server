@@ -74,6 +74,7 @@ class CategoryMasterBaseController extends Controller
             $category_master->color    = $request->json('color');
             $category_master->filename = $request->json('filename');
             $category_master->save();
+            return $category_master;
         } catch (ModelNotFoundException $exception) {
             return response()
                 ->json(['message' => $exception->getMessage()])

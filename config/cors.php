@@ -14,8 +14,7 @@ return [
     'allowedOrigins' => ["http://app.kidsweekend.test:3000"],
     'allowedOriginsPatterns' => ['@^chrome-extension://.*@'],
     'allowedHeaders' => ['Origin', 'Content-Type', 'Authorization', 'X-Requested-With'],
-    'allowedMethods' => ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    'allowedMethods' => ['GET', 'POST', 'PUT', 'DELETE'],
     'exposedHeaders' => [],
     'maxAge' => 0,
-
 ];
