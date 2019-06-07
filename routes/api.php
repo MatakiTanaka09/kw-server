@@ -193,11 +193,11 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
          * EventMaster
          */
         Route::group(["prefix" => "event-masters"], function () {
-            Route::get("", 'KW\Application\Controllers\Common\EventMaster\EventMasterBaseController@getEventMasters');
-            Route::post("", 'KW\Application\Controllers\Common\EventMaster\EventMasterBaseController@postEventMasters');
-            Route::get("/{event_master_id}", 'KW\Application\Controllers\Common\EventMaster\EventMasterBaseController@getEventMaster');
-            Route::put("/{event_master_id}", 'KW\Application\Controllers\Common\EventMaster\EventMasterBaseController@putEventMaster');
-            Route::delete("/{event_master_id}", 'KW\Application\Controllers\Common\EventMaster\EventMasterBaseController@deleteEventMaster');
+            Route::get("", 'KW\Application\Controllers\KW\EventMaster\EventMasterBaseController@getEventMasters');
+            Route::post("", 'KW\Application\Controllers\KW\EventMaster\EventMasterBaseController@postEventMasters');
+            Route::get("/{event_master_id}", 'KW\Application\Controllers\KW\EventMaster\EventMasterBaseController@getEventMaster');
+            Route::put("/{event_master_id}", 'KW\Application\Controllers\KW\EventMaster\EventMasterBaseController@putEventMaster');
+            Route::delete("/{event_master_id}", 'KW\Application\Controllers\KW\EventMaster\EventMasterBaseController@deleteEventMaster');
 
             /**
              * Relation API 2019-05-22 --

@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use KW\Application\Requests\EventDetail\EventDetail as EventDetailRequest;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use KW\Infrastructure\Eloquents\EventDetail;
+use Illuminate\Http\Request;
 use KW\Domain\Models\EventDetail\EventDetailRepositoryInterface;
 
 class EventDetailBaseController extends Controller
@@ -34,19 +35,9 @@ class EventDetailBaseController extends Controller
             'event_pr_id',
             'title',
             'detail',
-            'handing',
             'started_at',
             'expired_at',
-            'capacity_members',
-            'event_minutes',
-            'target_min_age',
-            'target_max_age',
-            'parent_attendant',
-            'price',
-            'cancel_policy',
-            'cancel_deadline',
             'pub_state',
-            'arrived_at',
             'zip_code1',
             'zip_code2',
             'state',
@@ -59,14 +50,46 @@ class EventDetailBaseController extends Controller
     }
 
     /**
-     * @param EventDetailRequest $request
+     * @param Request $request
      * @param EventDetail $eventDetail
-     * @return \Illuminate\Support\Collection|EventDetail
      */
-    public function postEventDetail(EventDetailRequest $request, EventDetail $eventDetail)
+    public function postEventDetail(Request $request, EventDetail $eventDetail)
     {
-        $eventDetails = $this->eventDetailRepo->postEventDetail($request, $eventDetail);
-        return $eventDetails;
+        $request->validate([
+            'event_master_id' => 'required',
+            'event_pr_id' => 'required',
+            'title'            => 'required',
+            'detail'           => 'required',
+            'started_at'       => 'required',
+            'expired_at'       => 'required',
+            'pub_state'        => 'required',
+            'zip_code1'        => 'required',
+            'zip_code2'        => 'required',
+            'state'            => 'required',
+            'city'             => 'required',
+            'address1'         => 'required',
+            'address2'         => 'required',
+            'longitude'        => 'required',
+            'latitude'         => 'required'
+        ]);
+        $eventDetail->event_master_id  = $request->json('event_master_id');
+        $eventDetail->event_pr_id      = $request->json('event_pr_id');
+        $eventDetail->title            = $request->json('title');
+        $eventDetail->detail           = $request->json('detail');
+        $eventDetail->started_at       = $request->json('started_at');
+        $eventDetail->expired_at       = $request->json('expired_at');
+        $eventDetail->pub_state        = $request->json('pub_state');
+        $eventDetail->zip_code1        = $request->json('zip_code1');
+        $eventDetail->zip_code2        = $request->json('zip_code2');
+        $eventDetail->state            = $request->json('state');
+        $eventDetail->city             = $request->json('city');
+        $eventDetail->address1         = $request->json('address1');
+        $eventDetail->address2         = $request->json('address2');
+        $eventDetail->longitude        = $request->json('longitude');
+        $eventDetail->latitude         = $request->json('latitude');
+        $eventDetail->save();
+//        $eventDetails = $this->eventDetailRepo->postEventDetail($request, $eventDetail);
+//        return $eventDetails;
     }
 
     /**
@@ -83,19 +106,9 @@ class EventDetailBaseController extends Controller
                     'event_pr_id',
                     'title',
                     'detail',
-                    'handing',
                     'started_at',
                     'expired_at',
-                    'capacity_members',
-                    'event_minutes',
-                    'target_min_age',
-                    'target_max_age',
-                    'parent_attendant',
-                    'price',
-                    'cancel_policy',
-                    'cancel_deadline',
                     'pub_state',
-                    'arrived_at',
                     'zip_code1',
                     'zip_code2',
                     'state',
@@ -115,11 +128,11 @@ class EventDetailBaseController extends Controller
     }
 
     /**
-     * @param EventDetailRequest $request
+     * @param Request $request
      * @param $event_detail_id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function putEventDetail(EventDetailRequest $request, $event_detail_id)
+    public function putEventDetail(Request $request, $event_detail_id)
     {
         try {
             $eventDetail = EventDetail::where('id', $event_detail_id)->firstOrFail();
@@ -127,19 +140,9 @@ class EventDetailBaseController extends Controller
             $eventDetail->event_pr_id      = $request->json('event_pr_id');
             $eventDetail->title            = $request->json('title');
             $eventDetail->detail           = $request->json('detail');
-            $eventDetail->handing          = $request->json('handing');
             $eventDetail->started_at       = $request->json('started_at');
             $eventDetail->expired_at       = $request->json('expired_at');
-            $eventDetail->capacity_members = $request->json('capacity_members');
-            $eventDetail->event_minutes    = $request->json('event_minutes');
-            $eventDetail->target_min_age   = $request->json('target_min_age');
-            $eventDetail->target_max_age   = $request->json('target_max_age');
-            $eventDetail->parent_attendant = $request->json('parent_attendant');
-            $eventDetail->price            = $request->json('price');
-            $eventDetail->cancel_policy    = $request->json('cancel_policy');
-            $eventDetail->cancel_deadline  = $request->json('cancel_deadline');
             $eventDetail->pub_state        = $request->json('pub_state');
-            $eventDetail->arrived_at       = $request->json('arrived_at');
             $eventDetail->zip_code1        = $request->json('zip_code1');
             $eventDetail->zip_code2        = $request->json('zip_code2');
             $eventDetail->state            = $request->json('state');
