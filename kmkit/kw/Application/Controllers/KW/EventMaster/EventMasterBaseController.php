@@ -5,6 +5,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use KW\Infrastructure\Eloquents\EventMaster;
+use KW\Infrastructure\Eloquents\SchoolMaster;
+use Illuminate\Http\JsonResponse;
+use Carbon\Carbon;
 
 class EventMasterBaseController extends Controller
 {
@@ -15,8 +18,6 @@ class EventMasterBaseController extends Controller
     {
         return response()->json(EventMaster::query()->select([
             'id',
-            'event_master_id',
-            'event_pr_id',
             'title',
             'detail',
             'handing',
@@ -42,12 +43,11 @@ class EventMasterBaseController extends Controller
     /**
      * @param Request $request
      * @param EventMaster $eventMaster
+     * @return string
      */
     public function postEventMasters(Request $request, EventMaster $eventMaster)
     {
         $request->validate([
-            'event_master_id'  => 'required',
-            'event_pr_id'      => 'required',
             'title'            => 'required',
             'detail'           => 'required',
             'handing'          => 'required',
@@ -68,8 +68,6 @@ class EventMasterBaseController extends Controller
             'longitude'        => 'required',
             'latitude'         => 'required'
         ]);
-        $eventMaster->event_master_id            = $request->json('event_master_id');
-        $eventMaster->event_pr_id           = $request->json('event_pr_id');
         $eventMaster->title            = $request->json('title');
         $eventMaster->detail           = $request->json('detail');
         $eventMaster->handing          = $request->json('handing');
@@ -90,6 +88,15 @@ class EventMasterBaseController extends Controller
         $eventMaster->longitude        = $request->json('longitude');
         $eventMaster->latitude         = $request->json('latitude');
         $eventMaster->save();
+
+        $this->attachEventMasterToSchoolMaster($request, $eventMaster);
+        $this->attachEventMasterToCategoryMaster($request, $eventMaster);
+
+        return new JsonResponse(
+            [
+                'success' => "OK"
+            ],
+            200);
     }
 
     /**
@@ -102,8 +109,6 @@ class EventMasterBaseController extends Controller
             return EventMaster::where('id', $event_master_id)
                 ->select([
                     'id',
-                    'event_master_id',
-                    'event_pr_id',
                     'title',
                     'detail',
                     'handing',
@@ -142,10 +147,8 @@ class EventMasterBaseController extends Controller
     {
         try {
             $eventMaster = EventMaster::where('id', $event_master_id)->firstOrFail();
-            $eventMaster->event_master_id            = $request->json('event_master_id');
-            $eventMaster->event_pr_id           = $request->json('event_pr_id');
-            $eventMaster->title              = $request->json('title');
-            $eventMaster->detail             = $request->json('detail');
+            $eventMaster->title            = $request->json('title');
+            $eventMaster->detail           = $request->json('detail');
             $eventMaster->handing          = $request->json('handing');
             $eventMaster->event_minutes    = $request->json('event_minutes');
             $eventMaster->target_min_age   = $request->json('target_min_age');
@@ -164,6 +167,8 @@ class EventMasterBaseController extends Controller
             $eventMaster->longitude        = $request->json('longitude');
             $eventMaster->latitude         = $request->json('latitude');
             $eventMaster->save();
+
+            $this->updatePivotEventMasterToCategoryMaster($request, $eventMaster);
         } catch (ModelNotFoundException $exception) {
             return response()
                 ->json(['message' => $exception->getMessage()])
@@ -178,6 +183,36 @@ class EventMasterBaseController extends Controller
      */
     public function deleteEventMaster($event_master_id)
     {
-        EventMaster::query()->where('id', '=', $event_master_id)->delete();
+        $eventMaster = EventMaster::where('id', $event_master_id)->firstOrFail();
+        $eventMaster->schoolMasters()->detach();
+        $eventMaster->delete();
+    }
+
+    public function attachEventMasterToSchoolMaster($request, $eventMaster)
+    {
+        $school_master_id = $request->school_master_id;
+        $eventMaster->schoolMasters()->attach($school_master_id, [
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now()
+        ]);
+    }
+
+    public function attachEventMasterToCategoryMaster($request, $eventMaster)
+    {
+        $category_master_id = $request->category_master_id;
+        $eventMaster->categoryMasters()->attach($category_master_id, [
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now()
+        ]);
+    }
+
+    public function updatePivotEventMasterToCategoryMaster($request, $eventMaster)
+    {
+        $target_category_master = $eventMaster->categoryMasters;
+        $category_master_id = $request->category_master_id;
+        $eventMaster->categoryMasters()->updateExistingPivot($target_category_master, [
+            'category_master_id' => $category_master_id,
+            'updated_at'         => Carbon::now()
+        ]);
     }
 }

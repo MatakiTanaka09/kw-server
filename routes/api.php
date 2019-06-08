@@ -197,12 +197,15 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
             Route::post("", 'KW\Application\Controllers\KW\EventMaster\EventMasterBaseController@postEventMasters');
             Route::get("/{event_master_id}", 'KW\Application\Controllers\KW\EventMaster\EventMasterBaseController@getEventMaster');
             Route::put("/{event_master_id}", 'KW\Application\Controllers\KW\EventMaster\EventMasterBaseController@putEventMaster');
+//            Route::delete("/{event_master_id}", 'KW\Application\Controllers\KW\EventMaster\EventMasterBaseController@deleteEventMaster');
             Route::delete("/{event_master_id}", 'KW\Application\Controllers\KW\EventMaster\EventMasterBaseController@deleteEventMaster');
 
             /**
              * Relation API 2019-05-22 --
              */
-            Route::get("/event-details", function() {});
+            Route::post("/school-masters", 'KW\Application\Controllers\KW\EventMaster\EventMasterBaseController@attachEventSchoolMaster');
+            Route::post("/school-masters/relations", 'KW\Application\Controllers\KW\EventMaster\EventMasterBaseController@detachEventMasterBySchoolMasterId');
+            Route::post("/school-masters/detach", 'KW\Application\Controllers\KW\EventMaster\EventMasterBaseController@detachSchoolMasterByEventMasterId');
         });
 
         /**
