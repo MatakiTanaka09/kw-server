@@ -1,6 +1,6 @@
 <?php
 
-namespace KW\Application\Requests\Book;
+namespace KW\Application\Requests\Book\User;
 use Illuminate\Foundation\Http\FormRequest;
 
 class Book extends FormRequest

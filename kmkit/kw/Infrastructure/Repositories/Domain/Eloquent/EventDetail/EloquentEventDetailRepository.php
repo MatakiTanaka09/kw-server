@@ -29,7 +29,10 @@ final class EloquentEventDetailRepository implements EventDetailRepositoryInterf
     public function findById(string $eventDetailId)
     {
         try {
-            return EventDetail::query()->where('id', '=', $eventDetailId)->get();
+            return EventDetail::query()->where([
+                ['id', '=', $eventDetailId],
+                ['pub_state', '=', 0],
+            ])->get();
         } catch (ModelNotFoundException $exception) {
             return response()
                 ->json(['message' => $exception->getMessage()])

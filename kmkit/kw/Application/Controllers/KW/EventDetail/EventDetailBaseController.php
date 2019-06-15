@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use KW\Infrastructure\Eloquents\EventDetail;
 use Illuminate\Http\Request;
 use KW\Domain\Models\EventDetail\EventDetailRepositoryInterface;
+use KW\Application\Resources\EventDetail\User\detail\EventDetail as EventDetailResource;
 
 class EventDetailBaseController extends Controller
 {
@@ -14,39 +15,24 @@ class EventDetailBaseController extends Controller
      * @var EventDetailRepositoryInterface
      */
     private $eventDetailRepo;
+    private $upload;
 
     /**
      * EventDetailBaseController constructor.
      * @param EventDetailRepositoryInterface $eventDetailRepo
+     * @param UploadController $upload
      */
-    public function __construct(EventDetailRepositoryInterface $eventDetailRepo)
-    {
+    public function __construct(
+        EventDetailRepositoryInterface $eventDetailRepo,
+        UploadController $upload
+    ){
         $this->eventDetailRepo = $eventDetailRepo;
+        $this->upload = $upload;
     }
 
-    /**
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function getEventDetails()
     {
-        return response()->json(EventDetail::query()->select([
-            'id',
-            'event_master_id',
-            'event_pr_id',
-            'title',
-            'detail',
-            'started_at',
-            'expired_at',
-            'pub_state',
-            'zip_code1',
-            'zip_code2',
-            'state',
-            'city',
-            'address1',
-            'address2',
-            'longitude',
-            'latitude'
-        ])->get());
+        return EventDetail::paginate(15);
     }
 
     /**
@@ -88,37 +74,12 @@ class EventDetailBaseController extends Controller
         $eventDetail->longitude        = $request->json('longitude');
         $eventDetail->latitude         = $request->json('latitude');
         $eventDetail->save();
-//        $eventDetails = $this->eventDetailRepo->postEventDetail($request, $eventDetail);
-//        return $eventDetails;
     }
 
-    /**
-     * @param $event_detail_id
-     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|\Illuminate\Http\JsonResponse
-     */
     public function getEventDetail($event_detail_id)
     {
         try {
-            return EventDetail::where('id', $event_detail_id)
-                ->select([
-                    'id',
-                    'event_master_id',
-                    'event_pr_id',
-                    'title',
-                    'detail',
-                    'started_at',
-                    'expired_at',
-                    'pub_state',
-                    'zip_code1',
-                    'zip_code2',
-                    'state',
-                    'city',
-                    'address1',
-                    'address2',
-                    'longitude',
-                    'latitude'
-                ])
-                ->firstOrFail();
+            return new EventDetailResource(EventDetail::where('id', $event_detail_id)->firstOrFail());
         } catch (ModelNotFoundException $exception) {
             return response()
                 ->json(['message' => $exception->getMessage()])

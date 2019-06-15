@@ -1,10 +1,12 @@
 <?php
-namespace KW\Application\Controllers\Common\UserChild;
+namespace KW\Application\Controllers\User\UserChild;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use KW\Application\Requests\UserChild\User\UserChild as UserChildRequest;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use KW\Infrastructure\Eloquents\UserChild;
+use Carbon\Carbon;
 
 class UserChildBaseController extends Controller
 {
@@ -24,24 +26,20 @@ class UserChildBaseController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param UserChildRequest $request
      * @param UserChild $userChild
      */
-    public function postUserChildren(Request $request, UserChild $userChild)
+    public function postUserChildren(UserChildRequest $request, UserChild $userChild)
     {
-        $request->validate([
-            'icon'       => '',
-            'sex_id'     => 'required',
-            'first_kana' => 'required',
-            'last_kana'  => 'required',
-            'birth_day'  => 'required'
-        ]);
         $userChild->sex_id      = $request->json('sex_id');
         $userChild->icon        = $request->json('icon');
         $userChild->first_kana  = $request->json('first_kana');
         $userChild->last_kana   = $request->json('last_kana');
         $userChild->birth_day   = $request->json('birth_day');
         $userChild->save();
+
+        $user_parent_id = $request->json('user_parent_id');
+        $this->attachUserChildToUserParent($user_parent_id, $userChild);
     }
 
     /**
@@ -70,11 +68,11 @@ class UserChildBaseController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param UserChildRequest $request
      * @param $user_child_id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function putUserChild(Request $request, $user_child_id)
+    public function putUserChild(UserChildRequest $request, $user_child_id)
     {
         try {
             $userChild = UserChild::where('id', $user_child_id)->firstOrFail();
@@ -98,6 +96,17 @@ class UserChildBaseController extends Controller
      */
     public function deleteUserChild($user_child_id)
     {
-        UserChild::query()->where('id', '=', $user_child_id)->delete();
+        $userChild = UserChild::query()->where('id', '=', $user_child_id)->firstOrFail();
+        $userChild->userParents()->detach();
+        $userChild->delete();
+    }
+
+
+    public function attachUserChildToUserParent($user_parent_id, $userChild)
+    {
+        $userChild->userParents()->attach($user_parent_id, [
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now()
+        ]);
     }
 }

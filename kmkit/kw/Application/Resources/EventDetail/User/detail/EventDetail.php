@@ -5,6 +5,7 @@ namespace KW\Application\Resources\EventDetail\User\detail;
 use Illuminate\Http\Resources\Json\JsonResource;
 use KW\Application\Resources\EventDetail\User\detail\EventMaster as EventMasterResource;
 use KW\Application\Resources\EventDetail\User\detail\Tag as TagResource;
+use KW\Application\Resources\EventDetail\User\detail\Image as ImageResource;
 use KW\Application\Resources\EventDetail\User\detail\SchoolMaster as SchoolMasterResource;
 use KW\Application\Resources\EventDetail\User\detail\CategoryMaster as CategoryMasterResource;
 
@@ -20,19 +21,9 @@ class EventDetail extends JsonResource
             "id"               => $this->id,
             "title"            => $this->title,
             "detail"           => $this->detail,
-            "handing"          => $this->handing,
             "started_at"       => $this->started_at,
             "expired_at"       => $this->expired_at,
-            "capacity_members" => $this->capacity_members,
-            "event_minutes"    => $this->event_minutes,
-            "target_min_age"   => $this->target_min_age,
-            "target_max_age"   => $this->target_max_age,
-            "parent_attendant" => $this->parent_attendant,
-            "price"            => $this->price,
-            "cancel_deadline"  => $this->cancel_deadline,
-            "cancel_policy"    => $this->cancel_policy,
             "pub_state"        => $this->pub_state,
-            "arrived_at"       => $this->arrived_at,
             "zip_code1"        => $this->zip_code1,
             "zip_code2"        => $this->zip_code2,
             "state"            => $this->state,
@@ -45,7 +36,8 @@ class EventDetail extends JsonResource
             "event_master"     => new EventMasterResource($this->eventMaster),
             "school_master"    => SchoolMasterResource::collection($this->eventMaster->schoolMasters),
             "tag"              => TagResource::collection($this->tags),
-            "category"         => CategoryMasterResource::collection($this->eventMaster->categoryMasters)
+            "category"         => CategoryMasterResource::collection($this->eventMaster->categoryMasters),
+            "images"           => ImageResource::collection($this->images)
         ];
     }
 }

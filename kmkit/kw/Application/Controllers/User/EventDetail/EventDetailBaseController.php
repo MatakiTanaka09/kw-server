@@ -2,9 +2,8 @@
 namespace KW\Application\Controllers\User\EventDetail;
 
 use App\Http\Controllers\Controller;
-use KW\Application\Requests\EventDetail\EventDetail as EventDetailRequest;
 use KW\Domain\Models\EventDetail\EventDetailRepositoryInterface;
-use KW\Application\Resources\EventDetail\User\detail\EventDetail as EventDetailResource;
+use KW\Application\Resources\EventDetail\User\detail\EventDetail as EventDetailResourceDetail;
 
 class EventDetailBaseController extends Controller
 {
@@ -24,11 +23,11 @@ class EventDetailBaseController extends Controller
 
     /**
      * @param $eventDetailId
-     * @return \Illuminate\Support\Collection
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
     public function getEventDetail($eventDetailId)
     {
         $eventDetail = $this->eventDetailRepo->findById($eventDetailId);
-        return EventDetailResource::collection($eventDetail);
+        return EventDetailResourceDetail::collection($eventDetail);
     }
 }

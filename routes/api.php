@@ -44,24 +44,25 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
      */
     Route::group(["prefix" => "users"], function () {
         /**
-         * UserParent
+         * UserChild
          */
         Route::group(["prefix" => "user-parents"], function () {
-            Route::post("", 'KW\Application\Controllers\Common\UserParent\UserParentBaseController@postUserParent');
-            Route::get("/{user_parent_id}", 'KW\Application\Controllers\Common\UserParent\UserParentBaseController@getUserParent');
-            Route::put("/{user_parent_id}", 'KW\Application\Controllers\Common\UserParent\UserParentBaseController@putUserParent');
-            Route::delete("/{user_parent_id}", 'KW\Application\Controllers\Common\UserParent\UserParentBaseController@deleteUserParent');
-            Route::get("/{user_parent_id}/children", 'KW\Application\Controllers\Common\UserParent\UserParentBaseController@getUserParentsChildren');
+            Route::post("", 'KW\Application\Controllers\User\UserParent\UserParentBaseController@postUserParent');
+            Route::get("/{user_parent_id}", 'KW\Application\Controllers\User\UserParent\UserParentBaseController@getUserParent');
+            Route::put("/{user_parent_id}", 'KW\Application\Controllers\User\UserParent\UserParentBaseController@putUserParent');
+            Route::delete("/{user_parent_id}", 'KW\Application\Controllers\User\UserParent\UserParentBaseController@deleteUserParent');
+            Route::get("/{user_parent_id}/children", 'KW\Application\Controllers\User\UserParent\UserParentBaseController@getUserParentsChildren');
+            Route::get("/{user_parent_id}/books", 'KW\Application\Controllers\User\UserParent\UserParentBaseController@getUserParentsBooks');
         });
 
         /**
          * UserChild
          */
         Route::group(["prefix" => "user-children"], function () {
-            Route::post("", 'KW\Application\Controllers\Common\UserChild\UserChildBaseController@postUserChildren');
-            Route::get("/{user_child_id}", 'KW\Application\Controllers\Common\UserChild\UserChildBaseController@getUserChild');
-            Route::put("/{user_child_id}", 'KW\Application\Controllers\Common\UserChild\UserChildBaseController@putUserChild');
-            Route::delete("/{user_child_id}", 'KW\Application\Controllers\Common\UserChild\UserChildBaseController@deleteUserChild');
+            Route::post("", 'KW\Application\Controllers\User\UserChild\UserChildBaseController@postUserChildren');
+            Route::get("/{user_child_id}", 'KW\Application\Controllers\User\UserChild\UserChildBaseController@getUserChild');
+            Route::put("/{user_child_id}", 'KW\Application\Controllers\User\UserChild\UserChildBaseController@putUserChild');
+            Route::delete("/{user_child_id}", 'KW\Application\Controllers\User\UserChild\UserChildBaseController@deleteUserChild');
         });
 
         /**
@@ -86,8 +87,8 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
          * EventDetail
          */
         Route::group(["prefix" => "books"], function () {
-            Route::get("users/{user_parent_id}", 'KW\Application\Controllers\User\Book\BookBaseController@getBooks');
-            Route::put("/{book_id}", 'KW\Application\Controllers\Common\Book\BookBaseController@putBook');
+            Route::post("", 'KW\Application\Controllers\User\Book\BookBaseController@postBooks');
+            Route::put("/{book_id}", 'KW\Application\Controllers\User\Book\BookBaseController@putBook');
         });
 
 
@@ -95,26 +96,14 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
          * Search
          */
         Route::group(["prefix" => "search"], function () {
-            Route::get("/date", function(Request $request) {
-                $pattern = '/^([1-9][0-9]{3})-(0[1-9]{1}|1[0-2]{1})-(0[1-9]{1}|[1-2]{1}[0-9]{1}|3[0-1]{1})$/';
-                $q = $request->input('q');
-
-                // Simple Search
-                if(preg_match($pattern, $q)) {
-                    // EventDetailを検索する
-                    return "preg_match successfully!";
-                }
-                else {
-                    return explode(" ", $q);
-                }
-            });
-            Route::get("/age", function() {});
-            Route::get("/place", function() {});
+            Route::get("age", "KW\Application\Controllers\User\Search\Age\SearchAgeController@getEventDetailBySearchingAge");
+            Route::get("/place", "KW\Application\Controllers\User\Search\Place\SearchPlaceController@getEventDetailBySearchingPlace");
             Route::get("/price", function() {});
-            Route::get("/category", function() {});
+            Route::get("/category", "KW\Application\Controllers\User\Search\Category\SearchCategoryController@getEventDetailBySearchingCategory");
             Route::get("/tag", function() {});
-            Route::get("/school", function() {});
+            Route::get("/school", "KW\Application\Controllers\User\Search\School\SearchSchoolController@getEventDetailBySearchingSchool");
             Route::get("/review", function() {});
+            Route::get("/date", "KW\Application\Controllers\User\Search\Date\SearchDateController@getEventDetailBySearchingDate");
         });
     });
 
@@ -135,7 +124,7 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
      */
     Route::group(["prefix" => "kw"], function () {
         /**
-         * UserParent
+         * UserChild
          */
         Route::group(["prefix" => "user-parents"], function () {
             Route::get("", 'KW\Application\Controllers\Common\UserParent\UserParentBaseController@getUserParents');
@@ -596,10 +585,13 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
             Route::get("/{company_admin_master_id}/roles", function() {});
         });
 
-        Route::group(["prefix" => "event-school-masters"], function() {
-            Route::post("", function() {
+        Route::group(["prefix" => "uploads"], function() {
+            Route::post("", "KW\Application\Controllers\KW\EventDetail\UploadController@postEventDetailImage");
+        });
 
-            });
+        Route::group(["prefix" => "images-s3"], function() {
+            Route::get("", "KW\Application\Controllers\KW\EventDetail\UploadController@getEventDetailImage");
+            Route::delete("", "KW\Application\Controllers\KW\EventDetail\UploadController@deleteEventDetailImage");
         });
     });
 });
