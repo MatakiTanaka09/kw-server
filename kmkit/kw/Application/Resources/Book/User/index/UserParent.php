@@ -26,11 +26,7 @@ class UserParent extends JsonResource
             "state"=> $this->state,
             "city"=> $this->city,
             "address1"=> $this->address1,
-            "address2"=> $this->address2,
-            "event_detail"=> EventDetailResource::collection($this->books),
-//            "school_master" => SchoolMasterResource::collection($this->eventMaster->schoolMasters),
-//            "tag" => TagResource::collection($this->tags),
-//            "category" => CategoryMasterResource::collection($this->eventMaster->categoryMasters)
+            "address2"=> $this->address2
         ];
     }
 }

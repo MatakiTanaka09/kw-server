@@ -40,6 +40,7 @@ class BookBaseController extends Controller
     public function postBooks(BookRequest $request, Book $book)
     {
         $book->user_parent_id  = $request->json('user_parent_id');
+        $book->user_child_id  = $request->json('user_child_id');
         $book->event_detail_id = $request->json('event_detail_id');
         $book->status          = $request->json('status');
         $book->price           = $request->json('price');

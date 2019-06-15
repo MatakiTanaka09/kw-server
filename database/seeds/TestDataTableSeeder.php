@@ -59,7 +59,7 @@ class TestDataTableSeeder extends Seeder
                 $schoolMaster->images()->create(['url' => 'https://aws.s3....']);
             });
 
-        factory(EventMaster::class, 10)
+        factory(EventMaster::class, 5)
             ->create()
             ->each(function($eventMaster) {
 //                $eventMaster->categoryMasters()->save(factory(CategoryMaster::class)->make());
@@ -73,7 +73,7 @@ class TestDataTableSeeder extends Seeder
         $eventMasters = EventMaster::all();
         foreach ($schoolMasters as $schoolMaster) {
             $schoolMaster->eventMasters()->attach(
-                $eventMasters->random(rand(1,3))->pluck('id')->toArray()
+                $eventMasters->random(rand(1,2))->pluck('id')->toArray()
             );
         }
 
@@ -86,13 +86,16 @@ class TestDataTableSeeder extends Seeder
         factory(Tag::class, 10)->create();
         $tags = Tag::all();
         $eventDetails = EventDetail::all();
+        $userChildren = UserChild::all();
 
         foreach ($eventDetails as $eventDetail) {
+            $userParentId = $userParents->random(rand(1,2))->pluck('id')->toArray();
             $eventDetail->images()->create(['url' => 'https://aws.s3....']);
             $eventDetail->books()->attach(
-                $userParents->random(rand(1,3))->pluck('id')->toArray(),
+                $userParentId,
                 [
                     'id' => $this->faker->uuid,
+                    'user_child_id' => $userChildren->random()->id,
                     'status' => $this->faker->randomElement([0, 5, 9, 10]),
                     'price' => $this->faker->randomElement([1000, 1500, 1800, 2000, 2500])
                 ]

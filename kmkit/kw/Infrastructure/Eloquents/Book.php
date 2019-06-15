@@ -15,5 +15,5 @@ class Book extends PivotUuid
     /**
      * @var array
      */
-    protected $fillable = ['user_parent_id', 'event_detail_id'];
+    protected $fillable = ['user_parent_id', 'user_child_id', 'event_detail_id'];
 }

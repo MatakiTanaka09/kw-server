@@ -67,9 +67,9 @@ class UserParent extends BaseUuid
             EventDetail::class,
             'books'
         )
-            ->as('info')
+            ->as('book')
             ->using(Book::class)
-            ->withPivot(['status', 'price'])
+            ->withPivot('user_parent_id', 'user_child_id', 'event_detail_id')
             ->withTimestamps();
     }
 }

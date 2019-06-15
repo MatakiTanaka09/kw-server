@@ -4,7 +4,9 @@ namespace KW\Application\Controllers\User\UserParent;
 
 use App\Http\Controllers\Controller;
 use KW\Application\Requests\UserParent\User\UserParent as UserParentRequest;
+use KW\Application\Resources\Book\User\index\Book as BookTestResource;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use KW\Infrastructure\Eloquents\EventDetail;
 use KW\Infrastructure\Eloquents\UserParent;
 use Carbon\Carbon;
 
@@ -147,19 +149,17 @@ class UserParentBaseController extends Controller
 
     /**
      * @param $user_parent_id
-     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Http\JsonResponse
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
     public function getUserParentsBooks($user_parent_id)
     {
         try {
-            return UserParent::findOrFail($user_parent_id)
-                ->books()
-                ->get();
+            $bookedEventDetail = EventDetail::whereHas("books", function($query) use($user_parent_id) {
+                $query->where("user_parent_id", "=", $user_parent_id);
+            })->get();
+            return BookTestResource::collection($bookedEventDetail);
         } catch (ModelNotFoundException $exception) {
-            return response()
-                ->json(['message' => $exception->getMessage()])
-                ->header('Content-Type', 'application/json')
-                ->setStatusCode(404);
+            return UserParentBaseController::errorMessage($exception);
         }
     }
 
@@ -174,5 +174,21 @@ class UserParentBaseController extends Controller
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now()
         ]);
+    }
+
+    private static function receiveResponse($result)
+    {
+        return response()->json([
+            'result' => 'ok',
+            $result
+        ], Response::HTTP_OK);
+    }
+
+    private static function errorMessage($exception)
+    {
+        return response()
+            ->json(['message' => $exception->getMessage()])
+            ->header('Content-Type', 'application/json')
+            ->setStatusCode(Response::HTTP_NOT_FOUND);
     }
 }

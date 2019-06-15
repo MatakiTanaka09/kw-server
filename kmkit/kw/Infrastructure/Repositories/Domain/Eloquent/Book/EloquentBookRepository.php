@@ -32,6 +32,7 @@ final class EloquentBookRepository implements BookRepositoryInterface
         return response()->json($this->eloquent::query()->select([
             'id',
             'user_parent_id',
+            'user_child_id',
             'event_detail_id',
             'status',
             'price'

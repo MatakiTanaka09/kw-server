@@ -3,7 +3,7 @@
 namespace KW\Application\Controllers\KW\Book;
 
 use App\Http\Controllers\Controller;
-use KW\Application\Requests\Book\EventDetail as BookRequest;
+use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use KW\Infrastructure\Eloquents\Book;
@@ -33,12 +33,13 @@ class BookBaseController extends Controller
     }
 
     /**
-     * @param BookRequest $request
+     * @param Request $request
      * @param Book $book
      */
-    public function postBooks(BookRequest $request, Book $book)
+    public function postBooks(Request $request, Book $book)
     {
         $book->user_parent_id  = $request->json('user_parent_id');
+        $book->user_child_id   = $request->json('user_child_id');
         $book->event_detail_id = $request->json('event_detail_id');
         $book->status          = $request->json('status');
         $book->price           = $request->json('price');
@@ -56,15 +57,16 @@ class BookBaseController extends Controller
     }
 
     /**
-     * @param BookRequest $request
+     * @param Request $request
      * @param $book_id
      * @return JsonResponse
      */
-    public function putBook(BookRequest $request, $book_id)
+    public function putBook(Request $request, $book_id)
     {
         try {
             $book = Book::where('id', $book_id)->firstOrFail();
             $book->user_parent_id  = $request->json('user_parent_id');
+            $book->user_child_id   = $request->json('user_child_id');
             $book->event_detail_id = $request->json('event_detail_id');
             $book->status          = $request->json('status');
             $book->price           = $request->json('price');
@@ -92,9 +94,9 @@ class BookBaseController extends Controller
      */
     public function getBookByUserParentId($user_parent_id)
     {
-            $user_parent = $this->bookRepo->findByUserParentId($user_parent_id);
-            $eventDetail = $user_parent->books()->get();
-            return BookResource::collection($eventDetail);
+        $user_parent = $this->bookRepo->findByUserParentId($user_parent_id);
+        $eventDetail = $user_parent->books()->get();
+        return BookResource::collection($eventDetail);
     }
 
     /**

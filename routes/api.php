@@ -283,11 +283,11 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
          * EventDetail
          */
         Route::group(["prefix" => "books"], function () {
-            Route::get("", 'KW\Application\Controllers\Common\Book\BookBaseController@getBooks');
-            Route::post("", 'KW\Application\Controllers\Common\Book\BookBaseController@postBooks');
-            Route::get("/{book_id}", 'KW\Application\Controllers\Common\Book\BookBaseController@getBook');
-            Route::put("/{book_id}", 'KW\Application\Controllers\Common\Book\BookBaseController@putBook');
-            Route::delete("/{book_id}", 'KW\Application\Controllers\Common\Book\BookBaseController@deleteBook');
+            Route::get("", 'KW\Application\Controllers\KW\Book\BookBaseController@getBooks');
+            Route::post("", 'KW\Application\Controllers\KW\Book\BookBaseController@postBooks');
+            Route::get("/{book_id}", 'KW\Application\Controllers\KW\Book\BookBaseController@getBook');
+            Route::put("/{book_id}", 'KW\Application\Controllers\KW\Book\BookBaseController@putBook');
+            Route::delete("/{book_id}", 'KW\Application\Controllers\KW\Book\BookBaseController@deleteBook');
 
             Route::get("/users/{user_parent_id}", 'KW\Application\Controllers\KW\Book\BookBaseController@getBookByUserParentId');
             Route::get("/event-details/{event_detail_id}", 'KW\Application\Controllers\KW\Book\BookBaseController@getBookByEventDetailId');

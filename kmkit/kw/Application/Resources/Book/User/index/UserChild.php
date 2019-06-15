@@ -4,7 +4,7 @@ namespace KW\Application\Resources\Book\User\index;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class SchoolMaster extends JsonResource
+class UserChild extends JsonResource
 {
     /**
      * @param \Illuminate\Http\Request $request
@@ -14,11 +14,10 @@ class SchoolMaster extends JsonResource
     {
         return [
             "id" => $this->id,
-            "name"=> $this->name,
-            "email"=> $this->email,
-            "url"=> $this->url,
-            "tel"=> $this->tel,
-            "icon"=> $this->icon
+            "sex_id" => $this->sex_id,
+            "icon" => $this->icon,
+            "first_kana" => $this->first_kana,
+            "last_kana" => $this->last_kana
         ];
     }
 }
