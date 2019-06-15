@@ -40,6 +40,20 @@ class EventMaster extends BaseUuid
         );
     }
 
+    public function placeMasters()
+    {
+        return $this->morphToMany(
+            PlaceMaster::class,
+            'target',
+            'place_relations',
+            'target_id',
+            'place_master_id',
+            'id',
+            'id',
+            false
+        );
+    }
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */

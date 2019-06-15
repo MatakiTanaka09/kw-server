@@ -36,7 +36,33 @@ class SchoolMaster extends BaseUuid
      */
     public function categoryMasters()
     {
-        return $this->morphToMany(CategoryMaster::class, 'target', 'category_relations');
+        return $this->morphToMany(
+            CategoryMaster::class,
+            'target',
+            'category_relations',
+            'target_id',
+            'category_master_id',
+            'id',
+            'id',
+            false
+        );
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
+     */
+    public function placeMasters()
+    {
+        return $this->morphToMany(
+            PlaceMaster::class,
+            'target',
+            'place_relations',
+            'target_id',
+            'place_master_id',
+            'id',
+            'id',
+            false
+        );
     }
 
     /**
