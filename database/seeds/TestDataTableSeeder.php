@@ -62,6 +62,7 @@ class TestDataTableSeeder extends Seeder
         factory(EventMaster::class, 5)
             ->create()
             ->each(function($eventMaster) {
+                $eventMaster->images()->create(['url' => 'https://aws.s3....']);
 //                $eventMaster->categoryMasters()->save(factory(CategoryMaster::class)->make());
                 $eventMaster->eventDetails()->save(factory(EventDetail::class)->make());
 //                $eventMaster->schoolMasters()->attach(
@@ -90,7 +91,7 @@ class TestDataTableSeeder extends Seeder
 
         foreach ($eventDetails as $eventDetail) {
             $userParentId = $userParents->random(rand(1,2))->pluck('id')->toArray();
-            $eventDetail->images()->create(['url' => 'https://aws.s3....']);
+
             $eventDetail->books()->attach(
                 $userParentId,
                 [

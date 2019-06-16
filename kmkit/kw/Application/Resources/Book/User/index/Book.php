@@ -24,7 +24,6 @@ class Book extends JsonResource
             "started_at"       => $this->started_at,
             "expired_at"       => $this->expired_at,
             "image"            => ImageResource::collection($this->images),
-            "user_child"       => UserChildResource::collection($this->books),
             "event_master"     => new EventMasterResource($this->eventMaster),
             "school_master"    => SchoolMasterResource::collection($this->eventMaster->schoolMasters),
             "tag"              => TagResource::collection($this->tags),

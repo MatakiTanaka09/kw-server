@@ -1,6 +1,6 @@
 <?php
 
-namespace KW\Application\Requests\EventDetail;
+namespace KW\Application\Requests\EventDetail\KW;
 
 use KW\Application\Requests\ValidationErrorResponseCustomizer;
 use Illuminate\Foundation\Http\FormRequest;

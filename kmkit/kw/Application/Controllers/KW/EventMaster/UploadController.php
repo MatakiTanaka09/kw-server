@@ -1,11 +1,10 @@
 <?php
 
-namespace KW\Application\Controllers\KW\EventDetail;
+namespace KW\Application\Controllers\KW\EventMaster;
 
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Controller;
 use KW\Application\Requests\EventDetail\KW\Upload as Request;
-use KW\Infrastructure\Eloquents\EventDetail;
 
 class UploadController extends Controller
 {

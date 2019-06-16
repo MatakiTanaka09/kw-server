@@ -5,40 +5,22 @@ namespace KW\Application\Controllers\User\UserParent;
 use App\Http\Controllers\Controller;
 use KW\Application\Requests\UserParent\User\UserParent as UserParentRequest;
 use KW\Application\Resources\Book\User\index\Book as BookTestResource;
+use KW\Application\Resources\UserAccountInfo\User\UserParent\UserParent as UserParentResource;
+use KW\Application\Resources\UserAccountInfo\User\UserParent\UserChild as UserChildResource;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use KW\Infrastructure\Eloquents\EventDetail;
 use KW\Infrastructure\Eloquents\UserParent;
+use Illuminate\Http\Response;
 use Carbon\Carbon;
+use DB;
+use KW\Infrastructure\Eloquents\UserChild;
 
 class UserParentBaseController extends Controller
 {
     /**
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function getUserParents()
-    {
-        return response()->json(UserParent::query()->select([
-            'id',
-            'user_master_id',
-            'sex_id',
-            'icon',
-            'full_name',
-            'full_kana',
-            'tel',
-            'zip_code1',
-            'zip_code2',
-            'state',
-            'city',
-            'address1',
-            'address2',
-            'created_at',
-            'updated_at'
-        ])->get());
-    }
-
-    /**
      * @param UserParentRequest $request
      * @param UserParent $userParent
+     * @return \Illuminate\Http\JsonResponse
      */
     public function postUserParent(UserParentRequest $request, UserParent $userParent)
     {
@@ -55,6 +37,8 @@ class UserParentBaseController extends Controller
         $userParent->address1       = $request->json('address1');
         $userParent->address2       = $request->json('address2');
         $userParent->save();
+
+        return UserParentBaseController::receiveResponse($userParent);
     }
 
     /**
@@ -131,14 +115,14 @@ class UserParentBaseController extends Controller
 
     /**
      * @param $user_parent_id
-     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Http\JsonResponse
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
     public function getUserParentsChildren($user_parent_id)
     {
         try {
-            return UserParent::findOrFail($user_parent_id)
+            return UserChildResource::collection(UserParent::findOrFail($user_parent_id)
                 ->userChildren()
-                ->get();
+                ->get());
         } catch (ModelNotFoundException $exception) {
             return response()
                 ->json(['message' => $exception->getMessage()])
@@ -147,17 +131,35 @@ class UserParentBaseController extends Controller
         }
     }
 
-    /**
-     * @param $user_parent_id
-     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\AnonymousResourceCollection
-     */
     public function getUserParentsBooks($user_parent_id)
     {
         try {
-            $bookedEventDetail = EventDetail::whereHas("books", function($query) use($user_parent_id) {
-                $query->where("user_parent_id", "=", $user_parent_id);
+//            $userParent = UserParent::findOrFail($user_parent_id)->books()->get();
+//            $eventDetail = UserParent::with("userChildren")
+//                ->whereHas("books")
+//                ->get();
+//            return $userParent;
+//            return DB::table("user_parents")
+//                ->join("books", function($join) {
+//                    $join->on("user_parents.id", "=", "books.user_parent_id");
+//                })
+//                ->join("child_parents", function($join) {
+//                    $join->on("user_parents.id", "=", "child_parents.user_parent_id");
+//                })
+//                ->get();
+//            return $eventDetail = SchoolMaster::findOrFail("a4bb4610-8f4a-11e9-a311-29b84412300c")->books()->get();
+            $userParents = UserParent::findOrFail($user_parent_id)->books()->get();
+            foreach($userParents as $userParent) {
+                $user_child_id = $userParent->book->user_child_id;
+                $array = array_collapse(UserChild::where("id", "=", $user_child_id)->get());
+            }
+            return $array;
+//            $test = $eventDetail->books()->get();
+//            return BookTestResource::collection($eventDetail);
+
+            return EventDetail::whereHas("books", function($query) {
+                $query->where("pub_state", "=", 0);
             })->get();
-            return BookTestResource::collection($bookedEventDetail);
         } catch (ModelNotFoundException $exception) {
             return UserParentBaseController::errorMessage($exception);
         }
@@ -180,7 +182,7 @@ class UserParentBaseController extends Controller
     {
         return response()->json([
             'result' => 'ok',
-            $result
+            'data'   => $result
         ], Response::HTTP_OK);
     }
 

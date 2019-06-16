@@ -30,7 +30,7 @@ class SearchAgeController extends Controller
             return response()
                 ->json(['message' => "error"])
                 ->header('Content-Type', 'application/json')
-                ->setStatusCode(404);;
+                ->setStatusCode(404);
         }
     }
 

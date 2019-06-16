@@ -2,7 +2,9 @@
 
 namespace KW\Infrastructure\Eloquents;
 
-class ChildParent extends AppEloquent
+use Illuminate\Database\Eloquent\Relations\Pivot;
+
+class ChildParent extends Pivot
 {
     /**
      * @var string

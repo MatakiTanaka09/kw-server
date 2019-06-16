@@ -54,7 +54,7 @@ class UserParent extends BaseUuid
         )
             ->as('review')
             ->using(Review::class)
-            ->withPivot(['star_amount', 'comment'])
+            ->withPivot('star_amount', 'comment')
             ->withTimestamps();
     }
 

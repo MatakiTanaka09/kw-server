@@ -68,4 +68,12 @@ class EventMaster extends BaseUuid
             ->withPivot('id')
             ->withTimestamps();
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     */
+    public function images()
+    {
+        return $this->morphMany(Image::class, 'imageable');
+    }
 }

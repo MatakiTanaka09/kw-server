@@ -33,10 +33,10 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
     Route::post("mail/test", function() {
         $userMaster = \KW\Infrastructure\Eloquents\UserMaster::find(1);
         $book = \KW\Infrastructure\Eloquents\Book::findOrFail('2600994d-5906-36cc-880e-52b9bf16dd43');
-//        $userMaster->notify(new \KW\Infrastructure\Apis\Notifications\EventDetail\BookReceived($userMaster));
+//        $userMaster->notify(new \KW\Infrastructure\Apis\Notifications\SchoolMaster\BookReceived($userMaster));
         $userMaster->notify(new \KW\Infrastructure\Apis\Notifications\Book\BookSuccessed($userMaster));
-//        $book->notify(new \KW\Infrastructure\Apis\Notifications\EventDetail\BookCanceled($book));
-//        $userMaster->notify(new \KW\Infrastructure\Apis\Notifications\EventDetail\BookFailed($userMaster));
+//        $book->notify(new \KW\Infrastructure\Apis\Notifications\SchoolMaster\BookCanceled($book));
+//        $userMaster->notify(new \KW\Infrastructure\Apis\Notifications\SchoolMaster\BookFailed($userMaster));
     });
 
     /**
@@ -77,14 +77,14 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
         });
 
         /**
-         * EventDetail
+         * SchoolMaster
          */
         Route::group(["prefix" => "event-details"], function () {
             Route::get("/{event_detail_id}", 'KW\Application\Controllers\User\EventDetail\EventDetailBaseController@getEventDetail');
         });
 
         /**
-         * EventDetail
+         * SchoolMaster
          */
         Route::group(["prefix" => "books"], function () {
             Route::post("", 'KW\Application\Controllers\User\Book\BookBaseController@postBooks');
@@ -186,19 +186,12 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
             Route::post("", 'KW\Application\Controllers\KW\EventMaster\EventMasterBaseController@postEventMasters');
             Route::get("/{event_master_id}", 'KW\Application\Controllers\KW\EventMaster\EventMasterBaseController@getEventMaster');
             Route::put("/{event_master_id}", 'KW\Application\Controllers\KW\EventMaster\EventMasterBaseController@putEventMaster');
-//            Route::delete("/{event_master_id}", 'KW\Application\Controllers\KW\EventMaster\EventMasterBaseController@deleteEventMaster');
+            Route::post("/{event_master_id}/images", 'KW\Application\Controllers\KW\EventMaster\EventMasterBaseController@attachEventMasterToImage');
             Route::delete("/{event_master_id}", 'KW\Application\Controllers\KW\EventMaster\EventMasterBaseController@deleteEventMaster');
-
-            /**
-             * Relation API 2019-05-22 --
-             */
-            Route::post("/school-masters", 'KW\Application\Controllers\KW\EventMaster\EventMasterBaseController@attachEventSchoolMaster');
-            Route::post("/school-masters/relations", 'KW\Application\Controllers\KW\EventMaster\EventMasterBaseController@detachEventMasterBySchoolMasterId');
-            Route::post("/school-masters/detach", 'KW\Application\Controllers\KW\EventMaster\EventMasterBaseController@detachSchoolMasterByEventMasterId');
         });
 
         /**
-         * EventDetail
+         * SchoolMaster
          */
         Route::group(["prefix" => "event-details"], function () {
             Route::get("", 'KW\Application\Controllers\KW\EventDetail\EventDetailBaseController@getEventDetails');
@@ -280,7 +273,7 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
         });
 
         /**
-         * EventDetail
+         * SchoolMaster
          */
         Route::group(["prefix" => "books"], function () {
             Route::get("", 'KW\Application\Controllers\KW\Book\BookBaseController@getBooks');

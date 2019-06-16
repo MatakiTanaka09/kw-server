@@ -2,15 +2,29 @@
 namespace KW\Application\Controllers\KW\EventMaster;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use KW\Application\Requests\EventMaster\KW\EventMaster as EventMasterRequest;
+use Illuminate\Http\Response;
+use KW\Application\Requests\EventDetail\KW\Upload as UploadRequest;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use KW\Infrastructure\Eloquents\EventMaster;
-use KW\Infrastructure\Eloquents\SchoolMaster;
-use Illuminate\Http\JsonResponse;
 use Carbon\Carbon;
 
 class EventMasterBaseController extends Controller
 {
+    /**
+     * @var EventDetailRepositoryInterface
+     */
+    private $upload;
+
+    /**
+     * EventMasterBaseController constructor.
+     * @param UploadController $upload
+     */
+    public function __construct(UploadController $upload)
+    {
+        $this->upload = $upload;
+    }
+
     /**
      * @return \Illuminate\Http\JsonResponse
      */
@@ -41,33 +55,12 @@ class EventMasterBaseController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param EventMasterRequest $request
      * @param EventMaster $eventMaster
      * @return string
      */
-    public function postEventMasters(Request $request, EventMaster $eventMaster)
+    public function postEventMasters(EventMasterRequest $request, EventMaster $eventMaster)
     {
-        $request->validate([
-            'title'            => 'required',
-            'detail'           => 'required',
-            'handing'          => 'required',
-            'event_minutes'    => 'required',
-            'target_min_age'   => 'required',
-            'target_max_age'   => 'required',
-            'parent_attendant' => 'required',
-            'price'            => 'required',
-            'cancel_policy'    => 'required',
-            'pub_state'        => 'required',
-            'arrived_at'       => 'required',
-            'zip_code1'        => 'required',
-            'zip_code2'        => 'required',
-            'state'            => 'required',
-            'city'             => 'required',
-            'address1'         => 'required',
-            'address2'         => 'required',
-            'longitude'        => 'required',
-            'latitude'         => 'required'
-        ]);
         $eventMaster->title            = $request->json('title');
         $eventMaster->detail           = $request->json('detail');
         $eventMaster->handing          = $request->json('handing');
@@ -89,14 +82,9 @@ class EventMasterBaseController extends Controller
         $eventMaster->latitude         = $request->json('latitude');
         $eventMaster->save();
 
-        $this->attachEventMasterToSchoolMaster($request, $eventMaster);
-        $this->attachEventMasterToCategoryMaster($request, $eventMaster);
-
-        return new JsonResponse(
-            [
-                'success' => "OK"
-            ],
-            200);
+        EventMasterBaseController::attachEventMasterToSchoolMaster($request, $eventMaster);
+        EventMasterBaseController::attachEventMasterToCategoryMaster($request, $eventMaster);
+        return EventMasterBaseController::receiveResponse($eventMaster);
     }
 
     /**
@@ -131,19 +119,16 @@ class EventMasterBaseController extends Controller
                 ])
                 ->firstOrFail();
         } catch (ModelNotFoundException $exception) {
-            return response()
-                ->json(['message' => $exception->getMessage()])
-                ->header('Content-Type', 'application/json')
-                ->setStatusCode(404);
+            return EventMasterBaseController::errorMessage($exception);
         }
     }
 
     /**
-     * @param Request $request
+     * @param EventMasterRequest $request
      * @param $event_master_id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function putEventMaster(Request $request, $event_master_id)
+    public function putEventMaster(EventMasterRequest $request, $event_master_id)
     {
         try {
             $eventMaster = EventMaster::where('id', $event_master_id)->firstOrFail();
@@ -169,26 +154,42 @@ class EventMasterBaseController extends Controller
             $eventMaster->save();
 
             $this->updatePivotEventMasterToCategoryMaster($request, $eventMaster);
+
+            return EventMasterBaseController::receiveResponse($eventMaster);
         } catch (ModelNotFoundException $exception) {
-            return response()
-                ->json(['message' => $exception->getMessage()])
-                ->header('Content-Type', 'application/json')
-                ->setStatusCode(404);
+            return EventMasterBaseController::errorMessage($exception);
         }
     }
 
     /**
      * @param $event_master_id
-     * @throws \Exception
+     * @return \Illuminate\Http\JsonResponse
      */
     public function deleteEventMaster($event_master_id)
     {
         $eventMaster = EventMaster::where('id', $event_master_id)->firstOrFail();
         $eventMaster->schoolMasters()->detach();
+        $eventMaster->categoryMasters()->detach();
+        $eventMaster->images()->delete();
         $eventMaster->delete();
+        return EventMasterBaseController::receiveResponse($eventMaster);
     }
 
-    public function attachEventMasterToSchoolMaster($request, $eventMaster)
+    public function attachEventMasterToImage(UploadRequest $request, $event_master_id)
+    {
+        $eventMaster = EventMaster::where('id', $event_master_id)->firstOrFail();
+        $url = $this->upload->postEventDetailImage($request);
+        foreach ($url as $u) {
+            $eventMaster->images()->create([
+                "url" => $u,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
+            ]);
+        }
+        return EventMasterBaseController::receiveResponse($url);
+    }
+
+    private static function attachEventMasterToSchoolMaster($request, $eventMaster)
     {
         $school_master_id = $request->school_master_id;
         $eventMaster->schoolMasters()->attach($school_master_id, [
@@ -197,7 +198,7 @@ class EventMasterBaseController extends Controller
         ]);
     }
 
-    public function attachEventMasterToCategoryMaster($request, $eventMaster)
+    private static function attachEventMasterToCategoryMaster($request, $eventMaster)
     {
         $category_master_id = $request->category_master_id;
         $eventMaster->categoryMasters()->attach($category_master_id, [
@@ -214,5 +215,21 @@ class EventMasterBaseController extends Controller
             'category_master_id' => $category_master_id,
             'updated_at'         => Carbon::now()
         ]);
+    }
+
+    private static function receiveResponse($result)
+    {
+        return response()->json([
+            'result' => 'ok',
+            'data'   => $result
+        ], Response::HTTP_OK);
+    }
+
+    private static function errorMessage($exception)
+    {
+        return response()
+            ->json(['message' => $exception->getMessage()])
+            ->header('Content-Type', 'application/json')
+            ->setStatusCode(Response::HTTP_NOT_FOUND);
     }
 }

@@ -3,12 +3,27 @@
 namespace KW\Application\Controllers\Common\SchoolMaster;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use KW\Application\Requests\SchoolMaster\KW\SchoolMaster as SchoolMasterRequest;
+use KW\Application\Requests\SchoolMaster\KW\Upload as UploadRequest;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use KW\Infrastructure\Eloquents\SchoolMaster;
 
 class SchoolMasterBaseController extends Controller
 {
+    /**
+     * @var EventDetailRepositoryInterface
+     */
+    private $upload;
+
+    /**
+     * SchoolMasterBaseController constructor.
+     * @param UploadController $upload
+     */
+    public function __construct(UploadController $upload)
+    {
+        $this->upload = $upload;
+    }
+
     /**
      * @return \Illuminate\Http\JsonResponse
      */
@@ -34,27 +49,12 @@ class SchoolMasterBaseController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param SchoolMasterRequest $request
      * @param SchoolMaster $schoolMaster
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function postSchoolMasters(Request $request, SchoolMaster $schoolMaster)
+    public function postSchoolMasters(SchoolMasterRequest $request, SchoolMaster $schoolMaster)
     {
-        $request->validate([
-            'name'      => 'required',
-            'detail'    => 'required',
-            'email'     => 'required',
-            'url'       => 'required',
-            'tel'       => 'required',
-            'icon'      => 'required',
-            'zip_code1' => 'required',
-            'zip_code2' => 'required',
-            'state'     => 'required',
-            'city'      => 'required',
-            'address1'  => 'required',
-            'address2'  => 'required',
-            'longitude' => 'required',
-            'latitude'  => 'required',
-        ]);
         $schoolMaster->name      = $request->json('name');
         $schoolMaster->detail    = $request->json('detail');
         $schoolMaster->email     = $request->json('email');
@@ -70,6 +70,8 @@ class SchoolMasterBaseController extends Controller
         $schoolMaster->longitude = $request->json('longitude');
         $schoolMaster->latitude  = $request->json('latitude');
         $schoolMaster->save();
+
+        return SchoolMasterBaseController::receiveResponse($schoolMaster);
     }
 
     /**
@@ -98,19 +100,16 @@ class SchoolMasterBaseController extends Controller
                     'latitude'
                 ])->firstOrFail();
         } catch (ModelNotFoundException $exception) {
-            return response()
-                ->json(['message' => $exception->getMessage()])
-                ->header('Content-Type', 'application/json')
-                ->setStatusCode(404);
+            return SchoolMasterBaseController::errorMessage($exception);
         }
     }
 
     /**
-     * @param Request $request
+     * @param SchoolMasterRequest $request
      * @param $school_master_id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function putSchoolMaster(Request $request, $school_master_id)
+    public function putSchoolMaster(SchoolMasterRequest $request, $school_master_id)
     {
         try {
             $schoolMaster = SchoolMaster::where('id', $school_master_id)->firstOrFail();
@@ -129,11 +128,10 @@ class SchoolMasterBaseController extends Controller
             $schoolMaster->longitude = $request->json('longitude');
             $schoolMaster->latitude  = $request->json('latitude');
             $schoolMaster->save();
+
+            return SchoolMasterBaseController::receiveResponse($schoolMaster);
         } catch (ModelNotFoundException $exception) {
-            return response()
-                ->json(['message' => $exception->getMessage()])
-                ->header('Content-Type', 'application/json')
-                ->setStatusCode(404);
+            return SchoolMasterBaseController::errorMessage($exception);
         }
     }
 
@@ -144,5 +142,35 @@ class SchoolMasterBaseController extends Controller
     public function deleteSchoolMaster($school_master_id)
     {
         SchoolMaster::query()->where('id', '=', $school_master_id)->delete();
+    }
+
+    public function attachSchoolMasterToImage(UploadRequest $request, $event_master_id)
+    {
+        $eventMaster = EventMaster::where('id', $event_master_id)->firstOrFail();
+        $url = $this->upload->postEventDetailImage($request);
+        foreach ($url as $u) {
+            $eventMaster->images()->create([
+                "url" => $u,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
+            ]);
+        }
+        return SchoolMasterBaseController::receiveResponse($url);
+    }
+
+    private static function receiveResponse($result)
+    {
+        return response()->json([
+            'result' => 'ok',
+            'data'   => $result
+        ], Response::HTTP_OK);
+    }
+
+    private static function errorMessage($exception)
+    {
+        return response()
+            ->json(['message' => $exception->getMessage()])
+            ->header('Content-Type', 'application/json')
+            ->setStatusCode(Response::HTTP_NOT_FOUND);
     }
 }

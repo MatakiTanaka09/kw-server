@@ -29,7 +29,7 @@ class EventPrBaseController extends Controller
         $request->validate([
             'pr' => 'required'
         ]);
-        $eventPr->pr         = $request->json('pr');
+        $eventPr->pr = $request->json('pr');
         $eventPr->save();
     }
 

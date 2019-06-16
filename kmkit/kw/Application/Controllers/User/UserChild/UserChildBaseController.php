@@ -2,7 +2,7 @@
 namespace KW\Application\Controllers\User\UserChild;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use KW\Application\Requests\UserChild\User\UserChild as UserChildRequest;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use KW\Infrastructure\Eloquents\UserChild;
@@ -28,6 +28,7 @@ class UserChildBaseController extends Controller
     /**
      * @param UserChildRequest $request
      * @param UserChild $userChild
+     * @return \Illuminate\Http\JsonResponse
      */
     public function postUserChildren(UserChildRequest $request, UserChild $userChild)
     {
@@ -40,6 +41,7 @@ class UserChildBaseController extends Controller
 
         $user_parent_id = $request->json('user_parent_id');
         $this->attachUserChildToUserParent($user_parent_id, $userChild);
+        return UserChildBaseController::receiveResponse($userChild);
     }
 
     /**
@@ -60,10 +62,7 @@ class UserChildBaseController extends Controller
                 ])
                 ->firstOrFail();
         } catch (ModelNotFoundException $exception) {
-            return response()
-                ->json(['message' => $exception->getMessage()])
-                ->header('Content-Type', 'application/json')
-                ->setStatusCode(404);
+            return UserChildBaseController::errorMessage($exception);
         }
     }
 
@@ -82,11 +81,9 @@ class UserChildBaseController extends Controller
             $userChild->last_kana  = $request->json('last_kana');
             $userChild->birth_day  = $request->json('birth_day');
             $userChild->save();
+            return UserChildBaseController::receiveResponse($userChild);
         } catch (ModelNotFoundException $exception) {
-            return response()
-                ->json(['message' => $exception->getMessage()])
-                ->header('Content-Type', 'application/json')
-                ->setStatusCode(404);
+            return UserChildBaseController::errorMessage($exception);
         }
     }
 
@@ -108,5 +105,21 @@ class UserChildBaseController extends Controller
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now()
         ]);
+    }
+
+    private static function receiveResponse($result)
+    {
+        return response()->json([
+            'result' => 'ok',
+            'data'   => $result
+        ], Response::HTTP_OK);
+    }
+
+    private static function errorMessage($exception)
+    {
+        return response()
+            ->json(['message' => $exception->getMessage()])
+            ->header('Content-Type', 'application/json')
+            ->setStatusCode(Response::HTTP_NOT_FOUND);
     }
 }
