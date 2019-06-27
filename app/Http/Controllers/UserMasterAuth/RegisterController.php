@@ -1,8 +1,8 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Http\Controllers\UserMasterAuth;
 
-use App\Mail\RegisteredMail;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -84,6 +84,7 @@ class RegisterController extends Controller
         }
 
         event(new Registered($userMaster = $this->create($request->all())));
+//        \Mail::to($userMaster)->queue(new \App\Mail\User\Registered($userMaster));
 
         return new JsonResponse($userMaster);
     }

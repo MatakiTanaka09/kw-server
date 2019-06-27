@@ -3,12 +3,16 @@
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use KW\Infrastructure\Eloquents\UserParent;
+use KW\Infrastructure\Eloquents\ChildParent;
 use KW\Infrastructure\Eloquents\EventDetail;
 use KW\Infrastructure\Eloquents\Tag;
 use KW\Infrastructure\Eloquents\Image;
 use KW\Infrastructure\Eloquents\EventMaster;
 use KW\Infrastructure\Eloquents\EventSchoolMaster;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use KW\Application\Resources\Book\KW\detail\Book as BookResource;
+use KW\Application\Resources\Book\User\index\Book as BookIndexResource;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -26,31 +30,39 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
     /**
      * recommends, display api
      */
-
+    Route::post("mail/test", function() {
+        $userMaster = \KW\Infrastructure\Eloquents\UserMaster::find(1);
+        $book = \KW\Infrastructure\Eloquents\Book::findOrFail('2600994d-5906-36cc-880e-52b9bf16dd43');
+//        $userMaster->notify(new \KW\Infrastructure\Apis\Notifications\SchoolMaster\BookReceived($userMaster));
+        $userMaster->notify(new \KW\Infrastructure\Apis\Notifications\Book\BookSuccessed($userMaster));
+//        $book->notify(new \KW\Infrastructure\Apis\Notifications\SchoolMaster\BookCanceled($book));
+//        $userMaster->notify(new \KW\Infrastructure\Apis\Notifications\SchoolMaster\BookFailed($userMaster));
+    });
 
     /**
      * users api
      */
     Route::group(["prefix" => "users"], function () {
         /**
-         * UserParent
+         * UserChild
          */
         Route::group(["prefix" => "user-parents"], function () {
-            Route::post("", 'KW\Application\Controllers\Common\UserParent\UserParentBaseController@postUserParent');
-            Route::get("/{user_parent_id}", 'KW\Application\Controllers\Common\UserParent\UserParentBaseController@getUserParent');
-            Route::put("/{user_parent_id}", 'KW\Application\Controllers\Common\UserParent\UserParentBaseController@putUserParent');
-            Route::delete("/{user_parent_id}", 'KW\Application\Controllers\Common\UserParent\UserParentBaseController@deleteUserParent');
-            Route::get("/{user_parent_id}/children", 'KW\Application\Controllers\Common\UserParent\UserParentBaseController@getUserParentsChildren');
+            Route::post("", 'KW\Application\Controllers\User\UserParent\UserAccountController@postUserAccount');
+            Route::get("/{user_parent_id}", 'KW\Application\Controllers\User\UserParent\UserParentBaseController@getUserParent');
+            Route::put("/{user_parent_id}", 'KW\Application\Controllers\User\UserParent\UserParentBaseController@putUserParent');
+            Route::delete("/{user_parent_id}", 'KW\Application\Controllers\User\UserParent\UserParentBaseController@deleteUserParent');
+            Route::get("/{user_parent_id}/children", 'KW\Application\Controllers\User\UserParent\UserParentBaseController@getUserParentsChildren');
+            Route::get("/{user_parent_id}/books", 'KW\Application\Controllers\User\UserParent\UserParentBaseController@getUserParentsBooks');
         });
 
         /**
          * UserChild
          */
         Route::group(["prefix" => "user-children"], function () {
-            Route::post("", 'KW\Application\Controllers\Common\UserChild\UserChildBaseController@postUserChildren');
-            Route::get("/{user_child_id}", 'KW\Application\Controllers\Common\UserChild\UserChildBaseController@getUserChild');
-            Route::put("/{user_child_id}", 'KW\Application\Controllers\Common\UserChild\UserChildBaseController@putUserChild');
-            Route::delete("/{user_child_id}", 'KW\Application\Controllers\Common\UserChild\UserChildBaseController@deleteUserChild');
+            Route::post("", 'KW\Application\Controllers\User\UserChild\UserChildBaseController@postUserChildren');
+            Route::get("/{user_child_id}", 'KW\Application\Controllers\User\UserChild\UserChildBaseController@getUserChild');
+            Route::put("/{user_child_id}", 'KW\Application\Controllers\User\UserChild\UserChildBaseController@putUserChild');
+            Route::delete("/{user_child_id}", 'KW\Application\Controllers\User\UserChild\UserChildBaseController@deleteUserChild');
         });
 
         /**
@@ -65,44 +77,65 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
         });
 
         /**
-         * EventDetail
+         * SchoolMaster
          */
         Route::group(["prefix" => "event-details"], function () {
-            Route::get("/{event_detail_id}", 'KW\Application\Controllers\Common\EventDetail\EventDetailBaseController@getEventDetail');
+            Route::get("/{event_detail_id}", 'KW\Application\Controllers\User\EventDetail\EventDetailBaseController@getEventDetail');
         });
 
         /**
-         * Book
+         * SchoolMaster
          */
-        /** - POST @params child_parent_id, event_detail_id  */
-        /** - GET @params child_parent_id @return event_detail, user_child  */
-        /** - PATCH @params child_parent_id, event_detail_id, status  */
+        Route::group(["prefix" => "books"], function () {
+            Route::post("", 'KW\Application\Controllers\User\Book\BookBaseController@postBooks');
+            Route::put("/{book_id}", 'KW\Application\Controllers\User\Book\BookBaseController@putBook');
+        });
 
 
         /**
          * Search
          */
         Route::group(["prefix" => "search"], function () {
-            Route::get("/date", function(Request $request) {
-                $pattern = '/^([1-9][0-9]{3})-(0[1-9]{1}|1[0-2]{1})-(0[1-9]{1}|[1-2]{1}[0-9]{1}|3[0-1]{1})$/';
-                $q = $request->input('q');
-
-                // Simple Search
-                if(preg_match($pattern, $q)) {
-                    // EventDetailを検索する
-                    return "preg_match successfully!";
-                }
-                else {
-                    return explode(" ", $q);
-                }
-            });
-            Route::get("/age", function() {});
-            Route::get("/place", function() {});
+            Route::get("age", "KW\Application\Controllers\User\Search\Age\SearchAgeController@getEventDetailBySearchingAge");
+            Route::get("/place", "KW\Application\Controllers\User\Search\Place\SearchPlaceController@getEventDetailBySearchingPlace");
             Route::get("/price", function() {});
-            Route::get("/category", function() {});
+            Route::get("/category", "KW\Application\Controllers\User\Search\Category\SearchCategoryController@getEventDetailBySearchingCategory");
             Route::get("/tag", function() {});
-            Route::get("/school", function() {});
+            Route::get("/school", "KW\Application\Controllers\User\Search\School\SearchSchoolController@getEventDetailBySearchingSchool");
             Route::get("/review", function() {});
+            Route::get("/date", "KW\Application\Controllers\User\Search\Date\SearchDateController@getEventDetailBySearchingDate");
+        });
+
+        Route::group(["prefix" => "category-masters"], function () {
+            Route::get("", 'KW\Application\Controllers\User\CategoryMaster\CategoryMasterBaseController@getCategoryMasters');
+        });
+
+        /**
+         * UserMaster
+         */
+        Route::group(["prefix" => "user-masters"], function () {
+            Route::post('/register', 'App\Http\Controllers\UserMasterAuth\RegisterController@register');
+            Route::post('/login', 'App\Http\Controllers\UserMasterAuth\LoginController@login');
+            Route::group(["middleware" => "auth:users"], function () {
+                Route::get('/home', function() {
+                    return 'You are authorized user';
+                });
+            });
+            Route::post("password/email", "App\Http\Controllers\UserMasterAuth\ForgotPasswordController@sendResetLinkEmail");
+            Route::post("password/reset/{token}", "App\Http\Controllers\UserMasterAuth\ResetPasswordController@reset");
+            Route::get('email/verify/{id}', 'App\Http\Controllers\UserMasterAuth\VerificationController@verify')->name('verification.verify');
+            Route::post('email/resend', 'App\Http\Controllers\UserMasterAuth\VerificationController@resend')->name('verification.resend');
+
+            Route::get("", function() {});
+            Route::post("", function() {});
+            Route::get("/{user_master_id}", function() {});
+            Route::put("/{user_master_id}", function() {});
+            Route::delete("/{user_master_id}", function() {});
+
+            /**
+             * Relation API 2019-05-22 --
+             */
+            Route::get("/{user_master_id}/roles", function() {});
         });
     });
 
@@ -116,6 +149,17 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
      * organizations api
      */
     Route::group(["prefix" => "companies"], function () {
+        Route::post('/register', 'App\Http\Controllers\CompanyAdminMasterAuth\RegisterController@register');
+        Route::post('/login', 'App\Http\Controllers\CompanyAdminMasterAuth\LoginController@login');
+        Route::group(["middleware" => "auth:companies"], function () {
+            Route::get('/home', function() {
+                return 'You are authorized user';
+            });
+        });
+        Route::post("password/email", "App\Http\Controllers\CompanyAdminMasterAuth\ForgotPasswordController@sendResetLinkEmail");
+        Route::post("password/reset/{token}", "App\Http\Controllers\CompanyAdminMasterAuth\ResetPasswordController@reset");
+        Route::get('email/verify/{id}', 'App\Http\Controllers\CompanyAdminMasterAuth\VerificationController@verify')->name('verification.verify');
+        Route::post('email/resend', 'App\Http\Controllers\CompanyAdminMasterAuth\VerificationController@resend')->name('verification.resend');
     });
 
     /**
@@ -123,7 +167,7 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
      */
     Route::group(["prefix" => "kw"], function () {
         /**
-         * UserParent
+         * UserChild
          */
         Route::group(["prefix" => "user-parents"], function () {
             Route::get("", 'KW\Application\Controllers\Common\UserParent\UserParentBaseController@getUserParents');
@@ -181,32 +225,23 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
          * EventMaster
          */
         Route::group(["prefix" => "event-masters"], function () {
-            Route::get("", 'KW\Application\Controllers\Common\EventMaster\EventMasterBaseController@getEventMasters');
-            Route::post("", 'KW\Application\Controllers\Common\EventMaster\EventMasterBaseController@postEventMasters');
-            Route::get("/{event_master_id}", 'KW\Application\Controllers\Common\EventMaster\EventMasterBaseController@getEventMaster');
-            Route::put("/{event_master_id}", 'KW\Application\Controllers\Common\EventMaster\EventMasterBaseController@putEventMaster');
-            Route::delete("/{event_master_id}", 'KW\Application\Controllers\Common\EventMaster\EventMasterBaseController@deleteEventMaster');
-
-            /**
-             * Relation API 2019-05-22 --
-             */
-            Route::get("/event-details", function() {});
-//            Route::group(["prefix" => "relations"], function () {
-//                Route::get("/event_master", function() {
-//                    return EventMaster::with(['eventDetails', 'schoolMaster'])->get();
-//                });
-//            });
+            Route::get("", 'KW\Application\Controllers\KW\EventMaster\EventMasterBaseController@getEventMasters');
+            Route::post("", 'KW\Application\Controllers\KW\EventMaster\EventMasterBaseController@postEventMasters');
+            Route::get("/{event_master_id}", 'KW\Application\Controllers\KW\EventMaster\EventMasterBaseController@getEventMaster');
+            Route::put("/{event_master_id}", 'KW\Application\Controllers\KW\EventMaster\EventMasterBaseController@putEventMaster');
+            Route::post("/{event_master_id}/images", 'KW\Application\Controllers\KW\EventMaster\EventMasterBaseController@attachEventMasterToImage');
+            Route::delete("/{event_master_id}", 'KW\Application\Controllers\KW\EventMaster\EventMasterBaseController@deleteEventMaster');
         });
 
         /**
-         * EventDetail
+         * SchoolMaster
          */
         Route::group(["prefix" => "event-details"], function () {
-            Route::get("", 'KW\Application\Controllers\Common\EventDetail\EventDetailBaseController@getEventDetails');
-            Route::post("", 'KW\Application\Controllers\Common\EventDetail\EventDetailBaseController@postEventDetail');
-            Route::get("/{event_detail_id}", 'KW\Application\Controllers\Common\EventDetail\EventDetailBaseController@getEventDetail');
-            Route::put("/{event_detail_id}", 'KW\Application\Controllers\Common\EventDetail\EventDetailBaseController@putEventDetail');
-            Route::delete("/{event_detail_id}", 'KW\Application\Controllers\Common\EventDetail\EventDetailBaseController@deleteEventDetail');
+            Route::get("", 'KW\Application\Controllers\KW\EventDetail\EventDetailBaseController@getEventDetails');
+            Route::post("", 'KW\Application\Controllers\KW\EventDetail\EventDetailBaseController@postEventDetail');
+            Route::get("/{event_detail_id}", 'KW\Application\Controllers\KW\EventDetail\EventDetailBaseController@getEventDetail');
+            Route::put("/{event_detail_id}", 'KW\Application\Controllers\KW\EventDetail\EventDetailBaseController@putEventDetail');
+            Route::delete("/{event_detail_id}", 'KW\Application\Controllers\KW\EventDetail\EventDetailBaseController@deleteEventDetail');
 
             /**
              * Relation API 2019-05-22 --
@@ -281,25 +316,35 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
         });
 
         /**
-         * Book
+         * SchoolMaster
          */
         Route::group(["prefix" => "books"], function () {
-            Route::get("", 'KW\Application\Controllers\Common\Book\BookBaseController@getBooks');
-            Route::post("", 'KW\Application\Controllers\Common\Book\BookBaseController@postBooks');
-            Route::get("/{book_id}", 'KW\Application\Controllers\Common\Book\BookBaseController@getBook');
-            Route::put("/{book_id}", 'KW\Application\Controllers\Common\Book\BookBaseController@putBook');
-            Route::delete("/{book_id}", 'KW\Application\Controllers\Common\Book\BookBaseController@deleteBook');
+            Route::get("", 'KW\Application\Controllers\KW\Book\BookBaseController@getBooks');
+            Route::post("", 'KW\Application\Controllers\KW\Book\BookBaseController@postBooks');
+            Route::get("/{book_id}", 'KW\Application\Controllers\KW\Book\BookBaseController@getBook');
+            Route::put("/{book_id}", 'KW\Application\Controllers\KW\Book\BookBaseController@putBook');
+            Route::delete("/{book_id}", 'KW\Application\Controllers\KW\Book\BookBaseController@deleteBook');
+
+            Route::get("/users/{user_parent_id}", 'KW\Application\Controllers\KW\Book\BookBaseController@getBookByUserParentId');
+            Route::get("/event-details/{event_detail_id}", 'KW\Application\Controllers\KW\Book\BookBaseController@getBookByEventDetailId');
+            Route::get("test/users/{user_parent_id}", 'KW\Application\Controllers\User\Book\BookBaseController@getBooks');
+            Route::get('test/{user_parent_id}', function($user_parent_id) {
+                $userParent = UserParent::findOrFail($user_parent_id);
+                $eventDetails = $userParent->books()->get();
+                return BookResource::collection($eventDetails);
+//                return $eventDetails;
+            });
         });
 
         /**
          * SchoolMaster
          */
         Route::group(["prefix" => "school-masters"], function () {
-            Route::get("", 'KW\Application\Controllers\Common\SchoolMaster\SchoolMasterBaseController@getSchoolMasters');
-            Route::post("", 'KW\Application\Controllers\Common\SchoolMaster\SchoolMasterBaseController@postSchoolMasters');
-            Route::get("/{school_master_id}", 'KW\Application\Controllers\Common\SchoolMaster\SchoolMasterBaseController@getSchoolMaster');
-            Route::put("/{school_master_id}", 'KW\Application\Controllers\Common\SchoolMaster\SchoolMasterBaseController@putSchoolMaster');
-            Route::delete("/{school_master_id}", 'KW\Application\Controllers\Common\SchoolMaster\SchoolMasterBaseController@deleteSchoolMaster');
+            Route::get("", 'KW\Application\Controllers\KW\SchoolMaster\SchoolMasterBaseController@getSchoolMasters');
+            Route::post("", 'KW\Application\Controllers\KW\SchoolMaster\SchoolMasterBaseController@postSchoolMasters');
+            Route::get("/{school_master_id}", 'KW\Application\Controllers\KW\SchoolMaster\SchoolMasterBaseController@getSchoolMaster');
+            Route::put("/{school_master_id}", 'KW\Application\Controllers\KW\SchoolMaster\SchoolMasterBaseController@putSchoolMaster');
+            Route::delete("/{school_master_id}", 'KW\Application\Controllers\KW\SchoolMaster\SchoolMasterBaseController@deleteSchoolMaster');
 
             /**
              * Relation API 2019-05-22 --
@@ -564,6 +609,18 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
          * CompanyAdminMaster
          */
         Route::group(["prefix" => "company-admin-masters"], function () {
+            Route::post('/register', 'App\Http\Controllers\CompanyAdminMasterAuth\RegisterController@register');
+            Route::post('/login', 'App\Http\Controllers\CompanyAdminMasterAuth\LoginController@login');
+            Route::group(["middleware" => "auth:companies"], function () {
+                Route::get('/home', function() {
+                    return 'You are authorized user';
+                });
+            });
+            Route::post("password/email", "App\Http\Controllers\CompanyAdminMasterAuth\ForgotPasswordController@sendResetLinkEmail");
+            Route::post("password/reset/{token}", "App\Http\Controllers\CompanyAdminMasterAuth\ResetPasswordController@reset");
+            Route::get('email/verify/{id}', 'App\Http\Controllers\CompanyAdminMasterAuth\VerificationController@verify')->name('verification.verify');
+            Route::post('email/resend', 'App\Http\Controllers\CompanyAdminMasterAuth\VerificationController@resend')->name('verification.resend');
+
             Route::get("", function() {});
             Route::post("", function() {});
             Route::get("/{company_admin_master_id}", function() {});
@@ -575,5 +632,18 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
              */
             Route::get("/{company_admin_master_id}/roles", function() {});
         });
+
+        Route::group(["prefix" => "companies"], function () {
+
+        });
+
+//        Route::group(["prefix" => "uploads"], function() {
+//            Route::post("", "KW\Application\Controllers\KW\EventDetail\UploadController@postEventDetailImage");
+//        });
+
+//        Route::group(["prefix" => "images-s3"], function() {
+//            Route::get("", "KW\Application\Controllers\KW\EventDetail\UploadController@getEventDetailImage");
+//            Route::delete("", "KW\Application\Controllers\KW\EventDetail\UploadController@deleteEventDetailImage");
+//        });
     });
 });

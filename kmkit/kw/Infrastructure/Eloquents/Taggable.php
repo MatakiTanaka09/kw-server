@@ -2,26 +2,6 @@
 
 namespace KW\Infrastructure\Eloquents;
 
-/**
- * KW\Infrastructure\Eloquents\Taggable
- *
- * @property int $id
- * @property int $tag_id
- * @property string $event_detail_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \KW\Infrastructure\Eloquents\EventDetail $eventDetail
- * @property-read \KW\Infrastructure\Eloquents\Tag $tag
- * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\Taggable newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\Taggable newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\Taggable query()
- * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\Taggable whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\Taggable whereEventDetailId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\Taggable whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\Taggable whereTagId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\Taggable whereUpdatedAt($value)
- * @mixin \Eloquent
- */
 class Taggable extends AppEloquent
 {
     /**

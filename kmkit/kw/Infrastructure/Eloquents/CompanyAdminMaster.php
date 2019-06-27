@@ -5,29 +5,11 @@ namespace KW\Infrastructure\Eloquents;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
+use App\Notifications\CustomPasswordReset;
+use App\Notifications\VerifyEmail;
 
-/**
- * KW\Infrastructure\Eloquents\CompanyAdminMaster
- *
- * @property int $id
- * @property string $email
- * @property string $password
- * @property string|null $remember_token
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
- * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\CompanyAdminMaster newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\CompanyAdminMaster newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\CompanyAdminMaster query()
- * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\CompanyAdminMaster whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\CompanyAdminMaster whereEmail($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\CompanyAdminMaster whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\CompanyAdminMaster wherePassword($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\CompanyAdminMaster whereRememberToken($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\CompanyAdminMaster whereUpdatedAt($value)
- * @mixin \Eloquent
- */
-class CompanyAdminMaster extends Authenticatable
+class CompanyAdminMaster extends Authenticatable implements JWTSubject, MustVerifyEmail
 {
     use Notifiable;
 
@@ -76,5 +58,31 @@ class CompanyAdminMaster extends Authenticatable
     public function roles()
     {
         return $this->morphToMany(Role::class, 'role_relations');
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    /**
+     * @return array
+     */
+    public function getJWTCustomClaims()
+    {
+        return [];
+    }
+
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new CustomPasswordReset($token));
+    }
+
+    public function sendEmailVerificationNotification()
+    {
+        $this->notify(new VerifyEmail);
     }
 }

@@ -18,8 +18,8 @@ class CreateUserChildrenTable extends Migration
             $table->uuid('id')->primary();
             $table->unsignedInteger('sex_id');
             $table->string('icon')->nullable();
-            $table->string('first_kana', 50);
-            $table->string('last_kana', 50);
+            $table->string('full_name', 50);
+            $table->string('full_kana', 50);
             $table->timestamp('birth_day');
             $table->timestamps();
         });

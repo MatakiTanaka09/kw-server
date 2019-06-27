@@ -2,28 +2,6 @@
 
 namespace KW\Infrastructure\Eloquents;
 
-/**
- * KW\Infrastructure\Eloquents\CompanyAndMember
- *
- * @property int $id
- * @property string $company_master_id
- * @property int $company_admin_master_id
- * @property string $name
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \KW\Infrastructure\Eloquents\CompanyAdminMaster $companyAdminMaster
- * @property-read \KW\Infrastructure\Eloquents\CompanyMaster $companyMaster
- * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\CompanyAndMember newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\CompanyAndMember newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\CompanyAndMember query()
- * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\CompanyAndMember whereCompanyAdminMasterId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\CompanyAndMember whereCompanyMasterId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\CompanyAndMember whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\CompanyAndMember whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\CompanyAndMember whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\CompanyAndMember whereUpdatedAt($value)
- * @mixin \Eloquent
- */
 class CompanyAndMember extends AppEloquent
 {
     /**

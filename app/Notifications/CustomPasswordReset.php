@@ -11,12 +11,12 @@ use Illuminate\Notifications\Messages\MailMessage;
 class CustomPasswordReset extends Notification
 {
     use Queueable;
+
     public $token;
 
     /**
-     * Create a new notification instance.
-     *
-     * @return void
+     * CustomPasswordReset constructor.
+     * @param $token
      */
     public function __construct($token)
     {
@@ -24,9 +24,7 @@ class CustomPasswordReset extends Notification
     }
 
     /**
-     * Get the notification's delivery channels.
-     *
-     * @param  mixed  $notifiable
+     * @param $notifiable
      * @return array
      */
     public function via($notifiable)
@@ -35,26 +33,22 @@ class CustomPasswordReset extends Notification
     }
 
     /**
-     * Get the mail representation of the notification.
-     *
-     * @param  mixed  $notifiable
-     * @return \Illuminate\Notifications\Messages\MailMessage
+     * @param $notifiable
+     * @return MailMessage
      */
     public function toMail($notifiable)
     {
         return (new MailMessage)
             ->subject('パスワードリセット')
-            ->view('emails.resetpass')
+            ->view('emails.users.resetpass')
             ->action('リセットパスワード',
                 config('frontend.url') . config('frontend.reset_pass_url') .
-                url('api/v1/kw/user-masters/password/reset', $this->token)
+                url('api/v1/users/user-masters/password/reset', $this->token)
             );
     }
 
     /**
-     * Get the array representation of the notification.
-     *
-     * @param  mixed  $notifiable
+     * @param $notifiable
      * @return array
      */
     public function toArray($notifiable)
