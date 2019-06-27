@@ -61,7 +61,7 @@ return [
 
         'companies-api' => [
             'driver' => 'jwt',
-            'provider' => 'users',
+            'provider' => 'companies',
         ],
 
         /**

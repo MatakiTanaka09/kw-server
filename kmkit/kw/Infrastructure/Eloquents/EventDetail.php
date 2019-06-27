@@ -16,34 +16,26 @@ class EventDetail extends BaseUuid
     protected $guarded = [];
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\belongsTo
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function eventSchoolMaster()
+    public function eventMaster()
     {
-        return $this->belongsTo(EventSchoolMaster::class, 'event_school_master_id');
+        return $this->belongsTo(EventMaster::class);
     }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function childParents()
+    public function books()
     {
         return $this->belongsToMany(
-            ChildParent::class,
+            UserParent::class,
             'books'
         )
-            ->as('info')
+            ->as('book')
             ->using(Book::class)
-            ->withPivot(['status', 'price'])
+            ->withPivot('user_parent_id', 'user_child_id', 'event_detail_id')
             ->withTimestamps();
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function userParents()
-    {
-        return $this->belongsToMany(UserParent::class, 'reviews');
     }
 
     /**
@@ -57,14 +49,6 @@ class EventDetail extends BaseUuid
             'event_detail_id',
             'tag_id'
         )->withTimestamps();
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\MorphOne
-     */
-    public function images()
-    {
-        return $this->morphOne(Image::class, 'imageable');
     }
 
     /**

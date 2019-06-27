@@ -9,7 +9,7 @@ $factory->define(SchoolMaster::class, function (Faker $faker) {
         "detail"    => $faker->realText($maxNbChars = 200, $indexSize = 2),
         'email'     => $faker->unique()->safeEmail,
         'url'       => "http://amazon.s3.com...",
-        'icon'      => "http://amazon.s3.com...",
+        'icon'      => "https://kw-prod-bucket.s3-ap-northeast-1.amazonaws.com/top/sp.png",
         'tel'       => $faker->phoneNumber,
         'zip_code1' => $faker->regexify('[1-9]{3}'),
         'zip_code2' => $faker->regexify('[1-9]{4}'),

@@ -14,12 +14,4 @@ class EventSchoolMaster extends AppEloquent
      * @var array
      */
     protected $guarded = [];
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\hasMany
-     */
-    public function eventDetails()
-    {
-        return $this->hasMany(EventDetail::Class);
-    }
 }

@@ -2,28 +2,6 @@
 
 namespace KW\Infrastructure\Eloquents;
 
-/**
- * KW\Infrastructure\Eloquents\SchoolAndMember
- *
- * @property int $id
- * @property string $school_master_id
- * @property int $school_admin_master_id
- * @property string $name
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \KW\Infrastructure\Eloquents\SchoolAdminMaster $schoolAdminMaster
- * @property-read \KW\Infrastructure\Eloquents\SchoolMaster $schoolMaster
- * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\SchoolAndMember newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\SchoolAndMember newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\SchoolAndMember query()
- * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\SchoolAndMember whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\SchoolAndMember whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\SchoolAndMember whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\SchoolAndMember whereSchoolAdminMasterId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\SchoolAndMember whereSchoolMasterId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\KW\Infrastructure\Eloquents\SchoolAndMember whereUpdatedAt($value)
- * @mixin \Eloquent
- */
 class SchoolAndMember extends AppEloquent
 {
     /**

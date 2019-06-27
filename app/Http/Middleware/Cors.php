@@ -26,11 +26,12 @@ class Cors
 
         $http_origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : "";
 
-//        Log::debug("http_origin = " . $http_origin);
+        \Log::debug("http_origin = " . $http_origin);
         if ($http_origin == "http://app.kidsweekend.test:3000") {
             $response
                 ->header('Access-Control-Allow-Credentials', 'true')
                 ->header("Access-Control-Allow-Origin" , $http_origin)
+                ->header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept, Key, Authorization')
                 ->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
         }
 

@@ -46,10 +46,25 @@ class EventMasterTest extends KWBaseTestCase
         $eventMaster = $eventMasters[0];
         $this->assertSame([
             'id',
-            'school_master_id',
-            'category_master_id',
             'title',
-            'detail'
+            'detail',
+            'handing',
+            'event_minutes',
+            'target_min_age',
+            'target_max_age',
+            'parent_attendant',
+            'price',
+            'cancel_policy',
+            'pub_state',
+            'arrived_at',
+            'zip_code1',
+            'zip_code2',
+            'state',
+            'city',
+            'address1',
+            'address2',
+            'longitude',
+            'latitude'
         ], array_keys($eventMaster));
     }
 
@@ -68,10 +83,25 @@ class EventMasterTest extends KWBaseTestCase
     public function api_v1_event_mastersにPOSTメソッドでアクセスできる()
     {
         $eventMasters = [
-            'school_master_id'   => 'fce485a5-f5c9-49ee-8b26-31712e7dc7c2',
-            'category_master_id' => 1,
-            'title'              => 'バスタ新宿',
-            'detail'             => '日常空間としてのターミナル'
+            'title'            => 'test',
+            'detail'           => 'test',
+            'handing'          => 'test',
+            'event_minutes'    => 60,
+            'target_min_age'   => '4',
+            'target_max_age'   => '5',
+            'parent_attendant' => 0,
+            'price'            => 1500,
+            'cancel_policy'    => 'test',
+            'pub_state'        => 0,
+            'arrived_at'       => '15',
+            'zip_code1'        => '115',
+            'zip_code2'        => '0051',
+            'state'            => '東京都',
+            'city'             => '中央区',
+            'address1'         => '月島',
+            'address2'         => '4-19-9',
+            'longitude'        => 0.0,
+            'latitude'         => 0.0
         ];
         $response = $this->postJson(self::EVENT_MASTERS, $eventMasters);
         $response->assertStatus(200);
@@ -81,10 +111,24 @@ class EventMasterTest extends KWBaseTestCase
     {
         $newEventMasters = factory(EventMaster::class)->make();
         $params = [
-            'school_master_id'   => $newEventMasters->school_master_id,
-            'category_master_id' => $newEventMasters->category_master_id,
-            'title'              => $newEventMasters->title,
-            'detail'             => $newEventMasters->detail
+            'title'          => $newEventMasters->title,
+            'detail'         => $newEventMasters->detail,
+            'handing'        => $newEventMasters->handing,
+            'event_minutes'  => $newEventMasters->event_minutes,
+            'target_min_age' => $newEventMasters->target_min_age,
+            'target_max_age' => $newEventMasters->target_max_age,
+            'price'          => $newEventMasters->price,
+            'cancel_policy'  => $newEventMasters->cancel_policy,
+            'pub_state'      => $newEventMasters->pub_state,
+            'arrived_at'     => $newEventMasters->arrived_at,
+            'zip_code1'      => $newEventMasters->zip_code1,
+            'zip_code2'      => $newEventMasters->zip_code1,
+            'state'          => $newEventMasters->state,
+            'city'           => $newEventMasters->city,
+            'address1'       => $newEventMasters->address1,
+            'address2'       => $newEventMasters->address2,
+            'longitude'      => $newEventMasters->longitude,
+            'latitude'       => $newEventMasters->latitude
         ];
         $this->postJson(self::EVENT_MASTERS, $params);
         $this->assertDatabaseHas(self::EVENT_MASTERS_TABLE, $params);
@@ -96,25 +140,85 @@ class EventMasterTest extends KWBaseTestCase
     public function POST_api_v1_event_mastersのエラーレスポンスの確認()
     {
         $params = [
-            'school_master_id'    => '',
-            'category_master_id'  => '',
-            'title'               => '',
-            'detail'              => ''
+            'title'            => '',
+            'detail'           => '',
+            'handing'          => '',
+            'event_minutes'    => '',
+            'target_min_age'   => '',
+            'target_max_age'   => '',
+            'parent_attendant' => '',
+            'price'            => '',
+            'cancel_policy'    => '',
+            'pub_state'        => '',
+            'arrived_at'       => '',
+            'zip_code1'        => '',
+            'zip_code2'        => '',
+            'state'            => '',
+            'city'             => '',
+            'address1'         => '',
+            'address2'         => '',
+            'longitude'        => '',
+            'latitude'         => ''
         ];
         $response = $this->postJson(self::EVENT_MASTERS, $params);
         $error_response = [
             'message' => "The given data was invalid.",
             'errors' => [
-                'school_master_id' => [
-                    'validation.required'
-                ],
-                'category_master_id' => [
-                    'validation.required'
-                ],
                 'title' => [
                     'validation.required'
                 ],
                 'detail' => [
+                    'validation.required'
+                ],
+                'handing' => [
+                    'validation.required'
+                ],
+                'event_minutes' => [
+                    'validation.required'
+                ],
+                'target_min_age' => [
+                    'validation.required'
+                ],
+                'target_max_age' => [
+                    'validation.required'
+                ],
+                'parent_attendant' => [
+                    'validation.required'
+                ],
+                'price' => [
+                    'validation.required'
+                ],
+                'cancel_policy' => [
+                    'validation.required'
+                ],
+                'pub_state' => [
+                    'validation.required'
+                ],
+                'arrived_at' => [
+                    'validation.required'
+                ],
+                'zip_code1' => [
+                    'validation.required'
+                ],
+                'zip_code2' => [
+                    'validation.required'
+                ],
+                'state' => [
+                    'validation.required'
+                ],
+                'city' => [
+                    'validation.required'
+                ],
+                'address1' => [
+                    'validation.required'
+                ],
+                'address2' => [
+                    'validation.required'
+                ],
+                'longitude' => [
+                    'validation.required'
+                ],
+                'latitude' => [
                     'validation.required'
                 ]
             ]
@@ -153,10 +257,25 @@ class EventMasterTest extends KWBaseTestCase
     {
         $event_master_id = $this->getFirstEventMasterId();
         $response = $this->putJson(self::EVENT_MASTERS. $event_master_id, [
-            'school_master_id'   => 'fce485a5-f5c9-49ee-8b26-31712e7dc7c2',
-            'category_master_id' => 1,
-            'title'              => 'バスタ新宿',
-            'detail'             => '日常空間としてのターミナル'
+            'title'            => 'test',
+            'detail'           => 'test',
+            'handing'          => 'test',
+            'event_minutes'    => 60,
+            'target_min_age'   => '4',
+            'target_max_age'   => '5',
+            'parent_attendant' => 0,
+            'price'            => 1500,
+            'cancel_policy'    => 'test',
+            'pub_state'        => 0,
+            'arrived_at'       => '15',
+            'zip_code1'        => '115',
+            'zip_code2'        => '0051',
+            'state'            => '東京都',
+            'city'             => '中央区',
+            'address1'         => '月島',
+            'address2'         => '4-19-9',
+            'longitude'        => 0.0,
+            'latitude'         => 0.0
         ]);
         $response->assertStatus(200);
     }
@@ -170,20 +289,48 @@ class EventMasterTest extends KWBaseTestCase
         $response = $this->get(self::EVENT_MASTERS. $event_master_id);
         $event_master = $response->json();
         $new = [
-            'school_master_id'   => 'ef49ee06-199f-4e2f-96ad-64f2cec3b36e',
-            'category_master_id' => 2,
-            'title'              => $event_master['title'],
-            'detail'             => $event_master['detail']
+            'title'          => 'test2',
+            'detail'         => $event_master['detail'],
+            'handing'        => $event_master['handing'],
+            'event_minutes'  => $event_master['event_minutes'],
+            'target_min_age' => $event_master['target_min_age'],
+            'target_max_age' => $event_master['target_max_age'],
+            'price'          => $event_master['price'],
+            'cancel_policy'  => $event_master['cancel_policy'],
+            'pub_state'      => $event_master['pub_state'],
+            'arrived_at'     => $event_master['arrived_at'],
+            'zip_code1'      => $event_master['zip_code1'],
+            'zip_code2'      => $event_master['zip_code2'],
+            'state'          => $event_master['state'],
+            'city'           => $event_master['city'],
+            'address1'       => $event_master['address1'],
+            'address2'       => $event_master['address2'],
+            'longitude'      => $event_master['longitude'],
+            'latitude'       => $event_master['latitude'],
         ];
         $this->putJson(self::EVENT_MASTERS. $event_master_id, $new);
 
         $response = $this->get(self::EVENT_MASTERS. $event_master_id);
         $event_master = $response->json();
         $event_master_result = [
-            'school_master_id'   => $event_master['school_master_id'],
-            'category_master_id' => $event_master['category_master_id'],
-            'title'              => $event_master['title'],
-            'detail'             => $event_master['detail']
+            'title'          => $event_master['title'],
+            'detail'         => $event_master['detail'],
+            'handing'        => $event_master['handing'],
+            'event_minutes'  => $event_master['event_minutes'],
+            'target_min_age' => $event_master['target_min_age'],
+            'target_max_age' => $event_master['target_max_age'],
+            'price'          => $event_master['price'],
+            'cancel_policy'  => $event_master['cancel_policy'],
+            'pub_state'      => $event_master['pub_state'],
+            'arrived_at'     => $event_master['arrived_at'],
+            'zip_code1'      => $event_master['zip_code1'],
+            'zip_code2'      => $event_master['zip_code2'],
+            'state'          => $event_master['state'],
+            'city'           => $event_master['city'],
+            'address1'       => $event_master['address1'],
+            'address2'       => $event_master['address2'],
+            'longitude'      => $event_master['longitude'],
+            'latitude'       => $event_master['latitude'],
         ];
         $this->assertSame($new, $event_master_result);
     }
@@ -195,10 +342,25 @@ class EventMasterTest extends KWBaseTestCase
     {
         $this->withoutExceptionHandling();
         $response = $this->putJson(self::EVENT_MASTERS. '999', [
-            'school_master_id'   => 'fce485a5-f5c9-49ee-8b26-31712e7dc7c2',
-            'category_master_id' => 1,
-            'title'              => 'バスタ新宿',
-            'detail'             => '日常空間としてのターミナル'
+            'title'            => 'test',
+            'detail'           => 'test',
+            'handing'          => 'test',
+            'event_minutes'    => 60,
+            'target_min_age'   => '4',
+            'target_max_age'   => '5',
+            'parent_attendant' => 0,
+            'price'            => 1500,
+            'cancel_policy'    => 'test',
+            'pub_state'        => 0,
+            'arrived_at'       => '15',
+            'zip_code1'        => '115',
+            'zip_code2'        => '0051',
+            'state'            => '東京都',
+            'city'             => '中央区',
+            'address1'         => '月島',
+            'address2'         => '4-19-9',
+            'longitude'        => 0.0,
+            'latitude'         => 0.0
         ]);
         $response->assertStatus(Response::HTTP_NOT_FOUND);
         $response->assertHeader('Content-Type', 'application/json');
