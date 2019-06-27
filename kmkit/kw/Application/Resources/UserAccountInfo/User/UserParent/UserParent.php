@@ -25,8 +25,7 @@ class UserParent extends JsonResource
             "state"=> $this->state,
             "city"=> $this->city,
             "address1"=> $this->address1,
-            "address2"=> $this->address2,
-
+            "address2"=> $this->address2
         ];
     }
 }

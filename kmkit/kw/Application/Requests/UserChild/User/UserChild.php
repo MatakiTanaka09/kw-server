@@ -24,11 +24,13 @@ class UserChild extends FormRequest
     public function rules()
     {
         return [
-            'icon'       => '',
-            'sex_id'     => 'required',
-            'first_kana' => 'required',
-            'last_kana'  => 'required',
-            'birth_day'  => 'required'
+            "children" => [
+                'icon'       => '',
+                'sex_id'     => 'required',
+                'first_kana' => 'required',
+                'last_kana'  => 'required',
+                'birth_day'  => 'required'
+            ]
         ];
     }
 }

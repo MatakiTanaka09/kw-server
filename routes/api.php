@@ -47,7 +47,7 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
          * UserChild
          */
         Route::group(["prefix" => "user-parents"], function () {
-            Route::post("", 'KW\Application\Controllers\User\UserParent\UserParentBaseController@postUserParent');
+            Route::post("", 'KW\Application\Controllers\User\UserParent\UserAccountController@postUserAccount');
             Route::get("/{user_parent_id}", 'KW\Application\Controllers\User\UserParent\UserParentBaseController@getUserParent');
             Route::put("/{user_parent_id}", 'KW\Application\Controllers\User\UserParent\UserParentBaseController@putUserParent');
             Route::delete("/{user_parent_id}", 'KW\Application\Controllers\User\UserParent\UserParentBaseController@deleteUserParent');
@@ -105,6 +105,38 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
             Route::get("/review", function() {});
             Route::get("/date", "KW\Application\Controllers\User\Search\Date\SearchDateController@getEventDetailBySearchingDate");
         });
+
+        Route::group(["prefix" => "category-masters"], function () {
+            Route::get("", 'KW\Application\Controllers\User\CategoryMaster\CategoryMasterBaseController@getCategoryMasters');
+        });
+
+        /**
+         * UserMaster
+         */
+        Route::group(["prefix" => "user-masters"], function () {
+            Route::post('/register', 'App\Http\Controllers\UserMasterAuth\RegisterController@register');
+            Route::post('/login', 'App\Http\Controllers\UserMasterAuth\LoginController@login');
+            Route::group(["middleware" => "auth:users"], function () {
+                Route::get('/home', function() {
+                    return 'You are authorized user';
+                });
+            });
+            Route::post("password/email", "App\Http\Controllers\UserMasterAuth\ForgotPasswordController@sendResetLinkEmail");
+            Route::post("password/reset/{token}", "App\Http\Controllers\UserMasterAuth\ResetPasswordController@reset");
+            Route::get('email/verify/{id}', 'App\Http\Controllers\UserMasterAuth\VerificationController@verify')->name('verification.verify');
+            Route::post('email/resend', 'App\Http\Controllers\UserMasterAuth\VerificationController@resend')->name('verification.resend');
+
+            Route::get("", function() {});
+            Route::post("", function() {});
+            Route::get("/{user_master_id}", function() {});
+            Route::put("/{user_master_id}", function() {});
+            Route::delete("/{user_master_id}", function() {});
+
+            /**
+             * Relation API 2019-05-22 --
+             */
+            Route::get("/{user_master_id}/roles", function() {});
+        });
     });
 
     /**
@@ -117,6 +149,17 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
      * organizations api
      */
     Route::group(["prefix" => "companies"], function () {
+        Route::post('/register', 'App\Http\Controllers\CompanyAdminMasterAuth\RegisterController@register');
+        Route::post('/login', 'App\Http\Controllers\CompanyAdminMasterAuth\LoginController@login');
+        Route::group(["middleware" => "auth:companies"], function () {
+            Route::get('/home', function() {
+                return 'You are authorized user';
+            });
+        });
+        Route::post("password/email", "App\Http\Controllers\CompanyAdminMasterAuth\ForgotPasswordController@sendResetLinkEmail");
+        Route::post("password/reset/{token}", "App\Http\Controllers\CompanyAdminMasterAuth\ResetPasswordController@reset");
+        Route::get('email/verify/{id}', 'App\Http\Controllers\CompanyAdminMasterAuth\VerificationController@verify')->name('verification.verify');
+        Route::post('email/resend', 'App\Http\Controllers\CompanyAdminMasterAuth\VerificationController@resend')->name('verification.resend');
     });
 
     /**
@@ -297,11 +340,11 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
          * SchoolMaster
          */
         Route::group(["prefix" => "school-masters"], function () {
-            Route::get("", 'KW\Application\Controllers\Common\SchoolMaster\SchoolMasterBaseController@getSchoolMasters');
-            Route::post("", 'KW\Application\Controllers\Common\SchoolMaster\SchoolMasterBaseController@postSchoolMasters');
-            Route::get("/{school_master_id}", 'KW\Application\Controllers\Common\SchoolMaster\SchoolMasterBaseController@getSchoolMaster');
-            Route::put("/{school_master_id}", 'KW\Application\Controllers\Common\SchoolMaster\SchoolMasterBaseController@putSchoolMaster');
-            Route::delete("/{school_master_id}", 'KW\Application\Controllers\Common\SchoolMaster\SchoolMasterBaseController@deleteSchoolMaster');
+            Route::get("", 'KW\Application\Controllers\KW\SchoolMaster\SchoolMasterBaseController@getSchoolMasters');
+            Route::post("", 'KW\Application\Controllers\KW\SchoolMaster\SchoolMasterBaseController@postSchoolMasters');
+            Route::get("/{school_master_id}", 'KW\Application\Controllers\KW\SchoolMaster\SchoolMasterBaseController@getSchoolMaster');
+            Route::put("/{school_master_id}", 'KW\Application\Controllers\KW\SchoolMaster\SchoolMasterBaseController@putSchoolMaster');
+            Route::delete("/{school_master_id}", 'KW\Application\Controllers\KW\SchoolMaster\SchoolMasterBaseController@deleteSchoolMaster');
 
             /**
              * Relation API 2019-05-22 --
@@ -566,6 +609,18 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
          * CompanyAdminMaster
          */
         Route::group(["prefix" => "company-admin-masters"], function () {
+            Route::post('/register', 'App\Http\Controllers\CompanyAdminMasterAuth\RegisterController@register');
+            Route::post('/login', 'App\Http\Controllers\CompanyAdminMasterAuth\LoginController@login');
+            Route::group(["middleware" => "auth:companies"], function () {
+                Route::get('/home', function() {
+                    return 'You are authorized user';
+                });
+            });
+            Route::post("password/email", "App\Http\Controllers\CompanyAdminMasterAuth\ForgotPasswordController@sendResetLinkEmail");
+            Route::post("password/reset/{token}", "App\Http\Controllers\CompanyAdminMasterAuth\ResetPasswordController@reset");
+            Route::get('email/verify/{id}', 'App\Http\Controllers\CompanyAdminMasterAuth\VerificationController@verify')->name('verification.verify');
+            Route::post('email/resend', 'App\Http\Controllers\CompanyAdminMasterAuth\VerificationController@resend')->name('verification.resend');
+
             Route::get("", function() {});
             Route::post("", function() {});
             Route::get("/{company_admin_master_id}", function() {});
@@ -578,13 +633,17 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
             Route::get("/{company_admin_master_id}/roles", function() {});
         });
 
-        Route::group(["prefix" => "uploads"], function() {
-            Route::post("", "KW\Application\Controllers\KW\EventDetail\UploadController@postEventDetailImage");
+        Route::group(["prefix" => "companies"], function () {
+
         });
 
-        Route::group(["prefix" => "images-s3"], function() {
-            Route::get("", "KW\Application\Controllers\KW\EventDetail\UploadController@getEventDetailImage");
-            Route::delete("", "KW\Application\Controllers\KW\EventDetail\UploadController@deleteEventDetailImage");
-        });
+//        Route::group(["prefix" => "uploads"], function() {
+//            Route::post("", "KW\Application\Controllers\KW\EventDetail\UploadController@postEventDetailImage");
+//        });
+
+//        Route::group(["prefix" => "images-s3"], function() {
+//            Route::get("", "KW\Application\Controllers\KW\EventDetail\UploadController@getEventDetailImage");
+//            Route::delete("", "KW\Application\Controllers\KW\EventDetail\UploadController@deleteEventDetailImage");
+//        });
     });
 });

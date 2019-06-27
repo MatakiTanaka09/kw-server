@@ -1,6 +1,6 @@
 <?php
 
-namespace KW\Application\Controllers\Common\CategoryMaster;
+namespace KW\Application\Controllers\User\CategoryMaster;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;

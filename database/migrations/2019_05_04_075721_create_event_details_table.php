@@ -18,8 +18,6 @@ class CreateEventDetailsTable extends Migration
             $table->uuid('id')->primary();
             $table->uuid('event_master_id');
             $table->unsignedInteger('event_pr_id');
-            $table->string('title');
-            $table->text('detail');
             $table->timestamp('started_at');
             $table->timestamp('expired_at');
             $table->tinyInteger('pub_state')->default(0);

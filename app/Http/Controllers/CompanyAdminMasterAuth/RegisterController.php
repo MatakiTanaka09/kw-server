@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers\CompanyAdminMasterAuth;
 
-use App\User;
+use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use KW\Infrastructure\Eloquents\CompanyAdminMaster;
 
 class RegisterController extends Controller
 {
@@ -28,7 +32,7 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected $redirectTo = '/';
 
     /**
      * Create a new controller instance.
@@ -49,24 +53,38 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:6', 'confirmed'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:user_masters'],
+            'password' => ['required', 'string', 'min:6', 'confirmed']
         ]);
     }
 
     /**
-     * Create a new user instance after a valid registration.
-     *
-     * @param  array  $data
-     * @return \App\User
+     * @param array $data
+     * @return \KW\Infrastructure\Eloquents\UserMaster
      */
     protected function create(array $data)
     {
-        return User::create([
-            'name' => $data['name'],
+        return CompanyAdminMaster::create([
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function register(Request $request): JsonResponse
+    {
+        $validate = $this->validator($request->all());
+
+        if ($validate->fails()) {
+            return new JsonResponse($validate->errors());
+        }
+
+        event(new Registered($companyAdminMaster = $this->create($request->all())));
+//        \Mail::to($companyAdminMaster)->queue(new \App\Mail\User\Registered($companyAdminMaster));
+
+        return new JsonResponse($companyAdminMaster);
     }
 }

@@ -18,17 +18,18 @@ class ChildParent extends Pivot
     protected $guarded = [];
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function eventDetails()
+    public function userParent()
     {
-        return $this->belongsToMany(
-            EventDetail::class,
-            'books'
-        )
-            ->as('info')
-            ->using(Book::class)
-            ->withPivot(['status', 'price'])
-            ->withTimestamps();
+        return $this->belongsTo(UserParent::class);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function userChild()
+    {
+        return $this->belongsTo(UserChild::class);
     }
 }

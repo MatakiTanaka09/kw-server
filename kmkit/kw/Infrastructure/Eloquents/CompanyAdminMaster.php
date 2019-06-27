@@ -5,8 +5,11 @@ namespace KW\Infrastructure\Eloquents;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
+use App\Notifications\CustomPasswordReset;
+use App\Notifications\VerifyEmail;
 
-class CompanyAdminMaster extends Authenticatable
+class CompanyAdminMaster extends Authenticatable implements JWTSubject, MustVerifyEmail
 {
     use Notifiable;
 
@@ -55,5 +58,31 @@ class CompanyAdminMaster extends Authenticatable
     public function roles()
     {
         return $this->morphToMany(Role::class, 'role_relations');
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    /**
+     * @return array
+     */
+    public function getJWTCustomClaims()
+    {
+        return [];
+    }
+
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new CustomPasswordReset($token));
+    }
+
+    public function sendEmailVerificationNotification()
+    {
+        $this->notify(new VerifyEmail);
     }
 }

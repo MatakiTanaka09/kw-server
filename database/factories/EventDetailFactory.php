@@ -9,8 +9,6 @@ $factory->define(EventDetail::class, function (Faker $faker) {
         'event_pr_id'      => function() {
             return factory(EventPr::class)->create()->id;
         },
-        'title'            => $faker->text(10),
-        'detail'           => $faker->text(200),
         'started_at'       => $faker->dateTimeBetween('-0 years', '-0years')->format('Y-m-d H:m:s'),
         'expired_at'       => $faker->dateTimeBetween('-0 years', '-0years')->format('Y-m-d H:m:s'),
         'pub_state'        => $faker->boolean($chanceOfGettingTrue = 20),

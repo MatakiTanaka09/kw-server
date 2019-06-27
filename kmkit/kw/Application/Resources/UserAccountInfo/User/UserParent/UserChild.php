@@ -16,8 +16,8 @@ class UserChild extends JsonResource
             "id" => $this->id,
             "sex_id" => $this->sex_id,
             "icon" => $this->icon,
-            "first_kana" => $this->first_kana,
-            "last_kana" => $this->last_kana
+            "full_name" => $this->full_name,
+            "full_kana" => $this->full_kana
         ];
     }
 }

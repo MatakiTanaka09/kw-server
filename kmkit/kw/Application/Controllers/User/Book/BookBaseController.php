@@ -33,20 +33,26 @@ class BookBaseController extends Controller
     }
 
     /**
-     * @param BookRequest $request
-     * @param Book $book
+     * @param Request $request
      * @return JsonResponse
      */
-    public function postBooks(BookRequest $request, Book $book)
+    public function postBooks(Request $request)
     {
-        $book->user_parent_id  = $request->json('user_parent_id');
-        $book->user_child_id   = $request->json('user_child_id');
-        $book->event_detail_id = $request->json('event_detail_id');
-        $book->status          = $request->json('status');
-        $book->price           = $request->json('price');
-        $book->save();
-
-        return BookBaseController::receiveResponse($book);
+        $result = [];
+        $data = $request->json()->all();
+        if(is_array($data)) {
+            for($i=0; $i < count($data); $i++) {
+                $book = new Book();
+                $book->user_parent_id  = $data[$i]['user_parent_id'];
+                $book->user_child_id   = $data[$i]['user_child_id'];
+                $book->event_detail_id = $data[$i]['event_detail_id'];
+                $book->status          = $data[$i]['status'];
+                $book->price           = $data[$i]['price'];
+                $book->save();
+                array_push($result, $book);
+            }
+        }
+        return BookBaseController::receiveResponse($result);
     }
 
     private static function receiveResponse($result)

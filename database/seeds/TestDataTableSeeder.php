@@ -56,13 +56,13 @@ class TestDataTableSeeder extends Seeder
             ->each(function($schoolMaster) {
                 $schoolMaster->schoolAndMembers()->save(factory(SchoolAndMember::class)->make());
 //                $schoolMaster->categoryMasters()->save(factory(CategoryMaster::class)->make());
-                $schoolMaster->images()->create(['url' => 'https://aws.s3....']);
+                $schoolMaster->images()->create(['url' => 'https://kw-prod-bucket.s3-ap-northeast-1.amazonaws.com/category/science.jpeg']);
             });
 
         factory(EventMaster::class, 5)
             ->create()
             ->each(function($eventMaster) {
-                $eventMaster->images()->create(['url' => 'https://aws.s3....']);
+                $eventMaster->images()->create(['url' => 'https://kw-prod-bucket.s3-ap-northeast-1.amazonaws.com/category/science.jpeg']);
 //                $eventMaster->categoryMasters()->save(factory(CategoryMaster::class)->make());
                 $eventMaster->eventDetails()->save(factory(EventDetail::class)->make());
 //                $eventMaster->schoolMasters()->attach(
@@ -147,52 +147,52 @@ class TestDataTableSeeder extends Seeder
 
         DB::table('category_masters')->insert([
             [
-                "name"       => "others",
-                "filename"   => "images/category.png",
+                "name"       => "その他",
+                "filename"   => "https://kw-prod-bucket.s3-ap-northeast-1.amazonaws.com/category/science.jpeg",
                 "color"      => "red",
                 "created_at" => now(),
                 "updated_at" => now()
             ],
             [
-                "name"       => "art",
+                "name"       => "アート",
                 "color"      => "red",
-                "filename"   => "images/art.png",
+                "filename"   => "https://kw-prod-bucket.s3-ap-northeast-1.amazonaws.com/category/science.jpeg",
                 "created_at" => now(),
                 "updated_at" => now()
             ],
             [
-                "name"       => "educational",
+                "name"       => "教育",
                 "color"      => "red",
-                "filename"   => "images/educational.png",
+                "filename"   => "https://kw-prod-bucket.s3-ap-northeast-1.amazonaws.com/category/science.jpeg",
                 "created_at" => now(),
                 "updated_at" => now()
             ],
             [
-                "name"       => "foreign_languages",
+                "name"       => "外国語",
                 "color"      => "red",
-                "filename"   => "images/foreign_languages.png",
+                "filename"   => "https://kw-prod-bucket.s3-ap-northeast-1.amazonaws.com/category/science.jpeg",
                 "created_at" => now(),
                 "updated_at" => now()
             ],
             [
-                "name"       => "music",
+                "name"       => "音楽",
                 "color"      => "red",
-                "filename"   => "images/music.png",
+                "filename"   => "https://kw-prod-bucket.s3-ap-northeast-1.amazonaws.com/category/science.jpeg",
                 "created_at" => now(),
                 "updated_at" => now(),
             ],
             [
-                "name"       => "science",
+                "name"       => "テクノロジー",
                 "color"      => "red",
-                "filename"   => "images/science.png",
+                "filename"   => "https://kw-prod-bucket.s3-ap-northeast-1.amazonaws.com/category/science.jpeg",
                 "created_at" => now(),
                 "updated_at" => now()
 
             ],
             [
-                "name"       => "sport",
+                "name"       => "スポーツ",
                 "color"      => "red",
-                "filename"   => "images/sport.png",
+                "filename"   => "https://kw-prod-bucket.s3-ap-northeast-1.amazonaws.com/category/science.jpeg",
                 "created_at" => now(),
                 "updated_at" => now()
             ]
@@ -216,25 +216,21 @@ class TestDataTableSeeder extends Seeder
 
         DB::table('sexes')->insert([
             [
-                "index"      => 0,
                 "name"       => "not_known",
                 "created_at" => now(),
                 "updated_at" => now()
             ],
             [
-                "index"      => 1,
                 "name"       => "male",
                 "created_at" => now(),
                 "updated_at" => now()
             ],
             [
-                "index"      => 2,
                 "name"       => "female",
                 "created_at" => now(),
                 "updated_at" => now()
             ],
             [
-                "index"      => 9,
                 "name"       => "not_applicable",
                 "created_at" => now(),
                 "updated_at" => now()

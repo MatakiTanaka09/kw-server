@@ -14,7 +14,8 @@ class EventMaster extends JsonResource
     {
         return [
             "id" => $this->id,
-            "title"=> $this->title
+            "title"=> $this->title,
+            "price" => $this->price
         ];
     }
 }

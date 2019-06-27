@@ -1,6 +1,6 @@
 <?php
 
-namespace KW\Application\Controllers\Common\SchoolMaster;
+namespace KW\Application\Controllers\KW\SchoolMaster;
 
 use App\Http\Controllers\Controller;
 use KW\Application\Requests\SchoolMaster\KW\SchoolMaster as SchoolMasterRequest;

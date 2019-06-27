@@ -84,7 +84,7 @@ class RegisterController extends Controller
         }
 
         event(new Registered($userMaster = $this->create($request->all())));
-        \Mail::to($userMaster)->queue(new \App\Mail\User\Registered($userMaster));
+//        \Mail::to($userMaster)->queue(new \App\Mail\User\Registered($userMaster));
 
         return new JsonResponse($userMaster);
     }

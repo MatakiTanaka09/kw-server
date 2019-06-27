@@ -45,8 +45,6 @@ class EventDetailBaseController extends Controller
     {
         $eventDetail->event_master_id = $request->json('event_master_id');
         $eventDetail->event_pr_id     = $request->json('event_pr_id');
-        $eventDetail->title           = $request->json('title');
-        $eventDetail->detail          = $request->json('detail');
         $eventDetail->started_at      = $request->json('started_at');
         $eventDetail->expired_at      = $request->json('expired_at');
         $eventDetail->pub_state       = $request->json('pub_state');
@@ -83,8 +81,6 @@ class EventDetailBaseController extends Controller
             $eventDetail = EventDetail::where('id', $event_detail_id)->firstOrFail();
             $eventDetail->event_master_id = $request->json('event_master_id');
             $eventDetail->event_pr_id     = $request->json('event_pr_id');
-            $eventDetail->title           = $request->json('title');
-            $eventDetail->detail          = $request->json('detail');
             $eventDetail->started_at      = $request->json('started_at');
             $eventDetail->expired_at      = $request->json('expired_at');
             $eventDetail->pub_state       = $request->json('pub_state');

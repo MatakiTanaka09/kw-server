@@ -15,11 +15,15 @@ class SearchCategoryController extends Controller
     public function getEventDetailBySearchingCategory(Request $request)
     {
         $q = $request->input('q');
+        $limit = $request->input('limit');
+        $limit == null ? "" : $limit;
 
         if($this->checkQueryRegexp($q)) {
             return EventDetailResourceIndex::collection(
-                EventDetail::whereHas("eventMaster.categoryMasters", function($query) use($q) {
-                    $query->where("category_master_id", "=", $q);
+                EventDetail::whereHas("eventMaster.categoryMasters", function($query) use($q, $limit) {
+                    $query
+                        ->where("category_master_id", "=", $q)
+                        ->limit($limit);
                 })->get());
         } else {
             return response()

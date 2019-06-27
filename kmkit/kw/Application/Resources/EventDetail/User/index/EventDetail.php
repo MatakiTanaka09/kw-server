@@ -19,15 +19,14 @@ class EventDetail extends JsonResource
     {
         return [
             "id" => $this->id,
-            "title" => $this->title,
             "started_at" => $this->started_at,
             "expired_at" => $this->expired_at,
             "pub_state" => $this->pub_state,
             "event_master"=> new EventMasterResource($this->eventMaster),
-            "school_master" => SchoolMasterResource::collection($this->eventMaster->schoolMasters),
+//            "school_master" => SchoolMasterResource::collection($this->eventMaster->schoolMasters),
             "tag" => TagResource::collection($this->tags),
             "category" => CategoryMasterResource::collection($this->eventMaster->categoryMasters),
-//            "image" => new ImageResource($this->images)
+            "image" => ImageResource::collection($this->eventMaster->images)
         ];
     }
 }

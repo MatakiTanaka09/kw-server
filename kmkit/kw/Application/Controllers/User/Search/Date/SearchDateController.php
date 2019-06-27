@@ -2,6 +2,7 @@
 namespace KW\Application\Controllers\User\Search\Date;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use KW\Application\Resources\EventDetail\User\index\EventDetail as EventDetailResourceIndex;
 use KW\Application\Resources\EventDetail\User\detail\EventDetail as EventDetailResourceDetail;
 use Illuminate\Http\Request;
@@ -17,15 +18,22 @@ class SearchDateController extends Controller
         $q = $request->input('q');
         $sort = $request->input('sort');
         $order = $request->input('order');
+        $limit = $request->input('limit');
+        $limit == null ? "" : $limit;
 
         if($this->checkEventDetailRegexp($q, $sort, $order)) {
-            return EventDetailResourceIndex::collection(
-                EventDetail::query()
-                    ->where("pub_state", "=", 0)
-                    ->whereDate("updated_at", ">=", $q)
-                    ->orderBy($sort, $order)
-                    ->get()
-            );
+            try {
+                return EventDetailResourceIndex::collection(
+                    EventDetail::query()
+                        ->where("pub_state", "=", 0)
+                        ->whereDate("updated_at", ">=", $q)
+                        ->orderBy($sort, $order)
+                        ->limit($limit)
+                        ->get()
+                );
+            } catch(ModelNotFoundException $exception) {
+                return SearchDateController::errorMessage($exception);
+            }
         } else {
             return response()
                 ->json(['message' => "error"])
@@ -56,5 +64,21 @@ class SearchDateController extends Controller
     {
         $order_value = ["desc", "asc"];
         return in_array($order, $order_value, true) ? true : false;
+    }
+
+    private static function receiveResponse($result)
+    {
+        return response()->json([
+            'result' => 'ok',
+            'data' => $result
+        ], Response::HTTP_OK);
+    }
+
+    private static function errorMessage($exception)
+    {
+        return response()
+            ->json(['message' => $exception->getMessage()])
+            ->header('Content-Type', 'application/json')
+            ->setStatusCode(Response::HTTP_NOT_FOUND);
     }
 }

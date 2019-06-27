@@ -16,8 +16,7 @@ class CreatePlaceRelationsTable extends Migration
         Schema::create('place_relations', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('place_master_id');
-            $table->string('target_type');
-            $table->uuid('target_id');
+            $table->morphs('target');
             $table->timestamps();
         });
     }
