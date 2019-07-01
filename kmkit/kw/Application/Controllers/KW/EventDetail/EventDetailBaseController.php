@@ -2,7 +2,7 @@
 namespace KW\Application\Controllers\KW\EventDetail;
 
 use App\Http\Controllers\Controller;
-use KW\Application\Requests\EventDetail\KW\SchoolMaster as EventDetailRequest;
+use KW\Application\Requests\EventDetail\KW\EventDetail as EventDetailRequest;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use KW\Infrastructure\Eloquents\EventDetail;
 use Illuminate\Http\Response;
@@ -71,15 +71,14 @@ class EventDetailBaseController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param EventDetailRequest $request
      * @param $event_detail_id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function putEventDetail(Request $request, $event_detail_id)
+    public function putEventDetail(EventDetailRequest $request, $event_detail_id)
     {
         try {
             $eventDetail = EventDetail::where('id', $event_detail_id)->firstOrFail();
-            $eventDetail->event_master_id = $request->json('event_master_id');
             $eventDetail->event_pr_id     = $request->json('event_pr_id');
             $eventDetail->started_at      = $request->json('started_at');
             $eventDetail->expired_at      = $request->json('expired_at');
@@ -105,6 +104,12 @@ class EventDetailBaseController extends Controller
     public function deleteEventDetail($event_detail_id)
     {
         EventDetail::query()->where('id', '=', $event_detail_id)->delete();
+    }
+
+    public function getEventMasterById($event_detail_id)
+    {
+        $eventDetail = EventDetail::where('id', $event_detail_id)->firstOrFail();
+        return $eventDetail->eventMaster->id;
     }
 
     public function attachEventDetailToImage($eventDetail)

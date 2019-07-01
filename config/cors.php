@@ -10,11 +10,11 @@ return [
     | to accept any value.
     |
     */
-    'supportsCredentials' => true,
-    'allowedOrigins' => ["http://app.kidsweekend.test:3000"],
-    'allowedOriginsPatterns' => ['@^chrome-extension://.*@'],
+    'supportsCredentials' => false,
+    'allowedOrigins' => [env('CORS_ALLOWED_ORIGIN')],
+    'allowedOriginsPatterns' => [],
     'allowedHeaders' => ['*'],
-    'allowedMethods' => ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'],
+    'allowedMethods' => ['*'],
     'exposedHeaders' => [],
     'maxAge' => 0,
 ];

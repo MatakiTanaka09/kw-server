@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Http\Controllers\UserMasterAuth;
 
@@ -7,10 +8,11 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
-use Illuminate\Support\Facades\Auth;
 use JWTAuth;
+use Tymon\JWTAuth\JWTGuard;
 use KW\Infrastructure\Eloquents\UserMaster;
 use Tymon\JWTAuth\Exceptions\JWTException;
+use KW\Application\Responder\TokenResponder;
 
 class LoginController extends Controller
 {
@@ -28,16 +30,17 @@ class LoginController extends Controller
     use AuthenticatesUsers;
 
     /**
-     * Where to redirect users after login.
-     *
-     * @var string
-     */
-    protected $redirectTo = '/';
-
-    /**
      * @var
      */
     private $authManager;
+
+    /**
+     * @return \Illuminate\Contracts\Auth\Guard|\Illuminate\Contracts\Auth\StatefulGuard|mixed
+     */
+    protected function guard()
+    {
+        return Auth::guard('users');
+    }
 
     /**
      * LoginController constructor.
@@ -46,7 +49,21 @@ class LoginController extends Controller
     public function __construct(AuthManager $authManager)
     {
         $this->authManager = $authManager;
-        $this->middleware('guest')->except('logout');
+//        $this->middleware('guest')->except('logout');
+    }
+
+    public function __invoke(Request $request, TokenResponder $responder): JsonResponse
+    {
+        $guard = $this->authManager->guard('users');
+        $token = $guard->attempt([
+            'email'    => $request->get('email'),
+            'password' => $request->get('password'),
+        ]);
+
+        return $responder(
+            $token,
+            $guard->factory()->getTTL() * 60
+        );
     }
 
     /**

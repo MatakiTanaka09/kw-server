@@ -53,13 +53,14 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
             Route::delete("/{user_parent_id}", 'KW\Application\Controllers\User\UserParent\UserParentBaseController@deleteUserParent');
             Route::get("/{user_parent_id}/children", 'KW\Application\Controllers\User\UserParent\UserParentBaseController@getUserParentsChildren');
             Route::get("/{user_parent_id}/books", 'KW\Application\Controllers\User\UserParent\UserParentBaseController@getUserParentsBooks');
+            Route::get("/{user_master_id}/user", 'KW\Application\Controllers\User\UserParent\UserParentBaseController@getUserParentById');
         });
 
         /**
          * UserChild
          */
         Route::group(["prefix" => "user-children"], function () {
-            Route::post("", 'KW\Application\Controllers\User\UserChild\UserChildBaseController@postUserChildren');
+            Route::post("/{user_parent_id}", 'KW\Application\Controllers\User\UserChild\UserChildBaseController@postAdditionalUserChildren');
             Route::get("/{user_child_id}", 'KW\Application\Controllers\User\UserChild\UserChildBaseController@getUserChild');
             Route::put("/{user_child_id}", 'KW\Application\Controllers\User\UserChild\UserChildBaseController@putUserChild');
             Route::delete("/{user_child_id}", 'KW\Application\Controllers\User\UserChild\UserChildBaseController@deleteUserChild');
@@ -115,11 +116,13 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
          */
         Route::group(["prefix" => "user-masters"], function () {
             Route::post('/register', 'App\Http\Controllers\UserMasterAuth\RegisterController@register');
-            Route::post('/login', 'App\Http\Controllers\UserMasterAuth\LoginController@login');
+            Route::post('/login', 'App\Http\Controllers\UserMasterAuth\LoginController');
+            Route::get('/me', 'App\Http\Controllers\UserMasterAuth\RetrieveAction')->middleware("auth:users");
             Route::group(["middleware" => "auth:users"], function () {
                 Route::get('/home', function() {
                     return 'You are authorized user';
                 });
+                Route::post('/logout', 'App\Http\Controllers\UserMasterAuth\LoginController@logout');
             });
             Route::post("password/email", "App\Http\Controllers\UserMasterAuth\ForgotPasswordController@sendResetLinkEmail");
             Route::post("password/reset/{token}", "App\Http\Controllers\UserMasterAuth\ResetPasswordController@reset");
@@ -242,7 +245,7 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
             Route::get("/{event_detail_id}", 'KW\Application\Controllers\KW\EventDetail\EventDetailBaseController@getEventDetail');
             Route::put("/{event_detail_id}", 'KW\Application\Controllers\KW\EventDetail\EventDetailBaseController@putEventDetail');
             Route::delete("/{event_detail_id}", 'KW\Application\Controllers\KW\EventDetail\EventDetailBaseController@deleteEventDetail');
-
+            Route::get("/{event_detail_id}/event-master", 'KW\Application\Controllers\KW\EventDetail\EventDetailBaseController@getEventMasterById');
             /**
              * Relation API 2019-05-22 --
              */

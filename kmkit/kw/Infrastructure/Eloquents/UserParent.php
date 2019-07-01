@@ -30,19 +30,19 @@ class UserParent extends BaseUuid
         return $this->belongsTo(UserMaster::class);
     }
 
-//    /**
-//     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-//     */
-//    public function userChildren()
-//    {
-//        return $this->belongsToMany(
-//            UserChild::class,
-//            'child_parents'
-//        )
-//            ->using(ChildParent::class)
-//            ->withPivot('user_parent_id', 'user_child_id')
-//            ->withTimestamps();
-//    }
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function userChildren()
+    {
+        return $this->belongsToMany(
+            UserChild::class,
+            'child_parents'
+        )
+            ->using(ChildParent::class)
+            ->withPivot('user_parent_id', 'user_child_id')
+            ->withTimestamps();
+    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
@@ -72,12 +72,5 @@ class UserParent extends BaseUuid
             ->using(Book::class)
             ->withPivot('user_parent_id', 'user_child_id', 'event_detail_id')
             ->withTimestamps();
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function childParents() {
-        return $this->hasMany(ChildParent::class);
     }
 }

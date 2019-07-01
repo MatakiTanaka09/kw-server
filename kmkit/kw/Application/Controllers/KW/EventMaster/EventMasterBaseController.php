@@ -30,28 +30,29 @@ class EventMasterBaseController extends Controller
      */
     public function getEventMasters()
     {
-        return response()->json(EventMaster::query()->select([
-            'id',
-            'title',
-            'detail',
-            'handing',
-            'event_minutes',
-            'target_min_age',
-            'target_max_age',
-            'parent_attendant',
-            'price',
-            'cancel_policy',
-            'pub_state',
-            'arrived_at',
-            'zip_code1',
-            'zip_code2',
-            'state',
-            'city',
-            'address1',
-            'address2',
-            'longitude',
-            'latitude'
-        ])->get());
+        return EventMaster::paginate(15);
+//        return response()->json(EventMaster::query()->select([
+//            'id',
+//            'title',
+//            'detail',
+//            'handing',
+//            'event_minutes',
+//            'target_min_age',
+//            'target_max_age',
+//            'parent_attendant',
+//            'price',
+//            'cancel_policy',
+//            'pub_state',
+//            'arrived_at',
+//            'zip_code1',
+//            'zip_code2',
+//            'state',
+//            'city',
+//            'address1',
+//            'address2',
+//            'longitude',
+//            'latitude'
+//        ])->get());
     }
 
     /**

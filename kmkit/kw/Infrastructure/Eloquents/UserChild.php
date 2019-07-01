@@ -16,11 +16,17 @@ class UserChild extends BaseUuid
     protected $guarded = [];
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function childParent()
+    public function userParents()
     {
-        return $this->hasOne(ChildParent::class);
+        return $this->belongsToMany(
+            UserParent::class,
+            'child_parents'
+        )
+            ->using(ChildParent::class)
+            ->withPivot('user_parent_id', 'user_child_id')
+            ->withTimestamps();
     }
 
     /**

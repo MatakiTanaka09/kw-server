@@ -3,6 +3,7 @@
 namespace KW\Application\Controllers\KW\SchoolMaster;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Response;
 use KW\Application\Requests\SchoolMaster\KW\SchoolMaster as SchoolMasterRequest;
 use KW\Application\Requests\SchoolMaster\KW\Upload as UploadRequest;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -29,23 +30,24 @@ class SchoolMasterBaseController extends Controller
      */
     public function getSchoolMasters()
     {
-        return response()->json(SchoolMaster::query()->select([
-            'id',
-            'name',
-            'detail',
-            'email',
-            'url',
-            'tel',
-            'icon',
-            'zip_code1',
-            'zip_code2',
-            'state',
-            'city',
-            'address1',
-            'address2',
-            'longitude',
-            'latitude'
-        ])->get());
+        return SchoolMaster::paginate(15);
+//        return response()->json(SchoolMaster::query()->select([
+//            'id',
+//            'name',
+//            'detail',
+//            'email',
+//            'url',
+//            'tel',
+//            'icon',
+//            'zip_code1',
+//            'zip_code2',
+//            'state',
+//            'city',
+//            'address1',
+//            'address2',
+//            'longitude',
+//            'latitude'
+//        ])->get());
     }
 
     /**
