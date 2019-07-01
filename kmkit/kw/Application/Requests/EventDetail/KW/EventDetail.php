@@ -24,10 +24,7 @@ class EventDetail extends FormRequest
     public function rules()
     {
         return [
-            'event_master_id' => 'required',
             'event_pr_id'     => 'required',
-            'title'           => 'required',
-            'detail'          => 'required',
             'started_at'      => 'required',
             'expired_at'      => 'required',
             'pub_state'       => 'required',

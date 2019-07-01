@@ -28,12 +28,12 @@ class RegisterController extends Controller
 
     use RegistersUsers;
 
-    /**
-     * Where to redirect users after registration.
-     *
-     * @var string
-     */
-    protected $redirectTo = '/';
+//    /**
+//     * Where to redirect users after registration.
+//     *
+//     * @var string
+//     */
+//    protected $redirectTo = '';
 
     /**
      * Create a new controller instance.
@@ -84,7 +84,7 @@ class RegisterController extends Controller
         }
 
         event(new Registered($userMaster = $this->create($request->all())));
-//        \Mail::to($userMaster)->queue(new \App\Mail\User\Registered($userMaster));
+        \Mail::to($userMaster)->queue(new \App\Mail\User\Registered($userMaster));
 
         return new JsonResponse($userMaster);
     }

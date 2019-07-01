@@ -5,7 +5,7 @@ use KW\Infrastructure\Eloquents\UserParent;
 //// 1.
 Route::get('/user', function () {
     return Auth::guard('users')->id();
-});
+})->middleware('cors');
 //
 //// 2.
 //Route::get('/message', function () {
@@ -18,7 +18,7 @@ Route::match(["get", "options"], 'api/v1/test', function () {
     return "id";
 });
 
-Route::match( ["get", "options"],'test', function () {
+Route::get( '/test', function () {
     return "testtest";
 });
 

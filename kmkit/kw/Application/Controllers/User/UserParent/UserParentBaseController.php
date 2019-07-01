@@ -13,6 +13,7 @@ use KW\Infrastructure\Eloquents\EventDetail;
 use KW\Infrastructure\Eloquents\UserParent;
 use KW\Infrastructure\Eloquents\Book;
 use Illuminate\Http\Response;
+use Illuminate\Http\Request;
 use Carbon\Carbon;
 use DB;
 use KW\Infrastructure\Eloquents\UserChild;
@@ -146,6 +147,12 @@ class UserParentBaseController extends Controller
         } catch (ModelNotFoundException $exception) {
             return UserParentBaseController::errorMessage($exception);
         }
+    }
+
+    public function getUserParentById($user_master_id)
+    {
+        $userParent = UserParent::where('user_master_id', "=", $user_master_id)->firstOrFail();
+        return $userParent->id;
     }
 
     /**
