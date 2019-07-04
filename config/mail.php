@@ -16,7 +16,7 @@ return [
     |
     */
 
-    'driver' => env('MAIL_DRIVER', 'smtp'),
+    'driver' => env('MAIL_DRIVER', 'ses'),
 
     /*
     |--------------------------------------------------------------------------
@@ -56,7 +56,7 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'kidsweekend@kidseed.co.jp'),
+        'address' => env('MAIL_FROM_ADDRESS', 'info@kidsweekend.jp'),
         'name' => env('MAIL_FROM_NAME', 'Kidsweekend'),
     ],
 
@@ -133,20 +133,9 @@ return [
 
     'log_channel' => env('MAIL_LOG_CHANNEL'),
 
-    'ses' => [
-        'key' => 'your-ses-key',
-        'secret' => 'your-ses-secret',
-        'region' => 'ses-region',  // e.g. us-east-1
-
-        // options はここに記述
-        'options' => [
-            'ConfigurationSetName' => 'MyConfigurationSet',
-            'Tags' => [
-                [
-                    'Name' => 'foo',
-                    'Value' => 'bar',
-                ],
-            ],
-        ],
-    ],
+//    'ses' => [
+//        'key' => env('SES_KEY'),
+//        'secret' => env('SES_SECRET'),
+//        'region' => env('SES_REGION', 'us-east-1'),
+//    ],
 ];

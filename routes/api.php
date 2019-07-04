@@ -32,11 +32,7 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
      */
     Route::post("mail/test", function() {
         $userMaster = \KW\Infrastructure\Eloquents\UserMaster::find(1);
-        $book = \KW\Infrastructure\Eloquents\Book::findOrFail('2600994d-5906-36cc-880e-52b9bf16dd43');
-//        $userMaster->notify(new \KW\Infrastructure\Apis\Notifications\SchoolMaster\BookReceived($userMaster));
         $userMaster->notify(new \KW\Infrastructure\Apis\Notifications\Book\BookSuccessed($userMaster));
-//        $book->notify(new \KW\Infrastructure\Apis\Notifications\SchoolMaster\BookCanceled($book));
-//        $userMaster->notify(new \KW\Infrastructure\Apis\Notifications\SchoolMaster\BookFailed($userMaster));
     });
 
     /**
@@ -116,6 +112,9 @@ Route::group(["prefix" => "v1", "middleware" => "api"], function () {
          */
         Route::group(["prefix" => "user-masters"], function () {
             Route::post('/register', 'App\Http\Controllers\UserMasterAuth\RegisterController@register');
+//            Route::post('/register', function() {
+//                return view('emails.user.register');
+//            });
             Route::post('/login', 'App\Http\Controllers\UserMasterAuth\LoginController');
             Route::get('/me', 'App\Http\Controllers\UserMasterAuth\RetrieveAction')->middleware("auth:users");
             Route::group(["middleware" => "auth:users"], function () {
