@@ -14,7 +14,7 @@ class Registered extends Mailable implements ShouldQueue
 {
     use InteractsWithQueue, Dispatchable, Queueable, SerializesModels;
 
-    protected $userMaster;
+    public $userMaster;
 
     /**
      * Registered constructor.
@@ -32,7 +32,7 @@ class Registered extends Mailable implements ShouldQueue
      */
     public function build()
     {
-        return $this->markdown('emails.users.registered');
+        return $this->view('emails.users.registered');
     }
 
     public function failed($event, $exception)

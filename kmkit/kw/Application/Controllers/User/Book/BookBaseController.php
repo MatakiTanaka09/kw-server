@@ -9,6 +9,11 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use KW\Infrastructure\Eloquents\Book;
+use KW\Infrastructure\Eloquents\EventDetail;
+use KW\Application\Resources\Book\User\Mail\booked\EventDetail as EventDetailResource;
+use KW\Infrastructure\Eloquents\UserChild;
+use KW\Infrastructure\Eloquents\EventMaster;
+use KW\Infrastructure\Eloquents\SchoolMaster;
 
 class BookBaseController extends Controller
 {
@@ -39,6 +44,7 @@ class BookBaseController extends Controller
     public function postBooks(Request $request)
     {
         $result = [];
+        $user = $request->user();
         $data = $request->json()->all();
         if(is_array($data)) {
             for($i=0; $i < count($data); $i++) {
@@ -54,7 +60,17 @@ class BookBaseController extends Controller
                 array_push($result, $book);
             }
         }
-        return BookBaseController::receiveResponse($result);
+        $user_children = [];
+        foreach ($result as $res) {
+            $user_child = UserChild::find($res->user_child_id);
+            array_push($user_children, $user_child->full_kana);
+        }
+
+        $event_detail_id = array_shift($result)->event_detail_id;
+        $event_master = EventDetail::find($event_detail_id)->eventMaster()->get();
+        return $event_master;
+//        \Mail::to($user)->queue(new \App\Mail\User\Booked($user, $event_detail));
+//        return BookBaseController::receiveResponse($result);
     }
 
     private static function receiveResponse($result)
