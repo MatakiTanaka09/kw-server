@@ -43,11 +43,13 @@ class BookBaseController extends Controller
         if(is_array($data)) {
             for($i=0; $i < count($data); $i++) {
                 $book = new Book();
-                $book->user_parent_id  = $data[$i]['user_parent_id'];
-                $book->user_child_id   = $data[$i]['user_child_id'];
-                $book->event_detail_id = $data[$i]['event_detail_id'];
-                $book->status          = $data[$i]['status'];
-                $book->price           = $data[$i]['price'];
+                $book->user_parent_id   = $data[$i]['user_parent_id'];
+                $book->user_child_id    = $data[$i]['user_child_id'];
+                $book->event_detail_id  = $data[$i]['event_detail_id'];
+                $book->school_master_id = $data[$i]['event_detail_id'];
+                $book->status           = $data[$i]['status'];
+                $book->price            = $data[$i]['price'];
+                $book->remark           = $data[$i]['remark'];
                 $book->save();
                 array_push($result, $book);
             }

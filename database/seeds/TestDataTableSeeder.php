@@ -97,8 +97,10 @@ class TestDataTableSeeder extends Seeder
                 [
                     'id' => $this->faker->uuid,
                     'user_child_id' => $userChildren->random()->id,
+                    'school_master_id' => $schoolMasters->random()->id,
                     'status' => $this->faker->randomElement([0, 5, 9, 10]),
-                    'price' => $this->faker->randomElement([1000, 1500, 1800, 2000, 2500])
+                    'price' => $this->faker->randomElement([1000, 1500, 1800, 2000, 2500]),
+                    'remark' => $this->faker->text(200)
                 ]
             );
             $eventDetail->reviews()->attach(

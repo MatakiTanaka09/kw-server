@@ -23,11 +23,13 @@ class Book extends FormRequest
     public function rules()
     {
         return [
-            'user_parent_id'  => 'required|string|size:36',
-            'user_child_id'  => 'required|string|size:36',
-            'event_detail_id' => 'required|string|size:36',
-            'status'          => 'required|integer',
-            'price'           => 'required|'
+            'user_parent_id'   => 'required|string|size:36',
+            'user_child_id'    => 'required|string|size:36',
+            'event_detail_id'  => 'required|string|size:36',
+            'school_master_id' => 'required|string|size:36',
+            'status'           => 'required|integer',
+            'price'            => 'required',
+            'remark'           => ''
         ];
     }
 }
