@@ -44,15 +44,20 @@ class BookBaseController extends Controller
     public function postBooks(Request $request)
     {
         $result = [];
+        $user_children = [];
+        $event_detail = [];
+        $school_master = [];
+        $book_id = [];
         $user = $request->user();
         $data = $request->json()->all();
+
         if(is_array($data)) {
             for($i=0; $i < count($data); $i++) {
                 $book = new Book();
                 $book->user_parent_id   = $data[$i]['user_parent_id'];
                 $book->user_child_id    = $data[$i]['user_child_id'];
                 $book->event_detail_id  = $data[$i]['event_detail_id'];
-                $book->school_master_id = $data[$i]['event_detail_id'];
+                $book->school_master_id = $data[$i]['school_master_id'];
                 $book->status           = $data[$i]['status'];
                 $book->price            = $data[$i]['price'];
                 $book->remark           = $data[$i]['remark'];
@@ -60,16 +65,19 @@ class BookBaseController extends Controller
                 array_push($result, $book);
             }
         }
-        $user_children = [];
+
         foreach ($result as $res) {
             $user_child = UserChild::find($res->user_child_id);
+            array_push($book_id, $res->id);
             array_push($user_children, $user_child->full_kana);
+            array_push($event_detail, $res->event_detail_id);
+            array_push($school_master, $res->school_master_id);
         }
 
-        $event_detail_id = array_shift($result)->event_detail_id;
-        $event_master = EventDetail::find($event_detail_id)->eventMaster()->get();
-        return $event_master;
-//        \Mail::to($user)->queue(new \App\Mail\User\Booked($user, $event_detail));
+        $event_detail = EventDetail::find($event_detail[0]);
+        $event_master = $event_detail->eventMaster()->get()[0];
+        $school_master = SchoolMaster::find($school_master[0]);
+        \Mail::to($user)->queue(new \App\Mail\User\Booked($user, $book_id, $event_master, $event_detail, $school_master, $user_children));
 //        return BookBaseController::receiveResponse($result);
     }
 
